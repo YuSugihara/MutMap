@@ -1,9 +1,9 @@
 
 import os
 import subprocess as sbp
-from utils import time_stamp
-from utils import clean_cmd
-from alignment import Alignment
+from mutmap.utils import time_stamp
+from mutmap.utils import clean_cmd
+from mutmap.alignment import Alignment
 
 
 class Trim(object):

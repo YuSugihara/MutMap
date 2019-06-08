@@ -4,9 +4,9 @@ import os
 import glob
 import subprocess as sbp
 from multiprocessing import Pool
-from utils import time_stamp
-from utils import clean_cmd
-from vcf2index import Vcf2Index
+from mutmap.utils import time_stamp
+from mutmap.utils import clean_cmd
+from mutmap.vcf2index import Vcf2Index
 
 
 class Mpileup(object):

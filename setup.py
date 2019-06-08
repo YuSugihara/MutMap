@@ -2,7 +2,7 @@
 
 from distutils.core import setup
 
-setup(name='MutMap',
+setup(name='mutmap',
       version='2.0.3',
       description='MutMap: pipeline to identify causative mutations responsible for a phenotype',
       author='Yu Sugihara',
@@ -10,4 +10,9 @@ setup(name='MutMap',
       url='https://github.com/YuSugihara/MutMap',
       license='GPL',
       packages=['mutmap'],
-     )
+      entry_points={'console_scripts': [
+            'mutmap = mutmap.mutmap:main',
+            'mutplot = mutmap.mutplot:main',
+            ]
+        }
+    )

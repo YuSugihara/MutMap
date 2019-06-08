@@ -1,26 +1,31 @@
 #!/usr/bin/env python3
-# MutMap version 0.0.2
 
-from params import Params
-
-
+from mutmap.params import Params
 pm = Params('mutmap')
 args, config = pm.set_options()
+
+
+import os
+import sys
+import glob
+import subprocess as sbp
+from mutmap.utils import time_stamp
+from mutmap.utils import clean_cmd
+from mutmap.trim import Trim
+from mutmap.alignment import Alignment
+from mutmap.bamfilt import BamFilt
+from mutmap.mpileup import Mpileup
+from mutmap.vcf2index import Vcf2Index
+
 
 class MutMap(object):
 
     def __init__(self, args, config):
         args = pm.check_max_threads(args)
-        N_files = pm.check_args(args)
+        self.N_fastq = pm.check_args(args)
         self.args = args
         self.config = config
         self.out = args.out
-        self.N_cultivar_fastq = N_files[0]
-        self.N_cultivar_bam = N_files[1]
-        self.N_bulk_fastq = N_files[2]
-        self.N_bulk_bam = N_files[3]
-        self.N_fastq = N_files[0] + N_files[2]
-        self.N_bam = N_files[1] + N_files[3]
         self.cultivar_fastq, self.cultivar_bam = self.get_files(args.cultivar)
         self.bulk_fastq, self.bulk_bam = self.get_files(args.bulk)
 
@@ -110,22 +115,18 @@ class MutMap(object):
         mp.run()
 
     def mutplot(self):
-        path_to_mutmap = os.path.realpath(__file__)
-        mutmap_dir = os.path.dirname(path_to_mutmap)
         if args.snpEff is None:
-            cmd = '{0}/../mutplot -v {1}/30_vcf/mutmap.vcf.gz \
-                                  -n {2} \
-                                  -o {1}/40_mutmap \
-                                  &>> {1}/log/mutplot.log'.format(mutmap_dir,
-                                                                  self.out,
+            cmd = 'mutplot -v {0}/30_vcf/mutmap.vcf.gz \
+                                  -n {1} \
+                                  -o {0}/40_mutmap \
+                                  &>> {0}/log/mutplot.log'.format(self.out,
                                                                   self.args.N_bulk)
         else:
-            cmd = '{0}/../mutplot -v {1}/30_vcf/mutmap.vcf.gz \
-                                  -n {2} \
-                                  -o {1}/40_mutmap \
-                                  -e {3}\
-                                  &>> {1}/log/mutplot.log'.format(mutmap_dir,
-                                                                  self.out,
+            cmd = 'mutplot -v {0}/30_vcf/mutmap.vcf.gz \
+                                  -n {1} \
+                                  -o {0}/40_mutmap \
+                                  -e {2}\
+                                  &>> {0}/log/mutplot.log'.format(self.out,
                                                                   self.args.N_bulk,
                                                                   self.args.snpEff)
 
@@ -146,20 +147,10 @@ class MutMap(object):
         self.mpileup()
         self.mutplot()
 
-if __name__ == '__main__':
-
-    import os
-    import sys
-    import glob
-    import subprocess as sbp
-    from utils import time_stamp
-    from utils import clean_cmd
-    from trim import Trim
-    from alignment import Alignment
-    from bamfilt import BamFilt
-    from mpileup import Mpileup
-    from vcf2index import Vcf2Index
-
+def main():
     print(time_stamp(), 'start to run MutMap.', flush=True)
     MutMap(args, config).run()
     print(time_stamp(), 'MutMap successfully finished.', flush=True)
+
+if __name__ == '__main__':
+    main()

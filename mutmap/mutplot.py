@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
-# MutPlot version 0.0.1
 
-from params import Params
-
-
+from mutmap.params import Params
 pm = Params('mutplot')
 args, config = pm.set_options()
+
+
+import os
+import pandas as pd
+import subprocess as sbp
+from mutmap.vcf2index import Vcf2Index
+from mutmap.plot import Plot
+from mutmap.utils import time_stamp
+from mutmap.utils import clean_cmd
 
 
 class MutPlot(object):
@@ -109,18 +115,11 @@ class MutPlot(object):
         if self.args.igv:
             self.make_igv_file()
 
-
-if __name__ == '__main__':
-
-    import os
-    import pandas as pd
-    import subprocess as sbp
-    from vcf2index import Vcf2Index
-    from plot import Plot
-    from utils import time_stamp
-    from utils import clean_cmd
-
+def main():
     print(time_stamp(), 'start to run MutPlot.', flush=True)
     mp = MutPlot(args, config)
     mp.run()
     print(time_stamp(), 'MutPlot successfully finished.', flush=True)
+
+if __name__ == '__main__':
+    main()

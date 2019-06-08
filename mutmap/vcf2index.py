@@ -6,9 +6,9 @@ import gzip
 import numpy as np
 import pandas as pd
 from functools import lru_cache
-from snpfilt import SnpFilt
-from smooth import Smooth
-from utils import time_stamp
+from mutmap.snpfilt import SnpFilt
+from mutmap.smooth import Smooth
+from mutmap.utils import time_stamp
 
 
 class Vcf2Index(object):

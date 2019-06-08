@@ -5,7 +5,8 @@ import argparse
 import configparser
 from multiprocessing import Pool
 import multiprocessing as multi
-from utils import time_stamp
+from mutmap.utils import time_stamp
+from mutmap.__init__ import __version__
 
 
 class Params(object):
@@ -27,9 +28,9 @@ class Params(object):
         return args, config
 
     def mutmap_options(self):
-        parser = argparse.ArgumentParser(description='MutMap version 2.0.3',
+        parser = argparse.ArgumentParser(description='MutMap version {}'.format(__version__),
                                          formatter_class=argparse.RawTextHelpFormatter)
-        parser.usage = ('mutmap -r <FASTA> -c <BAM | FASTQ> -b <BAM | FASTQ>\n'
+        parser.usage = ('mutmap -r <FASTA> -c <BAM|FASTQ> -b <BAM|FASTQ>\n'
                         '              -n <INT> -o <OUT_DIR> [-T] [-e <DATABASE>]')
 
         # set options
@@ -108,12 +109,12 @@ class Params(object):
         parser.add_argument('-v',
                             '--version',
                             action='version',
-                            version='%(prog)s 0.0.2')
+                            version='%(prog)s {}'.format(__version__))
 
         return parser
 
     def mutplot_options(self):
-        parser = argparse.ArgumentParser(description='MutPlot version 0.0.3',
+        parser = argparse.ArgumentParser(description='MutPlot version {}'.format(__version__),
                                          formatter_class=argparse.RawTextHelpFormatter)
         parser.usage = ('mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]\n'
                         '               [-D <INT>] [-d <INT>] [-N <INT>] [-m <FLOAT>]\n'
@@ -226,7 +227,7 @@ class Params(object):
         # set version
         parser.add_argument('--version',
                             action='version',
-                            version='%(prog)s 0.0.1')
+                            version='%(prog)s {}'.format(__version__))
 
         return parser
 
@@ -258,8 +259,7 @@ class Params(object):
                                 'remove existing directory\n\n'))
             sys.exit()
 
-        N_cultivar_fastq = 0
-        N_cultivar_bam = 0
+        N_fastq = 0
 
         for input_name in  args.cultivar:
             n_comma = input_name.count(',')
@@ -272,7 +272,6 @@ class Params(object):
                                         'input them as paired-end reads which is separated '
                                         'by comma. e.g. -c fastq1,fastq2\n\n').format(input_name))
                     sys.exit()
-                N_cultivar_bam += 1
             elif n_comma == 1:
                 fastqs = input_name.split(',')
                 for fastq in fastqs:
@@ -284,15 +283,12 @@ class Params(object):
                                             'input them separately. e.g. -c bam1 '
                                             '-c bam2\n\n').format(input_name))
                         sys.exit()
-                N_cultivar_fastq += 1
+                N_fastq += 1
             else:
                 sys.stderr.write(('  Please check "{}".\n'
                                   '  You specified too much files, or '
                                     'your file name includes ",".\n\n').format(input_name))
                 sys.exit()
-
-        N_bulk_fastq = 0
-        N_bulk_bam = 0
 
         for input_name in  args.bulk:
             n_comma = input_name.count(',')
@@ -305,7 +301,6 @@ class Params(object):
                                         'input them as paired-end reads which is separated '
                                         'by comma. e.g. -b fastq1,fastq2\n\n').format(input_name))
                     sys.exit()
-                N_bulk_bam += 1
             elif n_comma == 1:
                 fastqs = input_name.split(',')
                 for fastq in fastqs:
@@ -317,17 +312,16 @@ class Params(object):
                                             'input them separately. e.g. -b bam1 '
                                             '-b bam2\n\n').format(input_name))
                         sys.exit()
-                N_bulk_fastq += 1
+                N_fastq += 1
             else:
                 sys.stderr.write(('  Please check "{}".\n'
                                   '  You specified too much files, or '
                                     'your file name includes ",".\n\n').format(input_name))
                 sys.exit()
 
-        N_fastq = N_cultivar_fastq + N_bulk_fastq
         if N_fastq == 0 and args.trim:
             sys.stderr.write(('  You can specify "--trim" only when '
                                  'you input fastq.\n\n'))
             sys.exit()
 
-        return N_cultivar_fastq, N_cultivar_bam, N_bulk_fastq, N_bulk_bam
+        return N_fastq
