@@ -37,8 +37,8 @@ class MutPlot(object):
                           {2} \
                           1> {0}/mutmap.snpEff.vcf \
                           2> {0}/snpEff.log'.format(self.out,
-                                                        self.snpEff,
-                                                        self.vcf)
+                                                    self.snpEff,
+                                                    self.vcf)
         cmd = clean_cmd(cmd)
 
         print(time_stamp(), 'start to run SnpEff.', flush=True)
@@ -48,15 +48,27 @@ class MutPlot(object):
         self.args.vcf = '{}/mutmap.snpEff.vcf'.format(self.out)
 
     def make_igv_file(self):
-        snp_index = pd.read_csv('{}/snp_index.tsv'.format(self.out),
-                                sep='\t',
-                                names=['CHROM',
-                                       'POSI',
-                                       'variant',
-                                       'depth',
-                                       'p99',
-                                       'p95',
-                                       'SNPindex'])
+        if self.snpEff is None:
+            snp_index = pd.read_csv('{}/snp_index.tsv'.format(self.out),
+                                    sep='\t',
+                                    names=['CHROM',
+                                           'POSI',
+                                           'variant',
+                                           'depth',
+                                           'p99',
+                                           'p95',
+                                           'SNPindex'])
+        else:
+            snp_index = pd.read_csv('{}/snp_index.tsv'.format(self.out),
+                                    sep='\t',
+                                    names=['CHROM',
+                                           'POSI',
+                                           'variant',
+                                           'impact',
+                                           'depth',
+                                           'p99',
+                                           'p95',
+                                           'SNPindex'])
 
         snp_index['Start'] = snp_index['POSI'] - 1
         snp_index['End'] = snp_index['POSI']
