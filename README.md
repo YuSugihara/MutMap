@@ -8,8 +8,8 @@
   + [Installation using bioconda](#Installation-using-bioconda)
   + [Manual Installation](#Manual-Installation)
 - [Usage](#Usage)
-  + [Example 1 : run MutMap from FASTQ after trimming](#Example-1--run-MutMap-from-FASTQ-after-trimming)
-  + [Example 2 : run MutMap from FASTQ before trimming](#Example-2--run-MutMap-from-FASTQ-before-trimming)
+  + [Example 1 : run MutMap from FASTQ without trimming](#Example-1--run-MutMap-from-FASTQ-without-trimming)
+  + [Example 2 : run MutMap from FASTQ with trimming](#Example-2--run-MutMap-from-FASTQ-with-trimming)
   + [Example 3 : run MutMap from BAM](#Example-3--run-MutMap-from-BAM)
   + [Example 4 : run MutMap from multiple FASTQs and BAMs](#Example-4--run-MutMap-from-multiple-FASTQs-and-BAMs)
   + [Example 5 : run MutPlot from VCF](#Example-5--run-MutPlot-from-VCF)
@@ -40,10 +40,28 @@ Now MutMap is updated for easier installation and utilization using Python platf
 - seaborn (optional)
 
 ### Installation using bioconda
-preparing now...
+You can install MutMap using [bioconda](https://bioconda.github.io/index.html).
+```
+$ conda install -c bioconda mutmap
+```
 
 ### Mannual Installation
-preparing now...
+If you got a error during installation, you can install MutMap, manually.
+```
+$ git clone https://github.com/YuSugihara/MutMap.git
+$ cd MutMap
+$ pip install -e .
+```
+Then you have to install other dependencies by yourself. We highly recommend you to install SnpEff and Trimmomatic using bioconda.
+```
+$ conda install -c bioconda snpeff
+$ conda install -c bioconda triimomatic
+```
+After installation, please check whether SnpEff and Trimmomatic work through the commands below.
+```
+$ snpEff --help
+$ trimmomatic --help
+```
 
 ## Usage
 ```
@@ -77,17 +95,17 @@ optional arguments:
   -v, --version     show program's version number and exit
 ```
 
-MutMap can run from FASTQ (before or after trimming) and BAM. If you want to run MutMap from VCF, please use MutPlot (example 5). Then, please make sure that your VCF include AD format.
+MutMap can run from FASTQ (without or with trimming) and BAM. If you want to run MutMap from VCF, please use MutPlot (example 5). Then, please make sure that your VCF include AD format.
 
-+ [Example 1 : run MutMap from FASTQ after trimming](#Example-1--run-MutMap-from-FASTQ-after-trimming)
-+ [Example 2 : run MutMap from FASTQ before trimming](#Example-2--run-MutMap-from-FASTQ-before-trimming)
++ [Example 1 : run MutMap from FASTQ without trimming](#Example-1--run-MutMap-from-FASTQ-without-trimming)
++ [Example 2 : run MutMap from FASTQ with trimming](#Example-2--run-MutMap-from-FASTQ-with-trimming)
 + [Example 3 : run MutMap from BAM](#Example-3--run-MutMap-from-BAM)
 + [Example 4 : run MutMap from multiple FASTQs and BAMs](#Example-4--run-MutMap-from-multiple-FASTQs-and-BAMs)
 + [Example 5 : run MutPlot from VCF](#Example-5--run-MutPlot-from-VCF)
 
 
 
-### Example 1 : run MutMap from FASTQ after trimming
+### Example 1 : run MutMap from FASTQ without trimming
 ```
 $ mutmap -r reference.fasta \
          -c cultivar.1.fastq,cultivar.2.fastq \
@@ -106,7 +124,7 @@ $ mutmap -r reference.fasta \
 
 `-o` : name of output directory. Specified name cannot exist.
 
-### Example 2 : run MutMap from FASTQ before trimming
+### Example 2 : run MutMap from FASTQ with trimming
 ```
 $ mutmap -r reference.fasta \
          -c cultivar.1.fastq,cultivar.2.fastq \
