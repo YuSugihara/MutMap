@@ -18,7 +18,6 @@
   + [Change trimming parameters for Trimmomatic](#Change-trimming-parameters-for-Trimmomatic)
 
 ## What is MutMap?
-MutMap is ...
 
 Now MutMap is updated for easier installation and utilization using Python platform.
 
