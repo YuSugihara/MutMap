@@ -13,6 +13,7 @@
   + [Example 3 : run MutMap from BAM](#Example-3--run-MutMap-from-BAM)
   + [Example 4 : run MutMap from multiple FASTQs and BAMs](#Example-4--run-MutMap-from-multiple-FASTQs-and-BAMs)
   + [Example 5 : run MutPlot from VCF](#Example-5--run-MutPlot-from-VCF)
+- [Outputs](#Outputs)
 - [Advanced usage](#Advanced-usage)
   + [Detect causal variant using SnpEff](#Detect-causal-variant-using-SnpEff)
   + [Change trimming parameters for Trimmomatic](#Change-trimming-parameters-for-Trimmomatic)
@@ -94,7 +95,7 @@ optional arguments:
   -v, --version     show program's version number and exit
 ```
 
-MutMap can run from FASTQ (without or with trimming) and BAM. If you want to run MutMap from VCF, please use MutPlot (example 5). Then, please make sure that your VCF include AD format.
+MutMap can run from FASTQ (without or with trimming) and BAM. If you want to run MutMap from VCF, please use MutPlot (example 5). Once you run MutMap, MutMap automatically complete the subprocesses.
 
 + [Example 1 : run MutMap from FASTQ without trimming](#Example-1--run-MutMap-from-FASTQ-without-trimming)
 + [Example 2 : run MutMap from FASTQ with trimming](#Example-2--run-MutMap-from-FASTQ-with-trimming)
@@ -211,15 +212,75 @@ optional arguments:
   --indel               Plot SNP-index with INDEL.
   --version             show program's version number and exit
 ```
-MutPlot is included in MutMap. MutMap run MutPlot after making VCF. Then, MutPlot will work with default parameters. If you want to change some parameters and check plots, you can retry from VCF inside of `(OUT_DIR/30_vcf/mutmap.vcf.gz)` like below.
+MutPlot is included in MutMap. MutMap run MutPlot after making VCF. Then, MutPlot will work with default parameters. If you want to change some parameters, you can use VCF inside of `(OUT_DIR/30_vcf/mutmap.vcf.gz)` to retry plotting process like below.
 
 ```
 $ mutplot -v OUT_DIR/30_vcf/mutmap.vcf.gz \
           -o ANOTHER_DIR_NAME \
           -n 20 \
-          -w 1000 \
-          -s 50
+          -w 2000 \
+          -s 100
 ```
+
+#### Use MutPlot for VCF which was made by yourself
+In this case, please make sure that:
+1. Your VCF include AD format.
+2. Your VCF include two columns of cultivar and mutant bulk in this order.
+
+If you got a error, please try to run MutMap from FASTQ or BAM before asking in issues.
+
+## Outputs
+Inside of `OUT_DIR` is like below.
+```
+|-- 10_ref
+|   |-- reference.fasta
+|   |-- reference.fasta.amb
+|   |-- reference.fasta.ann
+|   |-- reference.fasta.bwt
+|   |-- reference.fasta.fai
+|   |-- reference.fasta.pac
+|   `-- reference.fasta.sa
+|-- 20_bam
+|   |-- bulk.filt.bam
+|   |-- bulk.filt.bam.bai
+|   |-- cultivar.filt.bam
+|   `-- cultivar.filt.bam.bai
+|-- 30_vcf
+|   |-- mutmap.vcf.gz
+|   `-- mutmap.vcf.gz.tbi
+|-- 40_mutmap
+|   |-- snp_index.tsv
+|   |-- sliding_window.tsv
+|   `-- mutmap_plot.png
+`-- log
+    |-- bcftools.log
+    |-- bgzip.log
+    |-- bwa.log
+    |-- mutplot.log
+    |-- samtools.log
+    `-- tabix.log
+```
+- If you run MutMap with trimming, you will get the directory of `00_fastq` which includes FASTQs after trimming.
+- You can check the results in `40_mutmap`.
+  + `snp_index.tsv` : columns in this order.
+    **1. CHROM** : chromosome name
+    **2. POSI** : position in chromosome
+    **3. VARIANT** : SNP or INDEL
+    **4. DEPTH** : depth of bulk
+    **5. p99** : 99% confidence interval of simulated SNP-index
+    **6. p95** : 95% confidence interval of simulated SNP-index
+    **7. SNP-index** : real SNP-index
+  + `sliding_window.tsv` : columns in this order.
+    **1. CHROM** : chromosome name
+    **2. POSI** : central position of window
+    **3. MEAN p99** : mean of p99
+    **4. MEAN p95** : mean of p95
+    **5. MEAN SNP-index** : mean SNP-index
+  + `mutmap_plot.png` : resulting plot
+    - **<span style="color: blue; ">BLUE dot</span>** : variant
+    - **<span style="color: red; ">RED line</span>** : mean SNP-index
+    - **<span style="color: orange; ">ORANGE line</span>** : mean p99
+    - **<span style="color: green; ">GREEN line</span>** : mean p95
 
 ## Advanced usage
 ### Detect causal variant using SnpEff
