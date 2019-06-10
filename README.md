@@ -264,18 +264,30 @@ Inside of `OUT_DIR` is like below.
 - You can check the results in `40_mutmap`.
   + `snp_index.tsv` : columns in this order.
     **1. CHROM** : chromosome name
+
     **2. POSI** : position in chromosome
+
     **3. VARIANT** : SNP or INDEL
+
     **4. DEPTH** : depth of bulk
+
     **5. p99** : 99% confidence interval of simulated SNP-index
+
     **6. p95** : 95% confidence interval of simulated SNP-index
+
     **7. SNP-index** : real SNP-index
+
   + `sliding_window.tsv` : columns in this order.
     **1. CHROM** : chromosome name
+
     **2. POSI** : central position of window
+
     **3. MEAN p99** : mean of p99
+
     **4. MEAN p95** : mean of p95
+
     **5. MEAN SNP-index** : mean SNP-index
+
   + `mutmap_plot.png` : resulting plot
     - **<span style="color: blue; ">BLUE dot</span>** : variant
     - **<span style="color: red; ">RED line</span>** : mean SNP-index
