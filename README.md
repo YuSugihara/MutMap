@@ -1,5 +1,5 @@
 # MutMap User Guide
-#### version 2.0.5
+#### version 2.0.6
 
 ## Table of contents
 - [What is MutMap?](#What-is-MutMap)

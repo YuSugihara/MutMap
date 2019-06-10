@@ -15,35 +15,43 @@ class SnpFilt(object):
             ADs = bulk_AD.split(',')
             # check biallele or multi-allele
             if len(ADs) == 2:
-                # check whether REF homo or ALT homo.
-                if cultivar_GT in ['0/0', '0|0']:
-                    record['bulk_ref_AD'] = int(ADs[0])
-                    record['bulk_alt_AD'] = int(ADs[1])
-                    # if depth of ALT is zero in bulk,
-                    # it will be discarded because SNP-index will be zero.
-                    if record['bulk_alt_AD'] != 0:
-                        record['type'] = 'keep'
-                        record['cultivar_GT'] = '0/0'
+                # filter missing
+                if ADs[0] != '.' and ADs[1] != '.':
+                    # check whether REF homo or ALT homo.
+                    if cultivar_GT in ['0/0', '0|0']:
+                        record['bulk_ref_AD'] = int(ADs[0])
+                        record['bulk_alt_AD'] = int(ADs[1])
+                        # if depth of ALT is zero in bulk,
+                        # it will be discarded because SNP-index will be zero.
+                        if record['bulk_alt_AD'] != 0:
+                            record['type'] = 'keep'
+                            record['cultivar_GT'] = '0/0'
+                        else:
+                            record['type'] = 'discard'
                     else:
-                        record['type'] = 'discard'
+                        record['bulk_ref_AD'] = int(ADs[1])
+                        record['bulk_alt_AD'] = int(ADs[0])
+                        # if depth of REF is zero in bulk,
+                        # it will be discarded because SNP-index will be zero.
+                        if record['bulk_ref_AD'] != 0:
+                            record['type'] = 'keep'
+                            record['cultivar_GT'] = '1/1'
+                        else:
+                            record['type'] = 'discard'
                 else:
-                    record['bulk_ref_AD'] = int(ADs[1])
-                    record['bulk_alt_AD'] = int(ADs[0])
-                    # if depth of REF is zero in bulk,
-                    # it will be discarded because SNP-index will be zero.
-                    if record['bulk_ref_AD'] != 0:
-                        record['type'] = 'keep'
-                        record['cultivar_GT'] = '1/1'
-                    else:
-                        record['type'] = 'discard'
+                    record['type'] = 'discard'
             # check ALT homo in cultivar
             elif len(ADs) == 3:
-                if cultivar_GT in ['1/1', '1|1']:
-                    if int(ADs[0]) == 0:
-                        record['bulk_ref_AD'] = int(ADs[1])
-                        record['bulk_alt_AD'] = int(ADs[2])
-                        record['type'] = 'keep'
-                        record['cultivar_GT'] = '1/1'
+                # filter missing
+                if ADs[0] != '.' and ADs[1] != '.' and ADs[2] != '.':
+                    if cultivar_GT in ['1/1', '1|1']:
+                        if int(ADs[0]) == 0:
+                            record['bulk_ref_AD'] = int(ADs[1])
+                            record['bulk_alt_AD'] = int(ADs[2])
+                            record['type'] = 'keep'
+                            record['cultivar_GT'] = '1/1'
+                        else:
+                            record['type'] = 'discard'
                     else:
                         record['type'] = 'discard'
                 else:
