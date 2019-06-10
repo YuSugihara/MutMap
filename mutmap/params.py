@@ -166,7 +166,9 @@ class Params(object):
                             action='store',
                             default=250,
                             type=int,
-                            help='Maximum depth of variants which will be used. [250]',
+                            help=('Maximum depth of variants which will be used.\n'
+                                  'This cutoff will be applied in both of cultivar\n'
+                                  'and bulk. [250]'),
                             metavar='')
 
         parser.add_argument('-d',
@@ -174,7 +176,9 @@ class Params(object):
                             action='store',
                             default=8,
                             type=int,
-                            help='Minimum depth of variants which will be used. [8]',
+                            help=('Minimum depth of variants which will be used.\n'
+                                  'This cutoff will be applied in both of cultivar\n'
+                                  'and bulk. [8]'),
                             metavar='')
 
         parser.add_argument('-N',

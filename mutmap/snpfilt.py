@@ -62,14 +62,18 @@ class SnpFilt(object):
             record['type'] = 'discard'
         return record
 
-    def filt_depth(self, record):
-        record['depth'] = record['bulk_ref_AD'] + record['bulk_alt_AD']
-        if record['depth'] < self.minDP or record['depth'] > self.maxDP:
+    def filt_depth(self, record, cultivar_AD):
+        record['cultivar_depth'] = sum([int(AD) for AD in cultivar_AD.split(',')])
+        record['bulk_depth'] = record['bulk_ref_AD'] + record['bulk_alt_AD']
+
+        if record['cultivar_depth'] < self.minDP or record['cultivar_depth'] > self.maxDP:
+            record['type'] = 'discard'
+        elif record['bulk_depth'] < self.minDP or record['bulk_depth'] > self.maxDP:
             record['type'] = 'discard'
         return record
 
     def filt_index(self, record):
-        record['SNPindex'] = record['bulk_alt_AD']/record['depth']
+        record['SNPindex'] = record['bulk_alt_AD']/record['bulk_depth']
         if record['SNPindex'] < self.min_SNPindex:
             record['type'] = 'discard'
         return record
@@ -92,10 +96,10 @@ class SnpFilt(object):
         return record
 
 
-    def filt(self, cultivar_GT, bulk_AD, ADFR):
+    def filt(self, cultivar_GT, cultivar_AD, bulk_AD, ADFR):
         record = self.filt_cultivar_gt(cultivar_GT, bulk_AD)
         if record['type'] == 'keep':
-            record = self.filt_depth(record)
+            record = self.filt_depth(record, cultivar_AD)
             if record['type'] == 'keep':
                 record = self.filt_index(record)
                 if record['type'] == 'keep':

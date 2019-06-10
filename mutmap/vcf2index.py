@@ -125,6 +125,7 @@ class Vcf2Index(object):
                 ADR_pos = field_pos[3]
 
                 cultivar_GT = cols[9].split(':')[GT_pos]
+                cultivar_AD = cols[9].split(':')[AD_pos]
                 bulk_AD = cols[10].split(':')[AD_pos]
 
                 if ADF_pos != None and ADR_pos != None:
@@ -134,16 +135,16 @@ class Vcf2Index(object):
                 else:
                     ADFR = None
 
-                record = sf.filt(cultivar_GT, bulk_AD, ADFR)
+                record = sf.filt(cultivar_GT, cultivar_AD, bulk_AD, ADFR)
                 if record['type'] == 'keep':
                     variant = self.check_variant_type(REF, ALT)
-                    p99, p95 = self.F2_simulation(record['depth'])
+                    p99, p95 = self.F2_simulation(record['bulk_depth'])
                     if self.snpEff is None:
                         table.write(('{}\t{}\t{}\t{}\t'
                                      '{:.4f}\t{:.4f}\t{:.4f}\n').format(CHR,
                                                                         POS,
                                                                         variant,
-                                                                        record['depth'],
+                                                                        record['bulk_depth'],
                                                                         p99,
                                                                         p95,
                                                                         record['SNPindex']))
@@ -154,7 +155,7 @@ class Vcf2Index(object):
                                                                         POS,
                                                                         variant,
                                                                         impact,
-                                                                        record['depth'],
+                                                                        record['bulk_depth'],
                                                                         p99,
                                                                         p95,
                                                                         record['SNPindex']))
