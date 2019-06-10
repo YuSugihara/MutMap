@@ -16,7 +16,7 @@ class SnpFilt(object):
             # check biallele or multi-allele
             if len(ADs) == 2:
                 # filter missing
-                if ADs[0] != '.' and ADs[1] != '.':
+                if not '.' in ADs:
                     # check whether REF homo or ALT homo.
                     if cultivar_GT in ['0/0', '0|0']:
                         record['bulk_ref_AD'] = int(ADs[0])
@@ -43,7 +43,7 @@ class SnpFilt(object):
             # check ALT homo in cultivar
             elif len(ADs) == 3:
                 # filter missing
-                if ADs[0] != '.' and ADs[1] != '.' and ADs[2] != '.':
+                if not '.' in ADs:
                     if cultivar_GT in ['1/1', '1|1']:
                         if int(ADs[0]) == 0:
                             record['bulk_ref_AD'] = int(ADs[1])
