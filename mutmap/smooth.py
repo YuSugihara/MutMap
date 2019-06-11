@@ -19,16 +19,16 @@ class Smooth(object):
             window = cols[(cols[:, 0] < win_edge) & (cols[:, 0] >= (win_edge - self.window_size))]
             N_SNPs_in_window = window.shape[0]
             if N_SNPs_in_window == 0:
-                self.sliding_window.write("{}\t{}\t{}\t{}\t{}\n".format(chr_name,
+                self.sliding_window.write('{}\t{}\t{}\t{}\t{}\n'.format(chr_name,
                                                                         int(max_posi/2),
-                                                                        "nan",
-                                                                        "nan",
-                                                                        "nan"))
+                                                                        'nan',
+                                                                        'nan',
+                                                                        'nan'))
             else:
                 mean_p99 = window[:, 1].mean()
                 mean_p95 = window[:, 2].mean()
                 mean_SNPindex = window[:, 3].mean()
-                self.sliding_window.write("{}\t{}\t{:.4f}\t{:.4f}\t{:.4f}\n".format(chr_name,
+                self.sliding_window.write('{}\t{}\t{:.4f}\t{:.4f}\t{:.4f}\n'.format(chr_name,
                                                                                     int(max_posi/2),
                                                                                     mean_p99,
                                                                                     mean_p95,
@@ -39,16 +39,16 @@ class Smooth(object):
                 window = cols[(cols[:, 0] < win_edge) & (cols[:, 0] >= (win_edge - self.window_size))]
                 N_SNPs_in_window = window.shape[0]
                 if N_SNPs_in_window == 0:
-                    self.sliding_window.write("{}\t{}\t{}\t{}\t{}\n".format(chr_name,
+                    self.sliding_window.write('{}\t{}\t{}\t{}\t{}\n'.format(chr_name,
                                                                             int(win_edge - self.window_size/2),
-                                                                            "nan",
-                                                                            "nan",
-                                                                            "nan"))
+                                                                            'nan',
+                                                                            'nan',
+                                                                            'nan'))
                 else:
                     mean_p99 = window[:, 1].mean()
                     mean_p95 = window[:, 2].mean()
                     mean_SNPindex = window[:, 3].mean()
-                    self.sliding_window.write("{}\t{}\t{:.4f}\t{:.4f}\t{:.4f}\n".format(chr_name,
+                    self.sliding_window.write('{}\t{}\t{:.4f}\t{:.4f}\t{:.4f}\n'.format(chr_name,
                                                                                         int(win_edge - self.window_size/2),
                                                                                         mean_p99,
                                                                                         mean_p95,
@@ -57,7 +57,7 @@ class Smooth(object):
     def run(self):
         self.sliding_window = open('{}/sliding_window.tsv'.format(self.out), 'w')
         if self.snpEff is None:
-            table = pd.read_csv('{}/snp_index.tsv'.format(self.out),
+            snp_index = pd.read_csv('{}/snp_index.tsv'.format(self.out),
                                 sep='\t',
                                 names=['CHROM',
                                        'POSI',
@@ -67,22 +67,22 @@ class Smooth(object):
                                        'p95',
                                        'SNPindex'])
         else:
-            table = pd.read_csv('{}/snp_index.tsv'.format(self.out),
-                                sep='\t',
-                                names=['CHROM',
-                                       'POSI',
-                                       'variant',
-                                       'impact',
-                                       'depth',
-                                       'p99',
-                                       'p95',
-                                       'SNPindex'])
+            snp_index = pd.read_csv('{}/snp_index.tsv'.format(self.out),
+                                    sep='\t',
+                                    names=['CHROM',
+                                           'POSI',
+                                           'variant',
+                                           'impact',
+                                           'depth',
+                                           'p99',
+                                           'p95',
+                                           'SNPindex'])
 
         if self.include_indel:
-            table = table[table['variant'] == 'snp']
+            snp_index = snp_index[snp_index['variant'] == 'snp']
 
-        table['CHROM'] = table['CHROM'].astype('category')
-        grouped = table.groupby('CHROM')
+        snp_index['CHROM'] = snp_index['CHROM'].astype('category')
+        grouped = snp_index.groupby('CHROM')
         for chr_name, chrom in grouped:
             self.calc_sliding_window(chr_name, chrom)
         self.sliding_window.close()

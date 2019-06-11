@@ -121,6 +121,8 @@ class MutPlot(object):
 
         v2i = Vcf2Index(self.args, self.config)
         v2i.run()
+
+        print(time_stamp(), 'plotting now...', flush=True)
         pt = Plot(self.args, self.config)
         pt.run()
 

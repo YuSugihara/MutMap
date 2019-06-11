@@ -87,28 +87,47 @@ class Plot(object):
                 chr_snp_index = chr_snp_index[chr_snp_index['variant']=='snp']
 
             ax = fig.add_subplot(N_raw, N_col, i+1)
-            ax.plot(chr_sliding_window['POSI'], chr_sliding_window['mean_p99'], color='orange', linewidth=3)
-            ax.plot(chr_sliding_window['POSI'], chr_sliding_window['mean_p95'], color='lime', linewidth=3)
-            ax.plot(chr_sliding_window['POSI'], chr_sliding_window['mean_SNPindex'], color='red', linewidth=3)
+            ax.plot(chr_sliding_window['POSI'],
+                    chr_sliding_window['mean_p99'],
+                    color='orange',
+                    linewidth=3)
+
+            ax.plot(chr_sliding_window['POSI'],
+                    chr_sliding_window['mean_p95'],
+                    color='lime',
+                    linewidth=3)
+
+            ax.plot(chr_sliding_window['POSI'],
+                    chr_sliding_window['mean_SNPindex'],
+                    color='red',
+                    linewidth=3)
+
             if self.snpEff is None:
-                ax.scatter(chr_snp_index['POSI'], chr_snp_index['SNPindex'], marker='.', color='navy')
+                ax.scatter(chr_snp_index['POSI'],
+                           chr_snp_index['SNPindex'],
+                           marker='.',
+                           color='navy')
             else:
                 ax.scatter(chr_snp_index[chr_snp_index['impact']=='MODIFIER']['POSI'],
                            chr_snp_index[chr_snp_index['impact']=='MODIFIER']['SNPindex'],
                            marker='.',
                            color='navy')
+
                 ax.scatter(chr_snp_index[chr_snp_index['impact']=='LOW']['POSI'],
                            chr_snp_index[chr_snp_index['impact']=='LOW']['SNPindex'],
                            marker='.',
                            color='navy')
+
                 ax.scatter(chr_snp_index[chr_snp_index['impact']=='MODERATE']['POSI'],
                            chr_snp_index[chr_snp_index['impact']=='MODERATE']['SNPindex'],
                            marker='.',
                            color='navy')
+
                 ax.scatter(chr_snp_index[chr_snp_index['impact']=='HIGH']['POSI'],
                            chr_snp_index[chr_snp_index['impact']=='HIGH']['SNPindex'],
                            marker='x',
                            color='firebrick')
+
             ax.hlines([0.5], 0, xmax, linestyles='dashed')
             ax.set_xlabel('position (Mb)', fontsize=15)
             ax.set_ylabel('SNP-index', fontsize=15)

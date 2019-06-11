@@ -20,7 +20,7 @@ class Vcf2Index(object):
         self.N_bulk = args.N_bulk
         self.N_replicates = args.N_rep
         self.min_SNPindex = args.min_SNPindex
-        self.table = '{}/snp_index.tsv'.format(self.out)
+        self.snp_index = '{}/snp_index.tsv'.format(self.out)
         self.args = args
         self.config = config
         if self.snpEff is not None:
@@ -108,7 +108,7 @@ class Vcf2Index(object):
             vcf = gzip.open(self.vcf, 'rt')
         else:
             vcf = open(self.vcf, 'r')
-        table = open(self.table, 'w')
+        snp_index = open(self.snp_index, 'w')
 
         sf = SnpFilt(self.args)
         for line in vcf:
@@ -140,27 +140,27 @@ class Vcf2Index(object):
                     variant = self.check_variant_type(REF, ALT)
                     p99, p95 = self.F2_simulation(record['bulk_depth'])
                     if self.snpEff is None:
-                        table.write(('{}\t{}\t{}\t{}\t'
-                                     '{:.4f}\t{:.4f}\t{:.4f}\n').format(CHR,
-                                                                        POS,
-                                                                        variant,
-                                                                        record['bulk_depth'],
-                                                                        p99,
-                                                                        p95,
-                                                                        record['SNPindex']))
+                        snp_index.write(('{}\t{}\t{}\t{}\t'
+                                         '{:.4f}\t{:.4f}\t{:.4f}\n').format(CHR,
+                                                                            POS,
+                                                                            variant,
+                                                                            record['bulk_depth'],
+                                                                            p99,
+                                                                            p95,
+                                                                            record['SNPindex']))
                     else:
                         impact = self.get_variant_impact(annotation)
-                        table.write(('{}\t{}\t{}\t{}\t{}\t'
-                                     '{:.4f}\t{:.4f}\t{:.4f}\n').format(CHR,
-                                                                        POS,
-                                                                        variant,
-                                                                        impact,
-                                                                        record['bulk_depth'],
-                                                                        p99,
-                                                                        p95,
-                                                                        record['SNPindex']))
+                        snp_index.write(('{}\t{}\t{}\t{}\t{}\t'
+                                         '{:.4f}\t{:.4f}\t{:.4f}\n').format(CHR,
+                                                                            POS,
+                                                                            variant,
+                                                                            impact,
+                                                                            record['bulk_depth'],
+                                                                            p99,
+                                                                            p95,
+                                                                            record['SNPindex']))
 
-        table.close()
+        snp_index.close()
         vcf.close()
 
     def run(self):

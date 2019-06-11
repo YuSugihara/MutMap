@@ -117,18 +117,18 @@ class MutMap(object):
     def mutplot(self):
         if args.snpEff is None:
             cmd = 'mutplot -v {0}/30_vcf/mutmap.vcf.gz \
-                                  -n {1} \
-                                  -o {0}/40_mutmap \
-                                  &>> {0}/log/mutplot.log'.format(self.out,
-                                                                  self.args.N_bulk)
+                           -n {1} \
+                           -o {0}/40_mutmap \
+                           &>> {0}/log/mutplot.log'.format(self.out,
+                                                           self.args.N_bulk)
         else:
             cmd = 'mutplot -v {0}/30_vcf/mutmap.vcf.gz \
-                                  -n {1} \
-                                  -o {0}/40_mutmap \
-                                  -e {2}\
-                                  &>> {0}/log/mutplot.log'.format(self.out,
-                                                                  self.args.N_bulk,
-                                                                  self.args.snpEff)
+                           -n {1} \
+                           -o {0}/40_mutmap \
+                           -e {2}\
+                           &>> {0}/log/mutplot.log'.format(self.out,
+                                                           self.args.N_bulk,
+                                                           self.args.snpEff)
 
         cmd = clean_cmd(cmd)
         sbp.run(cmd,
