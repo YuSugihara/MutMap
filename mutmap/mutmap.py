@@ -79,8 +79,17 @@ class MutMap(object):
                 &>> {}/log/samtools.log'.format(self.args.ref,
                                                 self.out)
 
-        sbp.run(cmd1, stdout=sbp.DEVNULL, stderr=sbp.DEVNULL, shell=True, check=True)
-        sbp.run(cmd2, stdout=sbp.DEVNULL, stderr=sbp.DEVNULL, shell=True, check=True)
+        sbp.run(cmd1,
+                stdout=sbp.DEVNULL,
+                stderr=sbp.DEVNULL,
+                shell=True,
+                check=True)
+
+        sbp.run(cmd2,
+                stdout=sbp.DEVNULL,
+                stderr=sbp.DEVNULL,
+                shell=True,
+                check=True)
 
         print(time_stamp(),
               'indexing of reference successfully finished.',

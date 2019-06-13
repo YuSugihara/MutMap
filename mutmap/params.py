@@ -87,7 +87,7 @@ class Params(object):
                             default=2,
                             type=int,
                             help=('Number of threads. If you specify the number\n'
-                                  'below one, then, MutMap will use the threads\n'
+                                  'below one, then MutMap will use the threads\n'
                                   'as many as possible. [2]'),
                             metavar='')
 
