@@ -1,5 +1,5 @@
 # MutMap User Guide
-#### version 2.0.6
+#### version 2.0.7
 
 ## Table of contents
 - [What is MutMap?](#What-is-MutMap)
@@ -177,7 +177,7 @@ $ mutmap -r reference.fasta \
          -o example_dir
 ```
 
-MutMap can automatically merge multiple FASTQs and BAMs. Of course, you can merge FASTQs or BAMs using `cat` or `samtools merge` before input them to MutMap. If you specify `-c` multiple times, please make sure that those files include only 1 individual. On the other hand, `-b` can include more than 1 individuals because those are bulked samples. MutMap can automatically classify FASTQs and BAMs from whether comma exits or not. 
+MutMap can automatically merge multiple FASTQs and BAMs. Of course, you can merge FASTQs or BAMs using `cat` or `samtools merge` before input them to MutMap. If you specify `-c` multiple times, please make sure that those files include only 1 individual. On the other hand, `-b` can include more than 1 individuals because those are bulked samples. MutMap can automatically classify FASTQs and BAMs from whether comma exits or not.
 
 ### Example 5 : run MutPlot from VCF
 ```
