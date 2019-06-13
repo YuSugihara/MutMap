@@ -68,11 +68,20 @@ class MutMap(object):
 
     def mkindex(self):
         print(time_stamp(),
-              'start to index reference fasta by BWA.',
+              'start to index reference fasta.',
               flush=True)
-        cmd = 'bwa index {} &>> {}/log/bwa.log'.format(self.args.ref,
-                                                       self.out)
-        sbp.run(cmd, stdout=sbp.DEVNULL, stderr=sbp.DEVNULL, shell=True, check=True)
+
+        cmd1 = 'bwa index {} \
+                &>> {}/log/bwa.log'.format(self.args.ref,
+                                           self.out)
+
+        cmd2 = 'samtools faidx {} \
+                &>> {}/log/samtools.log'.format(self.args.ref,
+                                                self.out)
+
+        sbp.run(cmd1, stdout=sbp.DEVNULL, stderr=sbp.DEVNULL, shell=True, check=True)
+        sbp.run(cmd2, stdout=sbp.DEVNULL, stderr=sbp.DEVNULL, shell=True, check=True)
+
         print(time_stamp(),
               'indexing of reference successfully finished.',
               flush=True)
@@ -118,17 +127,15 @@ class MutMap(object):
         if args.snpEff is None:
             cmd = 'mutplot -v {0}/30_vcf/mutmap.vcf.gz \
                            -n {1} \
-                           -o {0}/40_mutmap \
-                           &>> {0}/log/mutplot.log'.format(self.out,
-                                                           self.args.N_bulk)
+                           -o {0}/40_mutmap'.format(self.out,
+                                                    self.args.N_bulk)
         else:
             cmd = 'mutplot -v {0}/30_vcf/mutmap.vcf.gz \
                            -n {1} \
                            -o {0}/40_mutmap \
-                           -e {2}\
-                           &>> {0}/log/mutplot.log'.format(self.out,
-                                                           self.args.N_bulk,
-                                                           self.args.snpEff)
+                           -e {2}'.format(self.out,
+                                          self.args.N_bulk,
+                                          self.args.snpEff)
 
         cmd = clean_cmd(cmd)
         sbp.run(cmd,
