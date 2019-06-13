@@ -169,7 +169,7 @@ $ mutmap -r reference.fasta \
 ```
 $ mutmap -r reference.fasta \
          -c cultivar_1.1.fastq,cultivar_1.2.fastq \
-         -c cultivar_2.bam \
+         -c cultivar_1.bam \
          -b bulk_1.1.fastq,bulk_1.2.fastq \
          -b bulk_2.bam \
          -b bulk_3.bam \
@@ -177,7 +177,7 @@ $ mutmap -r reference.fasta \
          -o example_dir
 ```
 
-If you specify `-c` multiple times, please make sure that those files include only 1 individual. On the other hand, `-b` can include more than 1 individuals because those are bulked samples. MutMap can automatically classify FASTQs and BAMs from whether comma exits or not. Of course, you can merge FASTQs or BAMs using `cat` or `samtools merge` before input them to MutMap.
+MutMap can automatically merge multiple FASTQs and BAMs. Of course, you can merge FASTQs or BAMs using `cat` or `samtools merge` before input them to MutMap. If you specify `-c` multiple times, please make sure that those files include only 1 individual. On the other hand, `-b` can include more than 1 individuals because those are bulked samples. MutMap can automatically classify FASTQs and BAMs from whether comma exits or not. 
 
 ### Example 5 : run MutPlot from VCF
 ```
