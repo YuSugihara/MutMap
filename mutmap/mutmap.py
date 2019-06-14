@@ -147,14 +147,13 @@ class MutMap(object):
                                           self.args.snpEff)
 
         cmd = clean_cmd(cmd)
-        p = sbp.run(cmd,
-                    stdout=sbp.PIPE,
-                    stderr=sbp.STDOUT,
-                    shell=True,
-                    check=True)
+        p = sbp.Popen(cmd,
+                      stdout=sbp.PIPE,
+                      stderr=sbp.STDOUT,
+                      shell=True)
 
         for line in iter(p.stdout.readline, b''):
-            print(line.rstrip().decode('utf8'))
+            print(line.rstrip().decode('utf-8'), flush=True)
 
     def run(self):
         self.mkindex()
