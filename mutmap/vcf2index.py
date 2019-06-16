@@ -13,7 +13,7 @@ from mutmap.utils import time_stamp
 
 class Vcf2Index(object):
 
-    def __init__(self, args, config):
+    def __init__(self, args):
         self.out = args.out
         self.vcf = args.vcf
         self.snpEff = args.snpEff
@@ -22,7 +22,6 @@ class Vcf2Index(object):
         self.min_SNPindex = args.min_SNPindex
         self.snp_index = '{}/snp_index.tsv'.format(self.out)
         self.args = args
-        self.config = config
         if self.snpEff is not None:
             self.ANN_re = re.compile(';ANN=(.*);*')
 
@@ -170,6 +169,6 @@ class Vcf2Index(object):
         print(time_stamp(), 'SNP-index successfully finished.', flush=True)
 
         print(time_stamp(), 'start to smooth SNP-index.', flush=True)
-        sm = Smooth(self.args, self.config)
+        sm = Smooth(self.args)
         sm.run()
         print(time_stamp(), 'smoothing process successfully finished.', flush=True)

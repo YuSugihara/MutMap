@@ -2,7 +2,7 @@
 
 from mutmap.params import Params
 pm = Params('mutplot')
-args, config = pm.set_options()
+args = pm.set_options()
 
 
 import os
@@ -16,12 +16,11 @@ from mutmap.utils import clean_cmd
 
 class MutPlot(object):
 
-    def __init__(self, args, config):
+    def __init__(self, args):
         self.out = args.out
         self.vcf = args.vcf
         self.snpEff = args.snpEff
         self.args = args
-        self.config = config
 
     def check_outdir(self):
         if os.path.exists(self.out):
@@ -119,11 +118,11 @@ class MutPlot(object):
         if self.snpEff is not None:
             self.run_snpEff()
 
-        v2i = Vcf2Index(self.args, self.config)
+        v2i = Vcf2Index(self.args)
         v2i.run()
 
         print(time_stamp(), 'plotting now...', flush=True)
-        pt = Plot(self.args, self.config)
+        pt = Plot(self.args)
         pt.run()
 
         if self.args.igv:
@@ -131,7 +130,7 @@ class MutPlot(object):
 
 def main():
     print(time_stamp(), 'start to run MutPlot.', flush=True)
-    mp = MutPlot(args, config)
+    mp = MutPlot(args)
     mp.run()
     print(time_stamp(), 'MutPlot successfully finished.', flush=True)
 

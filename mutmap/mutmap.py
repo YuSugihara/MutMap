@@ -2,7 +2,7 @@
 
 from mutmap.params import Params
 pm = Params('mutmap')
-args, config = pm.set_options()
+args = pm.set_options()
 
 
 import os
@@ -20,11 +20,10 @@ from mutmap.vcf2index import Vcf2Index
 
 class MutMap(object):
 
-    def __init__(self, args, config):
+    def __init__(self, args):
         args = pm.check_max_threads(args)
         self.N_fastq = pm.check_args(args)
         self.args = args
-        self.config = config
         self.out = args.out
         self.cultivar_fastq, self.cultivar_bam = self.get_files(args.cultivar)
         self.bulk_fastq, self.bulk_bam = self.get_files(args.bulk)
@@ -96,7 +95,7 @@ class MutMap(object):
               flush=True)
 
     def trimming(self):
-        tm = Trim(args, config)
+        tm = Trim(args)
         for i, fastq in enumerate(self.cultivar_fastq):
             fastq1 = fastq.split(',')[0]
             fastq2 = fastq.split(',')[1]
@@ -110,7 +109,7 @@ class MutMap(object):
             tm.run(fastq1, fastq2, index)
 
     def alignment(self):
-        aln = Alignment(args, config)
+        aln = Alignment(args)
         for i, fastq in enumerate(self.cultivar_fastq):
             fastq1 = fastq.split(',')[0]
             fastq2 = fastq.split(',')[1]
@@ -124,12 +123,12 @@ class MutMap(object):
             aln.run(fastq1, fastq2, index)
 
     def bamfilt(self):
-        bt = BamFilt(self.args, self.config)
+        bt = BamFilt(self.args)
         bt.run()
 
     def mpileup(self):
         os.mkdir('{}/30_vcf'.format(self.out))
-        mp = Mpileup(self.args, self.config)
+        mp = Mpileup(self.args)
         mp.run()
 
     def mutplot(self):
@@ -167,7 +166,7 @@ class MutMap(object):
 
 def main():
     print(time_stamp(), 'start to run MutMap.', flush=True)
-    MutMap(args, config).run()
+    MutMap(args).run()
     print(time_stamp(), 'MutMap successfully finished.', flush=True)
 
 if __name__ == '__main__':

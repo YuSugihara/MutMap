@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 
 class Plot(object):
 
-    def __init__(self, args, config):
+    def __init__(self, args):
         self.args = args
         self.out = args.out
         self.snpEff = args.snpEff
-        self.fig_width = float(config['plot']['fig_width'])
-        self.fig_height = float(config['plot']['fig_height'])
-        self.white_space = float(config['plot']['white_space'])
+        self.fig_width = args.fig_width
+        self.fig_height = args.fig_height
+        self.white_space = args.white_space
         self.plot_with_indel = args.indel
         try:
             import seaborn as sns
