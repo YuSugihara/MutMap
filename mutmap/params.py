@@ -118,7 +118,7 @@ class Params(object):
                             action='store',
                             default='1G',
                             type=str,
-                            help='Used memory size when bam sorted. [1G]',
+                            help='Memory size when bam sorted. [1G]',
                             metavar='')
 
         parser.add_argument('-q',

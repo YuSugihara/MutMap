@@ -70,29 +70,39 @@ $ mutmap -h
 usage: mutmap -r <FASTA> -c <BAM | FASTQ> -b <BAM | FASTQ>
               -n <INT> -o <OUT_DIR> [-T] [-e <DATABASE>]
 
-MutMap version 2.0.3
+MutMap version 2.0.8
 
 optional arguments:
-  -h, --help        show this help message and exit
-  -r , --ref        Reference fasta.
-  -c , --cultivar   fastq or bam of cultivar. If you specify
-                    fastq, please separate pairs by commma,
-                    e.g. -c fastq1,fastq2. You can use this
-                    optiion multiple times
-  -b , --bulk       fastq or bam of mutnat bulk. If you specify
-                    fastq, please separate pairs by commma,
-                    e.g. -b fastq1,fastq2. You can use this
-                    optiion multiple times
-  -n , --N-bulk     Number of individuals in mutant bulk.
-  -o , --out        Output directory. Specified name must not
-                    exist.
-  -t , --threads    Number of threads. If you specify the number
-                    below one, then, MutMap will use the threads
-                    as many as possible. [2]
-  -T, --trim        Trim fastq by trimmomatic.
-  -e , --snpEff     Predict causal variant by SnpEff. Please check
-                    available databases in SnpEff.
-  -v, --version     show program's version number and exit
+  -h, --help         show this help message and exit
+  -r , --ref         Reference fasta.
+  -c , --cultivar    fastq or bam of cultivar. If you specify
+                     fastq, please separate pairs by commma,
+                     e.g. -c fastq1,fastq2. You can use this
+                     optiion multiple times
+  -b , --bulk        fastq or bam of mutnat bulk. If you specify
+                     fastq, please separate pairs by commma,
+                     e.g. -b fastq1,fastq2. You can use this
+                     optiion multiple times
+  -n , --N-bulk      Number of individuals in mutant bulk.
+  -o , --out         Output directory. Specified name must not
+                     exist.
+  -t , --threads     Number of threads. If you specify the number
+                     below one, then MutMap will use the threads
+                     as many as possible. [2]
+  -T, --trim         Trim fastq by trimmomatic.
+  --trim-params      Parameters for trimmomatic. Input parameters
+                     must be separated by comma with following
+                     order: phred,ILLUMINACLIP,LEADING,TRAILING,
+                     SLIDINGWINDOW,MINLEN.
+                     [33,TruSeq3-PE.fa:2:30:10,20,20,4:15,75]
+  -e , --snpEff      Predict causal variant by SnpEff. Please check
+                     available databases in SnpEff.
+  --mem              Memory size when bam sorted. [1G]
+  -q , --min-MQ      Minimum mapping quality in mpileup. [40]
+  -Q , --min-BQ      Minimum base quality in mpileup. [18]
+  -C , --adjust-MQ   "adjust-MQ" in mpileup. Default parameter
+                     is suited for BWA. [50]
+  -v, --version      show program's version number and exit
 ```
 
 MutMap can run from FASTQ (without or with trimming) and BAM. If you want to run MutMap from VCF, please use MutPlot (example 5). Once you run MutMap, MutMap automatically complete the subprocesses.
@@ -183,11 +193,7 @@ MutMap can automatically merge multiple FASTQs and BAMs. Of course, you can merg
 ```
 $ mutplot -h
 
-usage: mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]
-               [-D <INT>] [-d <INT>] [-N <INT>] [-m <FLOAT>]
-               [-S <INT>] [-e <DATABASE>] [--igv] [--indel]
-
-MutPlot version 0.0.3
+MutPlot version 2.0.8
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -196,8 +202,12 @@ optional arguments:
   -n , --N-bulk         Number of individuals in mutant bulk.
   -w , --window         Window size (kb). [2000]
   -s , --step           Step size (kb). [100]
-  -D , --max-depth      Maximum depth of variants which will be used. [250]
-  -d , --min-depth      Minimum depth of variants which will be used. [8]
+  -D , --max-depth      Maximum depth of variants which will be used.
+                        This cutoff will be applied in both of cultivar
+                        and bulk. [250]
+  -d , --min-depth      Minimum depth of variants which will be used.
+                        This cutoff will be applied in both of cultivar
+                        and bulk. [8]
   -N , --N-rep          Number of replicates for simulation to make
                         null distribution. [10000]
   -m , --min-SNPindex   Cutoff of minimum SNP-index for clear results. [0.3]
@@ -210,6 +220,10 @@ optional arguments:
                         available databases in SnpEff.
   --igv                 Output IGV format file to check results on IGV.
   --indel               Plot SNP-index with INDEL.
+  --fig-width           Width allocated in chromosome figure. [7.5]
+  --fig-height          Height allocated in chromosome figure. [4.0]
+  --white-space         White space between figures. (This option
+                        only affect vertical direction.) [0.6]
   --version             show program's version number and exit
 ```
 MutPlot is included in MutMap. MutMap run MutPlot after making VCF. Then, MutPlot will work with default parameters. If you want to change some parameters, you can use VCF inside of `(OUT_DIR/30_vcf/mutmap.vcf.gz)` to retry plotting process like below.
