@@ -10,8 +10,7 @@ import pandas as pd
 import subprocess as sbp
 from mutmap.vcf2index import Vcf2Index
 from mutmap.plot import Plot
-from mutmap.utils import time_stamp
-from mutmap.utils import clean_cmd
+from mutmap.utils import time_stamp, clean_cmd
 
 
 class MutPlot(object):

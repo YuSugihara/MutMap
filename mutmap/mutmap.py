@@ -9,13 +9,13 @@ import os
 import sys
 import glob
 import subprocess as sbp
-from mutmap.utils import time_stamp
-from mutmap.utils import clean_cmd
+from mutmap.refindex import RefIndex
 from mutmap.trim import Trim
 from mutmap.alignment import Alignment
 from mutmap.bamfilt import BamFilt
 from mutmap.mpileup import Mpileup
 from mutmap.vcf2index import Vcf2Index
+from mutmap.utils import time_stamp, clean_cmd, call_log
 
 
 class MutMap(object):
@@ -65,34 +65,9 @@ class MutMap(object):
             os.symlink(path_to_bam,
                        '{}/20_bam/{}.bam'.format(self.out, index))
 
-    def mkindex(self):
-        print(time_stamp(),
-              'start to index reference fasta.',
-              flush=True)
-
-        cmd1 = 'bwa index {} \
-                &>> {}/log/bwa.log'.format(self.args.ref,
-                                           self.out)
-
-        cmd2 = 'samtools faidx {} \
-                &>> {}/log/samtools.log'.format(self.args.ref,
-                                                self.out)
-
-        sbp.run(cmd1,
-                stdout=sbp.DEVNULL,
-                stderr=sbp.DEVNULL,
-                shell=True,
-                check=True)
-
-        sbp.run(cmd2,
-                stdout=sbp.DEVNULL,
-                stderr=sbp.DEVNULL,
-                shell=True,
-                check=True)
-
-        print(time_stamp(),
-              'indexing of reference successfully finished.',
-              flush=True)
+    def refindex(self):
+        ri = RefIndex(args)
+        ri.run()
 
     def trimming(self):
         tm = Trim(args)
@@ -155,7 +130,7 @@ class MutMap(object):
             print(line.rstrip().decode('utf-8'), flush=True)
 
     def run(self):
-        self.mkindex()
+        self.refindex()
         if self.args.trim:
             self.trimming()
         else:
@@ -167,7 +142,7 @@ class MutMap(object):
 def main():
     print(time_stamp(), 'start to run MutMap.', flush=True)
     MutMap(args).run()
-    print(time_stamp(), 'MutMap successfully finished.', flush=True)
+    print(time_stamp(), 'MutMap successfully finished.\n', flush=True)
 
 if __name__ == '__main__':
     main()
