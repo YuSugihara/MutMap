@@ -1,5 +1,5 @@
 # MutMap User Guide
-#### version 2.0.8
+#### version 2.1.0
 
 ## Table of contents
 - [What is MutMap?](#What-is-MutMap)
@@ -67,10 +67,10 @@ $ trimmomatic --help
 ```
 $ mutmap -h
 
-usage: mutmap -r <FASTA> -c <BAM | FASTQ> -b <BAM | FASTQ>
+usage: mutmap -r <FASTA> -c <BAM|FASTQ> -b <BAM|FASTQ>
               -n <INT> -o <OUT_DIR> [-T] [-e <DATABASE>]
 
-MutMap version 2.0.8
+MutMap version 2.1.0
 
 optional arguments:
   -h, --help         show this help message and exit
@@ -89,15 +89,22 @@ optional arguments:
   -t , --threads     Number of threads. If you specify the number
                      below one, then MutMap will use the threads
                      as many as possible. [2]
-  -T, --trim         Trim fastq by trimmomatic.
+  -T, --trim         Trim fastq using trimmomatic.
+  -a , --adapter     FASTA of adapter sequences. This will be used
+                     when you specify "-T" for trimming.
   --trim-params      Parameters for trimmomatic. Input parameters
                      must be separated by comma with following
-                     order: phred,ILLUMINACLIP,LEADING,TRAILING,
-                     SLIDINGWINDOW,MINLEN.
-                     [33,TruSeq3-PE.fa:2:30:10,20,20,4:15,75]
-  -e , --snpEff      Predict causal variant by SnpEff. Please check
-                     available databases in SnpEff.
-  --mem              Memory size when bam sorted. [1G]
+                     order: phred, ILLUMINACLIP, LEADING, TRAILING,
+                     SLIDINGWINDOW, MINLEN. If you want to remove
+                     adapters of illumina, please specify FASTA of
+                     the adapter sequences with "--adapter". Specified
+                     name will be inserted into <ADAPTER_FASTA>. If you
+                     don't specify it, adapter trimming will be skipped.
+                     [33,<ADAPTER_FASTA>:2:30:10,20,20,4:15,75]
+  -e , --snpEff      Predict causal variant using SnpEff. Please
+                     check available databases in SnpEff.
+  --mem              Maximum memory per thread when bam sorted;
+                     suffix K/M/G recognized. [1G]
   -q , --min-MQ      Minimum mapping quality in mpileup. [40]
   -Q , --min-BQ      Minimum base quality in mpileup. [18]
   -C , --adjust-MQ   "adjust-MQ" in mpileup. Default parameter
@@ -193,7 +200,11 @@ MutMap can automatically merge multiple FASTQs and BAMs. Of course, you can merg
 ```
 $ mutplot -h
 
-MutPlot version 2.0.8
+usage: mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]
+               [-D <INT>] [-d <INT>] [-N <INT>] [-m <FLOAT>]
+               [-S <INT>] [-e <DATABASE>] [--igv] [--indel]
+
+MutPlot version 2.1.0
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -208,7 +219,7 @@ optional arguments:
   -d , --min-depth      Minimum depth of variants which will be used.
                         This cutoff will be applied in both of cultivar
                         and bulk. [8]
-  -N , --N-rep          Number of replicates for simulation to make
+  -N , --N-rep          Number of replicates for simulation to make 
                         null distribution. [10000]
   -m , --min-SNPindex   Cutoff of minimum SNP-index for clear results. [0.3]
   -S , --strand-bias    Filter spurious homo genotypes in cultivar using
@@ -216,8 +227,8 @@ optional arguments:
                         cutoff when ADR (or ADF) is 0, that SNP will be
                         filtered out. If you want to supress this filtering,
                         please set this cutoff to 0. [7]
-  -e , --snpEff         Predict causal variant by SnpEff. Please check
-                        available databases in SnpEff.
+  -e , --snpEff         Predict causal variant using SnpEff. Please
+                        check available databases in SnpEff.
   --igv                 Output IGV format file to check results on IGV.
   --indel               Plot SNP-index with INDEL.
   --fig-width           Width allocated in chromosome figure. [7.5]
