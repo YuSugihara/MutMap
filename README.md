@@ -70,7 +70,7 @@ $ mutmap -h
 usage: mutmap -r <FASTA> -c <BAM|FASTQ> -b <BAM|FASTQ>
               -n <INT> -o <OUT_DIR> [-T] [-e <DATABASE>]
 
-MutMap version 2.1.0
+MutMap version 2.1.1
 
 optional arguments:
   -h, --help         show this help message and exit
@@ -89,6 +89,16 @@ optional arguments:
   -t , --threads     Number of threads. If you specify the number
                      below one, then MutMap will use the threads
                      as many as possible. [2]
+  -w , --window      Window size (kb). [2000]
+  -s , --step        Step size (kb). [100]
+  -D , --max-depth   Maximum depth of variants which will be used.
+                     This cutoff will be applied in both of cultivar
+                     and bulk. [250]
+  -d , --min-depth   Minimum depth of variants which will be used.
+                     This cutoff will be applied in both of cultivar
+                     and bulk. [8]
+  -N , --N-rep       Number of replicates for simulation to make 
+                     null distribution. [5000]
   -T, --trim         Trim fastq using trimmomatic.
   -a , --adapter     FASTA of adapter sequences. This will be used
                      when you specify "-T" for trimming.
@@ -204,7 +214,7 @@ usage: mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]
                [-D <INT>] [-d <INT>] [-N <INT>] [-m <FLOAT>]
                [-S <INT>] [-e <DATABASE>] [--igv] [--indel]
 
-MutPlot version 2.1.0
+MutPlot version 2.1.1
 
 optional arguments:
   -h, --help            show this help message and exit
