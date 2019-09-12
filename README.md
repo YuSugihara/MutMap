@@ -70,7 +70,7 @@ $ mutmap -h
 usage: mutmap -r <FASTA> -c <BAM|FASTQ> -b <BAM|FASTQ>
               -n <INT> -o <OUT_DIR> [-T] [-e <DATABASE>]
 
-MutMap version 2.1.1
+MutMap version 2.1.2
 
 optional arguments:
   -h, --help         show this help message and exit
