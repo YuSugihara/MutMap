@@ -1,5 +1,5 @@
 # MutMap User Guide
-#### version 2.1.1
+#### version 2.1.2
 
 ## Table of contents
 - [What is MutMap?](#What-is-MutMap)
@@ -214,7 +214,7 @@ usage: mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]
                [-D <INT>] [-d <INT>] [-N <INT>] [-m <FLOAT>]
                [-S <INT>] [-e <DATABASE>] [--igv] [--indel]
 
-MutPlot version 2.1.1
+MutPlot version 2.1.2
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -230,7 +230,7 @@ optional arguments:
                         This cutoff will be applied in both of cultivar
                         and bulk. [8]
   -N , --N-rep          Number of replicates for simulation to make 
-                        null distribution. [10000]
+                        null distribution. [5000]
   -m , --min-SNPindex   Cutoff of minimum SNP-index for clear results. [0.3]
   -S , --strand-bias    Filter spurious homo genotypes in cultivar using
                         strand bias. If ADF (or ADR) is higher than this
