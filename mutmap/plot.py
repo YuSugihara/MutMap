@@ -5,6 +5,7 @@ import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from qtlseq.utils import time_stamp
 
 
 class Plot(object):
@@ -54,7 +55,9 @@ class Plot(object):
                                             'mean_p95',
                                             'mean_SNPindex'])
 
+        snp_index['CHROM'] = snp_index['CHROM'].astype('str')
         snp_index['POSI'] = snp_index['POSI']/1000000
+        sliding_window['CHROM'] = sliding_window['CHROM'].astype('str')
         sliding_window['POSI'] = sliding_window['POSI']/1000000
         sliding_window = sliding_window.groupby('CHROM')
 

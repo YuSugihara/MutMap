@@ -1,4 +1,4 @@
-
+import sys
 import os
 import subprocess as sbp
 from mutmap.alignment import Alignment

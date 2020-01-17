@@ -1,5 +1,5 @@
 # MutMap User Guide
-#### version 2.1.2
+#### version 2.1.3
 
 ## Table of contents
 - [What is MutMap?](#What-is-MutMap)
@@ -14,15 +14,15 @@
   + [Example 4 : run MutMap from multiple FASTQs and BAMs](#Example-4--run-MutMap-from-multiple-FASTQs-and-BAMs)
   + [Example 5 : run MutPlot from VCF](#Example-5--run-MutPlot-from-VCF)
 - [Outputs](#Outputs)
-- [Advanced usage](#Advanced-usage)
-  + [Detect causal variant using SnpEff](#Detect-causal-variant-using-SnpEff)
-  + [Change trimming parameters for Trimmomatic](#Change-trimming-parameters-for-Trimmomatic)
 
 ## What is MutMap?
+<img src="https://210a94ef-a-fc7f2be1-s-sites.googlegroups.com/a/ibrc.or.jp/genome-e/home/bioinformatics-team/mutmap/MutMap_LOGO-s.jpg?attachauth=ANoY7cpPAXj1nrIoP1Z5j6TJmKkjdMI9SGRQbz4BMMM-pMptdltlgKmguJXmUTTF_C4tbK57UoTioe9_2A_9-5wrwQr2BpRQuMu3FM95sD7TP9OVTX4MMp6qSUIghCfx-O_rdM7iQaFic16svZNHs4-i16kT1yx-tuyMa0gwejEnWPXRv3UywxmeUUBZv8MwgNP3E21jSzmxgGQKSzCz9nzj1oyecb2TBHZoOD2Z3KFAItIoU_PX9LHvWpaspHXYiITvd0lDPKhY&attredirects=0" width=200>
 
-Now MutMap is updated for easier installation and utilization using Python platform.
+Bulked segregant analysis, as implemented in MutMap ([Abe et al., 2012](https://www.nature.com/articles/nbt.2095)), is a powerful and efficient method to identify agronomically important loci in crop plants. MutMap requires whole-genome resequencing of a single individual from the original cultivar and the pooled sequences of F2 progeny from a cross between the original cultivar and mutant. MutMap uses the sequence of the original cultivar to polarize the site frequencies of neighbouring markers and identifies loci with an unexpected site frequency, simulating the genotype of F2 progeny. **The updated pipeline is approximately 5-8 times faster than the previous pipeline, are easier for novice users to use and can be easily installed through bioconda with all dependencies.**
 
-**Citation: Abe, A. et al. (2012) Genome sequencing reveals agronomically important loci in rice using MutMap. Nature Biotechnol. 30:174-179.**
+#### Citation
+- Akira Abe, Shunichi Kosugi, Kentaro Yoshida, Satoshi Natsume, Hiroki Takagi, Hiroyuki Kanzaki, Hideo Matsumura, Kakoto Yoshida, Chikako Mitsuoka, Muluneh Tamiru, Hideki Innan, Liliana Cano, Sophien Kamoun & Ryohei Terauchi (2012). Genome sequencing reveals agronomically important loci in rice using MutMap. Nature Biotechnol. 30:174-179. [[URL]](https://www.nature.com/articles/nbt.2095)
+- Yu Sugihara, Lester Young, Hiroki Yaegashi, Satoshi Natsume, Daniel J. Shea, Hiroki Takagi, Helen Booker, Ryohei Terauchi, Akira Abe (in preparation). High performance pipeline for MutMap and QTL-seq.
 
 ## Installation
 ### Dependencies
@@ -70,7 +70,7 @@ $ mutmap -h
 usage: mutmap -r <FASTA> -c <BAM|FASTQ> -b <BAM|FASTQ>
               -n <INT> -o <OUT_DIR> [-T] [-e <DATABASE>]
 
-MutMap version 2.1.2
+MutMap version 2.1.3
 
 optional arguments:
   -h, --help         show this help message and exit
@@ -97,7 +97,7 @@ optional arguments:
   -d , --min-depth   Minimum depth of variants which will be used.
                      This cutoff will be applied in both of cultivar
                      and bulk. [8]
-  -N , --N-rep       Number of replicates for simulation to make 
+  -N , --N-rep       Number of replicates for simulation to make
                      null distribution. [5000]
   -T, --trim         Trim fastq using trimmomatic.
   -a , --adapter     FASTA of adapter sequences. This will be used
@@ -214,7 +214,7 @@ usage: mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]
                [-D <INT>] [-d <INT>] [-N <INT>] [-m <FLOAT>]
                [-S <INT>] [-e <DATABASE>] [--igv] [--indel]
 
-MutPlot version 2.1.2
+MutPlot version 2.1.3
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -229,7 +229,7 @@ optional arguments:
   -d , --min-depth      Minimum depth of variants which will be used.
                         This cutoff will be applied in both of cultivar
                         and bulk. [8]
-  -N , --N-rep          Number of replicates for simulation to make 
+  -N , --N-rep          Number of replicates for simulation to make
                         null distribution. [5000]
   -m , --min-SNPindex   Cutoff of minimum SNP-index for clear results. [0.3]
   -S , --strand-bias    Filter spurious homo genotypes in cultivar using
@@ -311,14 +311,10 @@ Inside of `OUT_DIR` is like below.
     - **MEAN p99** : mean of p99
     - **MEAN p95** : mean of p95
     - **MEAN SNP-index** : mean SNP-index
-  + `mutmap_plot.png` : resulting plot
+  + `mutmap_plot.png` : resulting plot (like below)
     - **<span style="color: blue; ">BLUE dot</span>** : variant
     - **<span style="color: red; ">RED line</span>** : mean SNP-index
     - **<span style="color: orange; ">ORANGE line</span>** : mean p99
     - **<span style="color: green; ">GREEN line</span>** : mean p95
 
-## Advanced usage
-### Detect causal variant using SnpEff
-preparing now...
-### Change trimming parameters for Trimmomatic
-preparing now...
+<img src="https://user-images.githubusercontent.com/34593586/72581109-89fd3c00-3921-11ea-81fb-3d1cb1fa09b4.png" width=600>
