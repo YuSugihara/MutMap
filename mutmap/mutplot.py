@@ -45,6 +45,25 @@ class MutPlot(object):
 
         self.args.vcf = '{}/mutmap.snpEff.vcf'.format(self.out)
 
+    def get_outlier_windows(self):
+        sliding_window = pd.read_csv('{}/sliding_window.tsv'.format(self.out),
+                                     sep='\t',
+                                     names=['CHROM',
+                                            'POSI',
+                                            'mean_p99',
+                                            'mean_p95',
+                                            'mean_SNPindex'])
+
+        sliding_window[abs(sliding_window['mean_p99']) <= \
+                       abs(sliding_window['mean_SNPindex'])].to_csv('{}/sliding_window.p99.tsv'.format(self.out),
+                                                                    sep='\t',
+                                                                    index=False)
+
+        sliding_window[abs(sliding_window['mean_p95']) <= \
+                       abs(sliding_window['mean_SNPindex'])].to_csv('{}/sliding_window.p95.tsv'.format(self.out),
+                                                                    sep='\t',
+                                                                    index=False)
+
     def make_igv_file(self):
         if self.snpEff is None:
             snp_index = pd.read_csv('{}/snp_index.tsv'.format(self.out),
@@ -123,6 +142,8 @@ class MutPlot(object):
         print(time_stamp(), 'plotting now...', flush=True)
         pt = Plot(self.args)
         pt.run()
+
+        self.get_outlier_windows()
 
         if self.args.igv:
             self.make_igv_file()

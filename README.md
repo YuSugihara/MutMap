@@ -1,5 +1,5 @@
 # MutMap User Guide
-#### version 2.1.3
+#### version 2.1.4
 
 ## Table of contents
 - [What is MutMap?](#What-is-MutMap)
@@ -33,7 +33,7 @@ Bulked segregant analysis, as implemented in MutMap ([Abe et al., 2012](https://
 - [SnpEff](http://snpeff.sourceforge.net/)
 - [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic)
 
-#### Python libraries
+#### Python (>=3.5) libraries
 - matplotlib
 - numpy
 - pandas
@@ -55,7 +55,7 @@ $ pip install -e .
 Then you have to install other dependencies by yourself. We highly recommend you to install SnpEff and Trimmomatic using bioconda.
 ```
 $ conda install -c bioconda snpeff
-$ conda install -c bioconda triimomatic
+$ conda install -c bioconda trimmomatic
 ```
 After installation, please check whether SnpEff and Trimmomatic work through the commands below.
 ```
@@ -70,17 +70,17 @@ $ mutmap -h
 usage: mutmap -r <FASTA> -c <BAM|FASTQ> -b <BAM|FASTQ>
               -n <INT> -o <OUT_DIR> [-T] [-e <DATABASE>]
 
-MutMap version 2.1.3
+MutMap version 2.1.4
 
 optional arguments:
   -h, --help         show this help message and exit
   -r , --ref         Reference fasta.
   -c , --cultivar    fastq or bam of cultivar. If you specify
-                     fastq, please separate pairs by commma,
+                     fastq, please separate pairs by comma,
                      e.g. -c fastq1,fastq2. You can use this
                      optiion multiple times
   -b , --bulk        fastq or bam of mutnat bulk. If you specify
-                     fastq, please separate pairs by commma,
+                     fastq, please separate pairs by comma,
                      e.g. -b fastq1,fastq2. You can use this
                      optiion multiple times
   -n , --N-bulk      Number of individuals in mutant bulk.
@@ -171,7 +171,7 @@ $ mutmap -r reference.fasta \
 
 `-o` : name of output directory. Specified name cannot exist.
 
-`-T` : trim your reads by triimomatic.
+`-T` : trim your reads by trimmomatic.
 
 ### Example 3 : run MutMap from BAM
 ```
@@ -212,9 +212,9 @@ $ mutplot -h
 
 usage: mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]
                [-D <INT>] [-d <INT>] [-N <INT>] [-m <FLOAT>]
-               [-S <INT>] [-e <DATABASE>] [--igv] [--indel]
+               [-S <INT>] [-e <DATABASE>] [--igv] [--corr] [--indel]
 
-MutPlot version 2.1.3
+MutPlot version 2.1.4
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -240,6 +240,9 @@ optional arguments:
   -e , --snpEff         Predict causal variant using SnpEff. Please
                         check available databases in SnpEff.
   --igv                 Output IGV format file to check results on IGV.
+  --corr                Use corrected threshold in Huang et al. (2019).
+                        If you specify this option, the options related to
+                        the simulation ("-N" and "-F") will be ignored.
   --indel               Plot SNP-index with INDEL.
   --fig-width           Width allocated in chromosome figure. [7.5]
   --fig-height          Height allocated in chromosome figure. [4.0]
@@ -286,6 +289,8 @@ Inside of `OUT_DIR` is like below.
 |-- 40_mutmap
 |   |-- snp_index.tsv
 |   |-- sliding_window.tsv
+│   ├── sliding_window.p95.tsv
+│   ├── sliding_window.p99.tsv 
 |   `-- mutmap_plot.png
 `-- log
     |-- bcftools.log
