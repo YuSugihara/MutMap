@@ -25,6 +25,10 @@ class Vcf2Index(object):
         if self.snpEff is not None:
             self.ANN_re = re.compile(';ANN=(.*);*')
 
+        if self.corr is not None:
+            var_fix = 0.25/(2*self.N_bulk)
+            self.threshold = self.corr*(var_fix**(1/2)) + 0.5
+
     def get_field(self):
         root, ext = os.path.splitext(self.vcf)
         if ext == '.gz':
@@ -101,13 +105,6 @@ class Vcf2Index(object):
         p95 = replicates[int(0.95*self.N_replicates) - 1]
         return p99, p95
 
-    def calculate_corrected_threshold(self, depth):
-        var_AF = (2*self.N_bulk + depth)/(8*self.N_bulk*depth)
-
-        p99 = 2.576*(var_AF**(1/2)) + 0.5
-        p95 = 1.960*(var_AF**(1/2)) + 0.5
-        return p99, p95
-
     def calc_SNPindex(self, field_pos):
         root, ext = os.path.splitext(self.vcf)
         if ext == '.gz':
@@ -145,8 +142,8 @@ class Vcf2Index(object):
                 if record['type'] == 'keep':
                     variant = self.check_variant_type(REF, ALT)
 
-                    if self.corr:
-                        p99, p95 = self.calculate_corrected_threshold(record['bulk_depth'])
+                    if self.corr is not None:
+                        p99, p95 = self.threshold, self.threshold
                     else:
                         p99, p95 = self.F2_simulation(record['bulk_depth'])
 

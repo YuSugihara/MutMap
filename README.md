@@ -1,5 +1,5 @@
 # MutMap User Guide
-#### version 2.1.4
+#### version 2.1.5
 
 ## Table of contents
 - [What is MutMap?](#What-is-MutMap)
@@ -74,7 +74,7 @@ $ mutmap -h
 usage: mutmap -r <FASTA> -c <BAM|FASTQ> -b <BAM|FASTQ>
               -n <INT> -o <OUT_DIR> [-T] [-e <DATABASE>]
 
-MutMap version 2.1.4
+MutMap version 2.1.5
 
 optional arguments:
   -h, --help         show this help message and exit
@@ -218,7 +218,7 @@ usage: mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]
                [-D <INT>] [-d <INT>] [-N <INT>] [-m <FLOAT>]
                [-S <INT>] [-e <DATABASE>] [--igv] [--corr] [--indel]
 
-MutPlot version 2.1.4
+MutPlot version 2.1.5
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -244,9 +244,10 @@ optional arguments:
   -e , --snpEff         Predict causal variant using SnpEff. Please
                         check available databases in SnpEff.
   --igv                 Output IGV format file to check results on IGV.
-  --corr                Use corrected threshold in Huang et al. (2019).
-                        If you specify this option, the options related to
-                        the simulation ("-N" and "-F") will be ignored.
+  --corr                Use the corrected threshold in Huang et al. (2019).
+                        Please spesify mu_alpha_2 in Huang et al. (2019).
+                        When you specify this option, p99 and p95 has the
+                        same value.
   --indel               Plot SNP-index with INDEL.
   --fig-width           Width allocated in chromosome figure. [7.5]
   --fig-height          Height allocated in chromosome figure. [4.0]
