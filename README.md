@@ -44,6 +44,10 @@ You can install MutMap using [bioconda](https://bioconda.github.io/index.html).
 ```
 $ conda install -c bioconda mutmap
 ```
+If you want to install with Python environment.
+```
+$ conda create -n mutmap python=3 mutmap
+```
 
 ### Mannual Installation
 If you got a error during installation, you can install MutMap, manually.
@@ -290,7 +294,7 @@ Inside of `OUT_DIR` is like below.
 |   |-- snp_index.tsv
 |   |-- sliding_window.tsv
 │   ├── sliding_window.p95.tsv
-│   ├── sliding_window.p99.tsv 
+│   ├── sliding_window.p99.tsv
 |   `-- mutmap_plot.png
 `-- log
     |-- bcftools.log
