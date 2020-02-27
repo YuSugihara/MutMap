@@ -223,7 +223,8 @@ class Params(object):
                             action='store',
                             required=True,
                             type=str,
-                            help='VCF which contains cultivar and mutant bulk.',
+                            help=('VCF file which contains cultivar and mutant bulk.\n'
+                                  'in this order. This VCF file must have AD field.'),
                             metavar='')
 
         parser.add_argument('-o',

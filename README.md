@@ -1,5 +1,5 @@
 # MutMap User Guide
-#### version 2.1.5
+#### version 2.1.6
 
 ## Table of contents
 - [What is MutMap?](#What-is-MutMap)
@@ -74,7 +74,7 @@ $ mutmap -h
 usage: mutmap -r <FASTA> -c <BAM|FASTQ> -b <BAM|FASTQ>
               -n <INT> -o <OUT_DIR> [-T] [-e <DATABASE>]
 
-MutMap version 2.1.5
+MutMap version 2.1.6
 
 optional arguments:
   -h, --help         show this help message and exit
@@ -218,11 +218,12 @@ usage: mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]
                [-D <INT>] [-d <INT>] [-N <INT>] [-m <FLOAT>]
                [-S <INT>] [-e <DATABASE>] [--igv] [--corr] [--indel]
 
-MutPlot version 2.1.5
+MutPlot version 2.1.6
 
 optional arguments:
   -h, --help            show this help message and exit
-  -v , --vcf            VCF which contains cultivar and mutant bulk.
+  -v , --vcf            VCF file which contains cultivar and mutant bulk.
+                        in this order. This VCF file must have AD field.
   -o , --out            Output directory. Specified name can exist.
   -n , --N-bulk         Number of individuals in mutant bulk.
   -w , --window         Window size (kb). [2000]
