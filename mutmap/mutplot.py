@@ -45,6 +45,39 @@ class MutPlot(object):
 
         self.args.vcf = '{}/mutmap.snpEff.vcf'.format(self.out)
 
+    def get_outlier_SNPindex(self):
+        if self.snpEff is None:
+            snp_index = pd.read_csv('{}/snp_index.tsv'.format(self.out),
+                                    sep='\t',
+                                    names=['CHROM',
+                                           'POSI',
+                                           'variant',
+                                           'depth',
+                                           'p99',
+                                           'p95',
+                                           'SNPindex'])
+        else:
+            snp_index = pd.read_csv('{}/snp_index.tsv'.format(self.out),
+                                    sep='\t',
+                                    names=['CHROM',
+                                           'POSI',
+                                           'variant',
+                                           'impact',
+                                           'depth',
+                                           'p99',
+                                           'p95',
+                                           'SNPindex'])
+
+        snp_index[abs(snp_index['p99']) <= \
+                  abs(snp_index['SNPindex'])].to_csv('{}/snp_index.p99.tsv'.format(self.out),
+                                                     sep='\t',
+                                                     index=False)
+
+        snp_index[abs(snp_index['p95']) <= \
+                  abs(snp_index['SNPindex'])].to_csv('{}/snp_index.p95.tsv'.format(self.out),
+                                                     sep='\t',
+                                                     index=False)
+
     def get_outlier_windows(self):
         sliding_window = pd.read_csv('{}/sliding_window.tsv'.format(self.out),
                                      sep='\t',
@@ -143,6 +176,7 @@ class MutPlot(object):
         pt = Plot(self.args)
         pt.run()
 
+        self.get_outlier_SNPindex()
         self.get_outlier_windows()
 
         if self.args.igv:

@@ -107,38 +107,26 @@ class MutMap(object):
         mp.run()
 
     def mutplot(self):
-        if args.snpEff is None:
-            cmd = 'mutplot -v {0}/30_vcf/mutmap.vcf.gz \
-                           -n {1} \
-                           -w {2} \
-                           -s {3} \
-                           -N {4} \
-                           -D {5} \
-                           -d {6} \
-                           -o {0}/40_mutmap'.format(self.out,
-                                                    self.args.N_bulk,
-                                                    self.args.window,
-                                                    self.args.step,
-                                                    self.args.N_rep,
-                                                    self.args.max_depth,
-                                                    self.args.min_depth)
-        else:
-            cmd = 'mutplot -v {0}/30_vcf/mutmap.vcf.gz \
-                           -n {1} \
-                           -w {2} \
-                           -s {3} \
-                           -N {4} \
-                           -D {5} \
-                           -d {6} \
-                           -o {0}/40_mutmap \
-                           -e {7}'.format(self.out,
-                                          self.args.N_bulk,
-                                          self.args.window,
-                                          self.args.step,
-                                          self.args.N_rep,
-                                          self.args.max_depth,
-                                          self.args.min_depth,
-                                          self.args.snpEff)
+        cmd = 'mutplot -v {0}/30_vcf/mutmap.vcf.gz \
+                        -n {1} \
+                        -w {2} \
+                        -s {3} \
+                        -N {4} \
+                        -D {5} \
+                        -d {6} \
+                        -o {0}/40_mutmap'.format(self.out,
+                                                self.args.N_bulk,
+                                                self.args.window,
+                                                self.args.step,
+                                                self.args.N_rep,
+                                                self.args.max_depth,
+                                                self.args.min_depth)
+        
+        if self.args.snpEff is not None:
+            cmd = cmd + ' -e {}'.format(self.args.snpEff)
+        
+        if self.args.species is not None:
+            cmd = cmd + ' --species {}'.format(self.args.species)
 
         cmd = clean_cmd(cmd)
         p = sbp.Popen(cmd,

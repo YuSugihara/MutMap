@@ -74,7 +74,7 @@ $ mutmap -h
 usage: mutmap -r <FASTA> -c <BAM|FASTQ> -b <BAM|FASTQ>
               -n <INT> -o <OUT_DIR> [-T] [-e <DATABASE>]
 
-MutMap version 2.1.6
+MutMap version 2.1.7
 
 optional arguments:
   -h, --help         show this help message and exit
@@ -101,7 +101,7 @@ optional arguments:
   -d , --min-depth   Minimum depth of variants which will be used.
                      This cutoff will be applied in both of cultivar
                      and bulk. [8]
-  -N , --N-rep       Number of replicates for simulation to make
+  -N , --N-rep       Number of replicates for simulation to make 
                      null distribution. [5000]
   -T, --trim         Trim fastq using trimmomatic.
   -a , --adapter     FASTA of adapter sequences. This will be used
@@ -123,6 +123,11 @@ optional arguments:
   -Q , --min-BQ      Minimum base quality in mpileup. [18]
   -C , --adjust-MQ   "adjust-MQ" in mpileup. Default parameter
                      is suited for BWA. [50]
+  --species          Consider multiple test correction derived by
+                     Huang et al. (2019). Please spesify a species name.
+                     With this option. QTL-seq produces a theoretical threshold.
+                     Currently, Arabidopsis, Cucumber, Maize, Rapeseed,
+                     Rice, Tobacco, Tomato, Wheat, and Yeast are supported.
   -v, --version      show program's version number and exit
 ```
 
@@ -216,9 +221,9 @@ $ mutplot -h
 
 usage: mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]
                [-D <INT>] [-d <INT>] [-N <INT>] [-m <FLOAT>]
-               [-S <INT>] [-e <DATABASE>] [--igv] [--corr] [--indel]
+               [-S <INT>] [-e <DATABASE>] [--igv] [--indel]
 
-MutPlot version 2.1.6
+MutPlot version 2.1.7
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -234,7 +239,7 @@ optional arguments:
   -d , --min-depth      Minimum depth of variants which will be used.
                         This cutoff will be applied in both of cultivar
                         and bulk. [8]
-  -N , --N-rep          Number of replicates for simulation to make
+  -N , --N-rep          Number of replicates for simulation to make 
                         null distribution. [5000]
   -m , --min-SNPindex   Cutoff of minimum SNP-index for clear results. [0.3]
   -S , --strand-bias    Filter spurious homo genotypes in cultivar using
@@ -245,10 +250,11 @@ optional arguments:
   -e , --snpEff         Predict causal variant using SnpEff. Please
                         check available databases in SnpEff.
   --igv                 Output IGV format file to check results on IGV.
-  --corr                Use the corrected threshold in Huang et al. (2019).
-                        Please spesify mu_alpha_2 in Huang et al. (2019).
-                        When you specify this option, p99 and p95 has the
-                        same value.
+  --species             Consider multiple test correction derived by
+                        Huang et al. (2019). Please spesify a species name.
+                        With this option. QTL-seq produces a theoretical threshold.
+                        Currently, Arabidopsis, Cucumber, Maize, Rapeseed,
+                        Rice, Tobacco, Tomato, Wheat, and Yeast are supported.
   --indel               Plot SNP-index with INDEL.
   --fig-width           Width allocated in chromosome figure. [7.5]
   --fig-height          Height allocated in chromosome figure. [4.0]
@@ -294,6 +300,8 @@ Inside of `OUT_DIR` is like below.
 |   `-- mutmap.vcf.gz.tbi
 |-- 40_mutmap
 |   |-- snp_index.tsv
+│   ├── snp_index.p95.tsv
+│   ├── snp_index.p99.tsv
 |   |-- sliding_window.tsv
 │   ├── sliding_window.p95.tsv
 │   ├── sliding_window.p99.tsv

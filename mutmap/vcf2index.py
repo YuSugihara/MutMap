@@ -16,7 +16,7 @@ class Vcf2Index(object):
         self.out = args.out
         self.vcf = args.vcf
         self.snpEff = args.snpEff
-        self.corr = args.corr
+        self.species = args.species
         self.N_bulk = args.N_bulk
         self.N_replicates = args.N_rep
         self.min_SNPindex = args.min_SNPindex
@@ -25,9 +25,51 @@ class Vcf2Index(object):
         if self.snpEff is not None:
             self.ANN_re = re.compile(';ANN=(.*);*')
 
-        if self.corr is not None:
-            var_fix = 0.25/(2*self.N_bulk)
-            self.threshold = self.corr*(var_fix**(1/2)) + 0.5
+        if self.species is not None:
+            self.u99, self.u95 = self.correct_threshold()
+
+    def correct_threshold(self):
+        if self.species == 'Arabidopsis':
+            u99 = 3.82
+            u95 = 3.41
+
+        elif self.species == 'Cucumber':
+            u99 = 4.02
+            u95 = 3.62
+
+        elif self.species == 'Maize':
+            u99 = 4.11
+            u95 = 3.72
+
+        elif self.species == 'Rapeseed':
+            u99 = 4.16
+            u95 = 3.78
+
+        elif self.species == 'Rice':
+            u99 = 4.05
+            u95 = 3.65
+
+        elif self.species == 'Tobacco':
+            u99 = 4.22
+            u95 = 3.84
+
+        elif self.species == 'Tomato':
+            u99 = 4.04
+            u95 = 3.65
+
+        elif self.species == 'Wheat':
+            u99 = 4.21
+            u95 = 3.83
+
+        elif self.species == 'Yeast':
+            u99 = 4.31
+            u95 = 3.93
+
+        else:
+            print('You specified not supported species.', file=sys.stderr)
+            sys.exit(1)
+
+        return u99, u95
 
     def get_field(self):
         root, ext = os.path.splitext(self.vcf)
@@ -142,10 +184,11 @@ class Vcf2Index(object):
                 if record['type'] == 'keep':
                     variant = self.check_variant_type(REF, ALT)
 
-                    if self.corr is not None:
-                        p99, p95 = self.threshold, self.threshold
-                    else:
+                    if self.species is None:
                         p99, p95 = self.F2_simulation(record['bulk_depth'])
+                    else:
+                        p99 = self.u99*0.25/record['bulk_depth'] + 0.5
+                        p95 = self.u95*0.25/record['bulk_depth'] + 0.5
 
                     if self.snpEff is None:
                         snp_index.write(('{}\t{}\t{}\t{}\t'
