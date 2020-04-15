@@ -44,7 +44,7 @@ You can install MutMap using [bioconda](https://bioconda.github.io/index.html).
 ```
 $ conda install -c bioconda mutmap
 ```
-If you want to install with Python environment.
+Alternatively, if you want to create MutMap specific environment with Python3.
 ```
 $ conda create -n mutmap python=3 mutmap
 ```
