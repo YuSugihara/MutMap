@@ -14,6 +14,7 @@
   + [Example 4 : run MutMap from multiple FASTQs and BAMs](#Example-4--run-MutMap-from-multiple-FASTQs-and-BAMs)
   + [Example 5 : run MutPlot from VCF](#Example-5--run-MutPlot-from-VCF)
 - [Outputs](#Outputs)
+- [About multiple testing correction](#About-multiple-testing-correction)
 
 ## What is MutMap?
 <img src="https://210a94ef-a-fc7f2be1-s-sites.googlegroups.com/a/ibrc.or.jp/genome-e/home/bioinformatics-team/mutmap/MutMap_LOGO-s.jpg?attachauth=ANoY7cpPAXj1nrIoP1Z5j6TJmKkjdMI9SGRQbz4BMMM-pMptdltlgKmguJXmUTTF_C4tbK57UoTioe9_2A_9-5wrwQr2BpRQuMu3FM95sD7TP9OVTX4MMp6qSUIghCfx-O_rdM7iQaFic16svZNHs4-i16kT1yx-tuyMa0gwejEnWPXRv3UywxmeUUBZv8MwgNP3E21jSzmxgGQKSzCz9nzj1oyecb2TBHZoOD2Z3KFAItIoU_PX9LHvWpaspHXYiITvd0lDPKhY&attredirects=0" width=200>
@@ -22,7 +23,7 @@ Bulked segregant analysis, as implemented in MutMap ([Abe et al., 2012](https://
 
 #### Citation
 - Akira Abe, Shunichi Kosugi, Kentaro Yoshida, Satoshi Natsume, Hiroki Takagi, Hiroyuki Kanzaki, Hideo Matsumura, Kakoto Yoshida, Chikako Mitsuoka, Muluneh Tamiru, Hideki Innan, Liliana Cano, Sophien Kamoun & Ryohei Terauchi (2012). Genome sequencing reveals agronomically important loci in rice using MutMap. Nature Biotechnol. 30:174-179. [[URL]](https://www.nature.com/articles/nbt.2095)
-- Yu Sugihara, Lester Young, Hiroki Yaegashi, Satoshi Natsume, Daniel J. Shea, Hiroki Takagi, Helen Booker, Ryohei Terauchi, Akira Abe (in preparation). High performance pipeline for MutMap and QTL-seq.
+- Yu Sugihara, Lester Young, Hiroki Yaegashi, Satoshi Natsume, Daniel J. Shea, Hiroki Takagi, Helen Booker, Hideki Innan, Ryohei Terauchi, Akira Abe (2020). High performance pipeline for MutMap and QTL-seq.[[URL]](https://www.biorxiv.org/content/10.1101/2020.06.28.176586v1.full.pdf)
 
 ## Installation
 ### Dependencies
@@ -70,6 +71,7 @@ $ trimmomatic --help
 ## Usage
 
 Current version can not plot too contiguous reference genome.
+**We highly recommend you to run MutMap without spcifying '--species' for multiple testing correction, initially.**
 
 ```
 $ mutmap -h
