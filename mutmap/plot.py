@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from qtlseq.utils import time_stamp
+from mutmap.utils import time_stamp
 
 
 class Plot(object):
