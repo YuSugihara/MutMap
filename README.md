@@ -319,7 +319,7 @@ Inside of `OUT_DIR` is like below.
     |-- samtools.log
     `-- tabix.log
 ```
-- If you run MutMap with trimming, you will get the directory of `00_fastq` which includes FASTQs after trimming.
+- If you run MutMap with trimming, you will get the directory of `00_fastq` which includes FASTQs after trimming.
 - You can check the results in `40_mutmap`.
   + `snp_index.tsv` : columns in this order.
     - **CHROM** : chromosome name
