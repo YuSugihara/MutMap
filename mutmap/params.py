@@ -352,7 +352,7 @@ class Params(object):
                                      'Yeast'],
                             help=('Consider multiple test correction derived by\n'
                                   'Huang et al. (2019). Please spesify a species name.\n'
-                                  'With this option. QTL-seq produces a theoretical threshold.\n'
+                                  'With this option. MutMap produces a theoretical threshold.\n'
                                   'Currently, Arabidopsis, Cucumber, Maize, Rapeseed,\n'
                                   'Rice, Tobacco, Tomato, Wheat, and Yeast are supported.'),
                             metavar='')

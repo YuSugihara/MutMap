@@ -257,7 +257,7 @@ optional arguments:
   --igv                 Output IGV format file to check results on IGV.
   --species             Consider multiple test correction derived by
                         Huang et al. (2019). Please spesify a species name.
-                        With this option. QTL-seq produces a theoretical threshold.
+                        With this option. MutMap produces a theoretical threshold.
                         Currently, Arabidopsis, Cucumber, Maize, Rapeseed,
                         Rice, Tobacco, Tomato, Wheat, and Yeast are supported.
   --indel               Plot SNP-index with INDEL.
