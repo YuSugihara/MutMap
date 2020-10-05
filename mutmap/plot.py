@@ -140,4 +140,4 @@ class Plot(object):
             ax.set_ylim(0, 1.05)
             ax.set_title(chr_name, fontsize=17)
 
-        plt.savefig('{}/mutmap_plot.png'.format(self.out), format='png')
+        plt.savefig('{}/mutmap_plot.{}'.format(self.out, self.args.format))

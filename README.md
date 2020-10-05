@@ -1,5 +1,5 @@
 # MutMap User Guide
-#### version 2.2.0
+#### version 2.2.1
 
 ## Table of contents
 - [What is MutMap?](#What-is-MutMap)
@@ -79,7 +79,7 @@ $ mutmap -h
 usage: mutmap -r <FASTA> -c <BAM|FASTQ> -b <BAM|FASTQ>
               -n <INT> -o <OUT_DIR> [-T] [-e <DATABASE>]
 
-MutMap version 2.2.0
+MutMap version 2.2.1
 
 optional arguments:
   -h, --help         show this help message and exit
@@ -228,7 +228,7 @@ usage: mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]
                [-D <INT>] [-d <INT>] [-N <INT>] [-m <FLOAT>]
                [-S <INT>] [-e <DATABASE>] [--igv] [--indel]
 
-MutPlot version 2.2.0
+MutPlot version 2.2.1
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -265,6 +265,8 @@ optional arguments:
   --fig-height          Height allocated in chromosome figure. [4.0]
   --white-space         White space between figures. (This option
                         only affect vertical direction.) [0.6]
+  -f , --format         Specifiy the format of an output image.
+                        eps/jpeg/jpg/pdf/pgf/png/rgba/svg/svgz/tif/tiff
   --version             show program's version number and exit
 ```
 MutPlot is included in MutMap. MutMap run MutPlot after making VCF. Then, MutPlot will work with default parameters. If you want to change some parameters, you can use VCF inside of `(OUT_DIR/30_vcf/mutmap.vcf.gz)` to retry plotting process like below.
