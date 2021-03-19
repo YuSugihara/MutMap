@@ -12,7 +12,6 @@ import subprocess as sbp
 from mutmap.refindex import RefIndex
 from mutmap.trim import Trim
 from mutmap.alignment import Alignment
-from mutmap.bamfilt import BamFilt
 from mutmap.mpileup import Mpileup
 from mutmap.vcf2index import Vcf2Index
 from mutmap.utils import time_stamp, clean_cmd, call_log
@@ -97,10 +96,6 @@ class MutMap(object):
             index = 'bulk.0{:0>3}'.format(i)
             aln.run(fastq1, fastq2, index)
 
-    def bamfilt(self):
-        bt = BamFilt(self.args)
-        bt.run()
-
     def mpileup(self):
         os.mkdir('{}/30_vcf'.format(self.out))
         mp = Mpileup(self.args)
@@ -143,7 +138,6 @@ class MutMap(object):
             self.trimming()
         else:
             self.alignment()
-        self.bamfilt()
         self.mpileup()
         self.mutplot()
 
