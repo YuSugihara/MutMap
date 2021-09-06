@@ -17,7 +17,7 @@
 - [About multiple testing correction](#About-multiple-testing-correction)
 
 ## What is MutMap?
-<img src="https://210a94ef-a-fc7f2be1-s-sites.googlegroups.com/a/ibrc.or.jp/genome-e/home/bioinformatics-team/mutmap/MutMap_LOGO-s.jpg?attachauth=ANoY7cpPAXj1nrIoP1Z5j6TJmKkjdMI9SGRQbz4BMMM-pMptdltlgKmguJXmUTTF_C4tbK57UoTioe9_2A_9-5wrwQr2BpRQuMu3FM95sD7TP9OVTX4MMp6qSUIghCfx-O_rdM7iQaFic16svZNHs4-i16kT1yx-tuyMa0gwejEnWPXRv3UywxmeUUBZv8MwgNP3E21jSzmxgGQKSzCz9nzj1oyecb2TBHZoOD2Z3KFAItIoU_PX9LHvWpaspHXYiITvd0lDPKhY&attredirects=0" width=200>
+<img src="https://github.com/YuSugihara/MutMap/tree/master/mutmap/1_logo.png" width=200>
 
 Bulked segregant analysis, as implemented in MutMap ([Abe et al., 2012](https://www.nature.com/articles/nbt.2095)), is a powerful and efficient method to identify agronomically important loci in crop plants. MutMap requires whole-genome resequencing of a single individual from the original cultivar and the pooled sequences of F2 progeny from a cross between the original cultivar and mutant. MutMap uses the sequence of the original cultivar to polarize the site frequencies of neighbouring markers and identifies loci with an unexpected site frequency, simulating the genotype of F2 progeny. **The updated pipeline is approximately 5-8 times faster than the previous pipeline, are easier for novice users to use and can be easily installed through bioconda with all dependencies.**
 
@@ -343,4 +343,4 @@ Inside of `OUT_DIR` is like below.
     - **<span style="color: orange; ">ORANGE line</span>** : mean p99
     - **<span style="color: green; ">GREEN line</span>** : mean p95
 
-<img src="https://user-images.githubusercontent.com/34593586/72581109-89fd3c00-3921-11ea-81fb-3d1cb1fa09b4.png" width=600>
+<img src="https://github.com/YuSugihara/MutMap/tree/master/mutmap/2_result.png" width=600>
