@@ -351,7 +351,7 @@ We implemented multiple testing correction from version 2. However, we highly re
 
 ## Built and use your own database for snpEff
 If you want to use your own database for snpEff, you need additional steps.
-Here we assume that you installed MutMap via anaconda distribution with `conda create`.
+Here we assume that you installed MutMap via anaconda distribution, creating new environment with `conda create`.
 
 1. Find the directory of snpEff that includes snpEff script, configuration file and database. You can find it in `/home/anaconda3/envs/{your_env_name_installed_mutmap}/share/snpeff-5.0-0/`. `anaconda3` may be `miniconda3`. Also, the version of snpeff may be different.
 
