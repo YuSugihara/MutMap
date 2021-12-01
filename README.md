@@ -15,6 +15,7 @@
   + [Example 5 : run MutPlot from VCF](#Example-5--run-MutPlot-from-VCF)
 - [Outputs](#Outputs)
 - [About multiple testing correction](#About-multiple-testing-correction)
+- [Built and use your own database for snpEff](#Built-and-use-your-own-database-for-snpEff)
 
 ## What is MutMap?
 <img src="https://github.com/YuSugihara/MutMap/blob/master/images/1_logo.png" width=200>
@@ -344,3 +345,18 @@ Inside of `OUT_DIR` is like below.
     - **<span style="color: green; ">GREEN line</span>** : mean p95
 
 <img src="https://github.com/YuSugihara/MutMap/blob/master/images/2_result.png" width=600>
+
+## About multiple testing correction
+We implemented multiple testing correction from version 2. However, we highly recommend to run MutMap without multiple testing correction at first.
+
+## Built and use your own database for snpEff
+If you want to use your own database for snpEff, you need additional steps.
+Here we assume that you installed MutMap via anaconda distribution with `conda create`.
+
+1. Find the directory of snpEff that includes snpEff script, configuration file and database. You can find it in `/home/anaconda3/envs/{your_env_name_installed_mutmap}/share/snpeff-5.0-0/`. `anaconda3` may be `miniconda3`. Also, the version of snpeff may be different.
+
+2. Go to this directory and follow the snpEff manual to build the database.
+Don't forget to add your database info to the snpEff configuration file.
+https://pcingola.github.io/SnpEff/se_buildingdb/#add-a-genome-to-the-configuration-file
+
+3. Run MutMap with option `-e {your_database_name}`
