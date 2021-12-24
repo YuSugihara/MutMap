@@ -44,29 +44,29 @@ Bulked segregant analysis, as implemented in MutMap ([Abe et al., 2012](https://
 ### Installation using bioconda
 You can install MutMap using [bioconda](https://bioconda.github.io/index.html).
 ```
-$ conda install -c bioconda mutmap
+conda install -c bioconda mutmap
 ```
 Alternatively, if you want to create MutMap specific environment with Python3.
 ```
-$ conda create -n mutmap python=3 mutmap
+conda create -n mutmap python=3 mutmap
 ```
 
 ### Mannual Installation
 If you got a error during installation, you can install MutMap, manually.
 ```
-$ git clone https://github.com/YuSugihara/MutMap.git
-$ cd MutMap
-$ pip install -e .
+git clone https://github.com/YuSugihara/MutMap.git
+cd MutMap
+pip install -e .
 ```
 Then you have to install other dependencies by yourself. We highly recommend you to install SnpEff and Trimmomatic using bioconda.
 ```
-$ conda install -c bioconda snpeff
-$ conda install -c bioconda trimmomatic
+conda install -c bioconda snpeff
+conda install -c bioconda trimmomatic
 ```
 After installation, please check whether SnpEff and Trimmomatic work through the commands below.
 ```
-$ snpEff --help
-$ trimmomatic --help
+snpEff --help
+trimmomatic --help
 ```
 
 ## Usage
@@ -75,7 +75,7 @@ Current version can not plot too contiguous reference genome.
 **We highly recommend you to run MutMap without spcifying '--species' for multiple testing correction, initially.**
 
 ```
-$ mutmap -h
+mutmap -h
 
 usage: mutmap -r <FASTA> -c <BAM|FASTQ> -b <BAM|FASTQ>
               -n <INT> -o <OUT_DIR> [-T] [-e <DATABASE>]
@@ -149,11 +149,11 @@ MutMap can run from FASTQ (without or with trimming) and BAM. If you want to run
 
 ### Example 1 : run MutMap from FASTQ without trimming
 ```
-$ mutmap -r reference.fasta \
-         -c cultivar.1.fastq,cultivar.2.fastq \
-         -b bulk.1.fastq,bulk.2.fastq \
-         -n 20 \
-         -o example_dir
+mutmap -r reference.fasta \
+       -c cultivar.1.fastq,cultivar.2.fastq \
+       -b bulk.1.fastq,bulk.2.fastq \
+       -n 20 \
+       -o example_dir
 ```
 
 `-r` : reference fasta
@@ -168,12 +168,12 @@ $ mutmap -r reference.fasta \
 
 ### Example 2 : run MutMap from FASTQ with trimming
 ```
-$ mutmap -r reference.fasta \
-         -c cultivar.1.fastq,cultivar.2.fastq \
-         -b bulk.1.fastq,bulk.2.fastq \
-         -n 20 \
-         -o example_dir \
-         -T
+mutmap -r reference.fasta \
+       -c cultivar.1.fastq,cultivar.2.fastq \
+       -b bulk.1.fastq,bulk.2.fastq \
+       -n 20 \
+       -o example_dir \
+       -T
 ```
 
 `-r` : reference fasta
@@ -190,11 +190,11 @@ $ mutmap -r reference.fasta \
 
 ### Example 3 : run MutMap from BAM
 ```
-$ mutmap -r reference.fasta \
-         -c cultivar.bam \
-         -b bulk.bam \
-         -n 20 \
-         -o example_dir
+mutmap -r reference.fasta \
+       -c cultivar.bam \
+       -b bulk.bam \
+       -n 20 \
+       -o example_dir
 ```
 
 `-r` : reference fasta
@@ -209,21 +209,21 @@ $ mutmap -r reference.fasta \
 
 ### Example 4 : run MutMap from multiple FASTQs and BAMs
 ```
-$ mutmap -r reference.fasta \
-         -c cultivar_1.1.fastq,cultivar_1.2.fastq \
-         -c cultivar_1.bam \
-         -b bulk_1.1.fastq,bulk_1.2.fastq \
-         -b bulk_2.bam \
-         -b bulk_3.bam \
-         -n 20 \
-         -o example_dir
+mutmap -r reference.fasta \
+       -c cultivar_1.1.fastq,cultivar_1.2.fastq \
+       -c cultivar_1.bam \
+       -b bulk_1.1.fastq,bulk_1.2.fastq \
+       -b bulk_2.bam \
+       -b bulk_3.bam \
+       -n 20 \
+       -o example_dir
 ```
 
 MutMap can automatically merge multiple FASTQs and BAMs. Of course, you can merge FASTQs or BAMs using `cat` or `samtools merge` before input them to MutMap. If you specify `-c` multiple times, please make sure that those files include only 1 individual. On the other hand, `-b` can include more than 1 individuals because those are bulked samples. MutMap can automatically classify FASTQs and BAMs from whether comma exits or not.
 
 ### Example 5 : run MutPlot from VCF
 ```
-$ mutplot -h
+mutplot -h
 
 usage: mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]
                [-D <INT>] [-d <INT>] [-N <INT>] [-m <FLOAT>]
@@ -273,11 +273,11 @@ optional arguments:
 MutPlot is included in MutMap. MutMap run MutPlot after making VCF. Then, MutPlot will work with default parameters. If you want to change some parameters, you can use VCF inside of `(OUT_DIR/30_vcf/mutmap.vcf.gz)` to retry plotting process like below.
 
 ```
-$ mutplot -v OUT_DIR/30_vcf/mutmap.vcf.gz \
-          -o ANOTHER_DIR_NAME \
-          -n 20 \
-          -w 2000 \
-          -s 100
+mutplot -v OUT_DIR/30_vcf/mutmap.vcf.gz \
+        -o ANOTHER_DIR_NAME \
+        -n 20 \
+        -w 2000 \
+        -s 100
 ```
 
 #### Use MutPlot for VCF which was made by yourself
