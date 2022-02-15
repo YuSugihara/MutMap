@@ -347,7 +347,20 @@ Inside of `OUT_DIR` is like below.
 <img src="https://github.com/YuSugihara/MutMap/blob/master/images/2_result.png" width=600>
 
 ## About multiple testing correction
-We implemented multiple testing correction from version 2. However, we highly recommend to run MutMap without multiple testing correction at first.
+We implemented multiple testing correction in MutMap v2. 
+However, since multiple testing correction changes the threshold from the original MutMap threshold, we highly recommend users, who expect original MutMap algorism identifying a lot of causal mutations in many researches, to try MutMap v2 without multiple testing correction at first.
+You can use multiple testing correction with the option ```--species``` like below:
+```
+mutmap -o test \
+       -n 20 \
+       -w 100 \
+       -s 20 \
+       -r mutmap_ref.fasta \
+       -c mutmap_cultivar.1.fastq.gz,mutmap_cultivar.2.fastq.gz \
+       -b mutmap_bulk.1.fastq.gz,mutmap_bulk.2.fastq.gz \
+       --species Rice
+```
+Currently, only nine species (Arabidopsis, Cucumber, Maize, Rapeseed, Rice, Tobacco, Tomato, Wheat, and Yeast) are supported, following the parameters defined in Huang et al. (2019).
 
 ## Built and use your own database for snpEff
 If you want to use your own database for snpEff, you need additional steps.
