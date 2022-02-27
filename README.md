@@ -1,5 +1,5 @@
 # MutMap User Guide
-#### version 2.3.2
+#### version 2.3.3
 
 ## Table of contents
 - [What is MutMap?](#What-is-MutMap)
@@ -71,8 +71,7 @@ trimmomatic --help
 
 ## Usage
 
-Current version can not plot too contiguous reference genome.
-**We highly recommend you to run MutMap without spcifying '--species' for multiple testing correction, initially.**
+If your reference genome has more than 50 contigs (or chromosomes), only significant contigs will be plotted.
 
 ```
 mutmap -h
@@ -80,7 +79,7 @@ mutmap -h
 usage: mutmap -r <FASTA> -c <BAM|FASTQ> -b <BAM|FASTQ>
               -n <INT> -o <OUT_DIR> [-T] [-e <DATABASE>]
 
-MutMap version 2.3.2
+MutMap version 2.3.3
 
 optional arguments:
   -h, --help         show this help message and exit
@@ -229,7 +228,7 @@ usage: mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]
                [-D <INT>] [-d <INT>] [-N <INT>] [-m <FLOAT>]
                [-S <INT>] [-e <DATABASE>] [--igv] [--indel]
 
-MutPlot version 2.3.2
+MutPlot version 2.3.3
 
 optional arguments:
   -h, --help            show this help message and exit
