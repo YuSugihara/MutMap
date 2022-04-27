@@ -164,7 +164,7 @@ mutmap -r reference.fasta \
 
 `-n` : number of individuals in mutant bulk.
 
-`-o` : name of output directory. Specified name cannot exist.
+`-o` : name of output directory. Specified name should not exist.
 
 ### Example 2 : run MutMap from FASTQ with trimming
 ```
@@ -184,7 +184,7 @@ mutmap -r reference.fasta \
 
 `-n` : number of individuals in mutant bulk.
 
-`-o` : name of output directory. Specified name cannot exist.
+`-o` : name of output directory. Specified name should not exist.
 
 `-T` : trim your reads by trimmomatic.
 
@@ -205,7 +205,7 @@ mutmap -r reference.fasta \
 
 `-n` : number of individuals in mutant bulk.
 
-`-o` : name of output directory. Specified name cannot exist.
+`-o` : name of output directory. Specified name should not exist.
 
 ### Example 4 : run MutMap from multiple FASTQs and BAMs
 ```
