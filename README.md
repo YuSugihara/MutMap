@@ -141,7 +141,7 @@ MutMap can run from FASTQ (without or with trimming) and BAM. If you want to run
 
 + [Example 1 : run MutMap from FASTQ without trimming](#example-1--run-mutmap-from-fastq-without-trimming)
 + [Example 2 : run MutMap from FASTQ with trimming](#example-2--run-mutmap-from-fastq-with-trimming)
-+ [Example 3 : run MutMap from BAM](#example-3--run-mutmap-from-BAM)
++ [Example 3 : run MutMap from BAM](#example-3--run-mutmap-from-bam)
 + [Example 4 : run MutMap from multiple FASTQs and BAMs](#example-4--run-mutmap-from-multiple-fastqs-and-bams)
 + [Example 5 : run MutPlot from VCF](#example-5--run-mutplot-from-vcf)
 
