@@ -2,7 +2,7 @@
 #### version 2.3.3
 
 ## Table of contents
-- [What is MutMap?](#what-is-MutMap)
+- [What is MutMap?](#what-is-mutmap)
 - [Installation](#installation)
   + [Dependencies](#dependencies)
   + [Installation using bioconda](#installation-using-bioconda)
