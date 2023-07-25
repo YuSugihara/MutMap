@@ -6,7 +6,7 @@
 - [Installation](#installation)
   + [Dependencies](#dependencies)
   + [Installation using bioconda](#installation-using-bioconda)
-  + [Manual Installation](#manual-installation)
+  + [Manual installation](#manual-installation)
 - [Usage](#usage)
   + [Example 1 : run MutMap from FASTQ without trimming](#example-1--run-mutmap-from-fastq-without-trimming)
   + [Example 2 : run MutMap from FASTQ with trimming](#example-2--run-mutmap-from-fastq-with-trimming)
@@ -52,7 +52,7 @@ Alternatively, if you want to create MutMap specific environment with Python3.
 conda create -n mutmap python=3 mutmap
 ```
 
-### Mannual Installation
+### Manual installation
 If you got a error during installation, you can install MutMap, manually.
 ```
 git clone https://github.com/YuSugihara/MutMap.git
