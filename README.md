@@ -2,20 +2,20 @@
 #### version 2.3.3
 
 ## Table of contents
-- [What is MutMap?](#What-is-MutMap)
-- [Installation](#Installation)
-  + [Dependencies](#Dependencies)
-  + [Installation using bioconda](#Installation-using-bioconda)
-  + [Manual Installation](#Manual-Installation)
-- [Usage](#Usage)
-  + [Example 1 : run MutMap from FASTQ without trimming](#Example-1--run-MutMap-from-FASTQ-without-trimming)
-  + [Example 2 : run MutMap from FASTQ with trimming](#Example-2--run-MutMap-from-FASTQ-with-trimming)
-  + [Example 3 : run MutMap from BAM](#Example-3--run-MutMap-from-BAM)
-  + [Example 4 : run MutMap from multiple FASTQs and BAMs](#Example-4--run-MutMap-from-multiple-FASTQs-and-BAMs)
-  + [Example 5 : run MutPlot from VCF](#Example-5--run-MutPlot-from-VCF)
-- [Outputs](#Outputs)
-- [About multiple testing correction](#About-multiple-testing-correction)
-- [Built and use your own database for snpEff](#Built-and-use-your-own-database-for-snpEff)
+- [What is MutMap?](#what-is-MutMap)
+- [Installation](#installation)
+  + [Dependencies](#dependencies)
+  + [Installation using bioconda](#installation-using-bioconda)
+  + [Manual Installation](#manual-installation)
+- [Usage](#usage)
+  + [Example 1 : run MutMap from FASTQ without trimming](#example-1--run-mutmap-from-fastq-without-trimming)
+  + [Example 2 : run MutMap from FASTQ with trimming](#example-2--run-mutmap-from-fastq-with-trimming)
+  + [Example 3 : run MutMap from BAM](#example-3--run-mutmap-from-BAM)
+  + [Example 4 : run MutMap from multiple FASTQs and BAMs](#example-4--run-mutmap-from-multiple-fastqs-and-bams)
+  + [Example 5 : run MutPlot from VCF](#example-5--run-mutplot-from-vcf)
+- [Outputs](#outputs)
+- [About multiple testing correction](#about-multiple-testing-correction)
+- [Built and use your own database for snpEff](#built-and-use-your-own-database-for-snpeff)
 
 ## What is MutMap?
 <img src="https://github.com/YuSugihara/MutMap/blob/master/images/1_logo.png" width=200>
@@ -139,11 +139,11 @@ optional arguments:
 
 MutMap can run from FASTQ (without or with trimming) and BAM. If you want to run MutMap from VCF, please use MutPlot (example 5). Once you run MutMap, MutMap automatically complete the subprocesses.
 
-+ [Example 1 : run MutMap from FASTQ without trimming](#Example-1--run-MutMap-from-FASTQ-without-trimming)
-+ [Example 2 : run MutMap from FASTQ with trimming](#Example-2--run-MutMap-from-FASTQ-with-trimming)
-+ [Example 3 : run MutMap from BAM](#Example-3--run-MutMap-from-BAM)
-+ [Example 4 : run MutMap from multiple FASTQs and BAMs](#Example-4--run-MutMap-from-multiple-FASTQs-and-BAMs)
-+ [Example 5 : run MutPlot from VCF](#Example-5--run-MutPlot-from-VCF)
++ [Example 1 : run MutMap from FASTQ without trimming](#example-1--run-mutmap-from-fastq-without-trimming)
++ [Example 2 : run MutMap from FASTQ with trimming](#example-2--run-mutmap-from-fastq-with-trimming)
++ [Example 3 : run MutMap from BAM](#example-3--run-mutmap-from-BAM)
++ [Example 4 : run MutMap from multiple FASTQs and BAMs](#example-4--run-mutmap-from-multiple-fastqs-and-bams)
++ [Example 5 : run MutPlot from VCF](#example-5--run-mutplot-from-vcf)
 
 
 
