@@ -9,6 +9,8 @@ import os
 import sys
 import glob
 import subprocess as sbp
+from multiprocessing import set_start_method
+set_start_method('fork')
 from mutmap.refindex import RefIndex
 from mutmap.trim import Trim
 from mutmap.alignment import Alignment
