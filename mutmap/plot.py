@@ -66,7 +66,7 @@ class Plot(object):
 
         print(('!!WARNING!! Your reference genome has too many contigs (>50). '
                'Therefore, only significant contigs will be plotted.'), file=sys.stderr)
-        
+        sliding_window=sliding_window.obj
         significant_windows = sliding_window[abs(sliding_window['mean_p95']) <= \
                                              abs(sliding_window['mean_SNPindex'])]
 
@@ -75,7 +75,7 @@ class Plot(object):
         N_chr = len(significant_contigs)
         snp_index = snp_index[snp_index['CHROM'].isin(significant_contigs)]
         sliding_window = sliding_window[sliding_window['CHROM'].isin(significant_contigs)]
-
+        sliding_window = sliding_window.groupby('CHROM')
         return N_chr, snp_index, sliding_window
 
     def set_plot_style(self, N_chr):
@@ -96,7 +96,7 @@ class Plot(object):
         N_chr = len(sliding_window['CHROM'].unique())
 
         if N_chr > 50:
-            N_chr, self.snp_index, self.sliding_window = self.get_significant_contigs(N_chr, 
+            N_chr, self.snp_index, sliding_window = self.get_significant_contigs(N_chr, 
                                                                                       snp_index, 
                                                                                       sliding_window)
 
