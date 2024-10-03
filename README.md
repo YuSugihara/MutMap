@@ -173,7 +173,8 @@ mutmap -r reference.fasta \
        -b bulk.1.fastq,bulk.2.fastq \
        -n 20 \
        -o example_dir \
-       -T
+       -T \
+       -a adapter.fasta \
 ```
 
 `-r` : reference fasta
@@ -187,6 +188,8 @@ mutmap -r reference.fasta \
 `-o` : name of output directory. Specified name should not exist.
 
 `-T` : trim your reads by trimmomatic.
+
+`-a` : FASTA of adapter sequences.
 
 ### Example 3 : run MutMap from BAM
 ```
