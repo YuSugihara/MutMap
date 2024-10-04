@@ -1,5 +1,5 @@
 # MutMap User Guide
-#### version 2.3.4
+#### version 2.3.5
 
 ## Table of contents
 - [What is MutMap?](#what-is-mutmap)
@@ -45,11 +45,8 @@ Bulked segregant analysis, as implemented in MutMap ([Abe et al., 2012](https://
 ### Installation using bioconda
 You can install MutMap using [bioconda](https://bioconda.github.io/index.html).
 ```
-conda install -c bioconda mutmap
-```
-Alternatively, if you want to create MutMap specific environment with Python3.
-```
-conda create -n mutmap python=3 mutmap
+conda create -c bioconda -n mutmap mutmap
+conda activate mutmap
 ```
 
 ### Manual installation
@@ -80,7 +77,7 @@ mutmap -h
 usage: mutmap -r <FASTA> -c <BAM|FASTQ> -b <BAM|FASTQ>
               -n <INT> -o <OUT_DIR> [-T] [-e <DATABASE>]
 
-MutMap version 2.3.4
+MutMap version 2.3.5
 
 optional arguments:
   -h, --help         show this help message and exit
@@ -232,7 +229,7 @@ usage: mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]
                [-D <INT>] [-d <INT>] [-N <INT>] [-m <FLOAT>]
                [-S <INT>] [-e <DATABASE>] [--igv] [--indel]
 
-MutPlot version 2.3.4
+MutPlot version 2.3.5
 
 optional arguments:
   -h, --help            show this help message and exit
