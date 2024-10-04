@@ -171,7 +171,7 @@ mutmap -r reference.fasta \
        -n 20 \
        -o example_dir \
        -T \
-       -a adapter.fasta \
+       -a adapter.fasta
 ```
 
 `-r` : reference fasta
