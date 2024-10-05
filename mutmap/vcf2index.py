@@ -1,3 +1,4 @@
+
 import os
 import re
 import sys
@@ -16,7 +17,6 @@ class Vcf2Index(object):
         self.out = args.out
         self.vcf = args.vcf
         self.snpEff = args.snpEff
-        self.species = args.species
         self.N_bulk = args.N_bulk
         self.N_replicates = args.N_rep
         self.min_SNPindex = args.min_SNPindex
@@ -25,53 +25,8 @@ class Vcf2Index(object):
         if self.snpEff is not None:
             self.ANN_re = re.compile(';ANN=(.*);*')
 
-        if self.species is None:
-            self.p99_index = int(0.99*self.N_replicates) - 1
-            self.p95_index = int(0.95*self.N_replicates) - 1
-        else:
-            k = self.correct_threshold()
-            corr_p99 = 0.01/k
-            corr_p95 = 0.05/k
-            self.p99_index = int((1 - corr_p99)*self.N_replicates) - 1
-            self.p95_index = int((1 - corr_p95)*self.N_replicates) - 1
-
-            if int(corr_p99*self.N_replicates) - 1 < 0:
-                print(('!!WARNING!! Number of replicates for simulation is not '
-                       'enough to consider multiple testing correction. '
-                       'Therefore, the highest SNP-index and the second highest '
-                       'SNP-index were selected for p99 and p95, respectively.'), 
-                       file=sys.stderr)
-
-                self.p99_index = self.N_replicates - 1
-                self.p95_index = self.N_replicates - 2
-
-    def correct_threshold(self):
-        l = 8.4
-
-        if self.species == 'Arabidopsis':
-            k = 5 + 600/l
-        elif self.species == 'Cucumber':
-            k = 7 + 1390/l
-        elif self.species == 'Maize':
-            k = 10 + 2060/l
-        elif self.species == 'Rapeseed':
-            k = 18 + 2520/l
-        elif self.species == 'Rice':
-            k = 12 + 1530/l
-        elif self.species == 'Tobacco':
-            k = 12 + 3270/l
-        elif self.species == 'Tomato':
-            k = 12 + 1470/l
-        elif self.species == 'Wheat':
-            k = 21 + 3140/l
-        elif self.species == 'Yeast':
-            k = 16 + 4900/l
-
-        else:
-            print('You specified not supported species.', file=sys.stderr)
-            sys.exit(1)
-
-        return k
+        self.p99_index = int(0.99*self.N_replicates) - 1
+        self.p95_index = int(0.95*self.N_replicates) - 1
 
     def get_field(self):
         root, ext = os.path.splitext(self.vcf)

@@ -202,24 +202,6 @@ class Params(object):
                                   'is suited for BWA. [50]'),
                             metavar='')
 
-        parser.add_argument('--species',
-                            action='store',
-                            choices=['Arabidopsis', 
-                                     'Cucumber', 
-                                     'Maize', 
-                                     'Rapeseed', 
-                                     'Rice', 
-                                     'Tobacco', 
-                                     'Tomato', 
-                                     'Wheat', 
-                                     'Yeast'],
-                            help=('Consider multiple test correction derived by\n'
-                                  'Huang et al. (2019). Please spesify a species name.\n'
-                                  'With this option. QTL-seq produces a theoretical threshold.\n'
-                                  'Currently, Arabidopsis, Cucumber, Maize, Rapeseed,\n'
-                                  'Rice, Tobacco, Tomato, Wheat, and Yeast are supported.'),
-                            metavar='')
-
         # set version
         parser.add_argument('-v',
                             '--version',
@@ -338,24 +320,6 @@ class Params(object):
                             action='store_true',
                             default=False,
                             help='Output IGV format file to check results on IGV.')
-
-        parser.add_argument('--species',
-                            action='store',
-                            choices=['Arabidopsis', 
-                                     'Cucumber', 
-                                     'Maize', 
-                                     'Rapeseed', 
-                                     'Rice', 
-                                     'Tobacco', 
-                                     'Tomato', 
-                                     'Wheat', 
-                                     'Yeast'],
-                            help=('Consider multiple test correction derived by\n'
-                                  'Huang et al. (2019). Please spesify a species name.\n'
-                                  'With this option. MutMap produces a theoretical threshold.\n'
-                                  'Currently, Arabidopsis, Cucumber, Maize, Rapeseed,\n'
-                                  'Rice, Tobacco, Tomato, Wheat, and Yeast are supported.'),
-                            metavar='')
 
         parser.add_argument('--indel',
                             action='store_true',
