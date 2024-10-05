@@ -79,7 +79,7 @@ usage: mutmap -r <FASTA> -c <BAM|FASTQ> -b <BAM|FASTQ>
 
 MutMap version 2.3.5
 
-optional arguments:
+options:
   -h, --help         show this help message and exit
   -r , --ref         Reference fasta.
   -c , --cultivar    fastq or bam of cultivar. If you specify
@@ -126,11 +126,6 @@ optional arguments:
   -Q , --min-BQ      Minimum base quality in mpileup. [18]
   -C , --adjust-MQ   "adjust-MQ" in mpileup. Default parameter
                      is suited for BWA. [50]
-  --species          Consider multiple test correction derived by
-                     Huang et al. (2019). Please spesify a species name.
-                     With this option. QTL-seq produces a theoretical threshold.
-                     Currently, Arabidopsis, Cucumber, Maize, Rapeseed,
-                     Rice, Tobacco, Tomato, Wheat, and Yeast are supported.
   -v, --version      show program's version number and exit
 ```
 
@@ -231,7 +226,7 @@ usage: mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]
 
 MutPlot version 2.3.5
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -v , --vcf            VCF file which contains cultivar and mutant bulk.
                         in this order. This VCF file must have AD field.
@@ -256,11 +251,6 @@ optional arguments:
   -e , --snpEff         Predict causal variant using SnpEff. Please
                         check available databases in SnpEff.
   --igv                 Output IGV format file to check results on IGV.
-  --species             Consider multiple test correction derived by
-                        Huang et al. (2019). Please spesify a species name.
-                        With this option. MutMap produces a theoretical threshold.
-                        Currently, Arabidopsis, Cucumber, Maize, Rapeseed,
-                        Rice, Tobacco, Tomato, Wheat, and Yeast are supported.
   --indel               Plot SNP-index with INDEL.
   --fig-width           Width allocated in chromosome figure. [7.5]
   --fig-height          Height allocated in chromosome figure. [4.0]
@@ -347,18 +337,9 @@ Inside of `OUT_DIR` is like below.
 <img src="https://github.com/YuSugihara/MutMap/blob/master/images/2_result.png" width=600>
 
 ## About multiple testing correction
-We implemented multiple testing correction in MutMap v2. 
-However, since multiple testing correction changes the threshold from the original MutMap threshold, we highly recommend users, who expect original MutMap algorism identifying a lot of causal mutations in many researches, to try MutMap v2 without multiple testing correction at first.
-You can use multiple testing correction with the option ```--species``` like below:
-```
-mutmap -r reference.fasta \
-       -c cultivar.1.fastq,cultivar.2.fastq \
-       -b bulk.1.fastq,bulk.2.fastq \
-       -n 20 \
-       -o example_dir \
-       --species Rice
-```
-Currently, only nine species (Arabidopsis, Cucumber, Maize, Rapeseed, Rice, Tobacco, Tomato, Wheat, and Yeast) are supported, following the parameters defined in Huang et al. (2019).
+Now this function is deprecated since v2.3.5.
+We highly recommend running MutMap without this function.
+However, if you would like to use this function, you can use it with versions of MutMap older than v2.3.5.
 
 ## Built and use your own database for snpEff
 If you want to use your own database for snpEff, you need additional steps.
