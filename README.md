@@ -142,8 +142,8 @@ MutMap can run from FASTQ (without or with trimming) and BAM. If you want to run
 ### Example 1 : run MutMap from FASTQ without trimming
 ```
 mutmap -r reference.fasta \
-       -c cultivar.1.fastq,cultivar.2.fastq \
-       -b bulk.1.fastq,bulk.2.fastq \
+       -c cultivar.1.fastq.gz,cultivar.2.fastq.gz \
+       -b bulk.1.fastq.gz,bulk.2.fastq.gz \
        -n 20 \
        -o example_dir
 ```
@@ -161,8 +161,8 @@ mutmap -r reference.fasta \
 ### Example 2 : run MutMap from FASTQ with trimming
 ```
 mutmap -r reference.fasta \
-       -c cultivar.1.fastq,cultivar.2.fastq \
-       -b bulk.1.fastq,bulk.2.fastq \
+       -c cultivar.1.fastq.gz,cultivar.2.fastq.gz \
+       -b bulk.1.fastq.gz,bulk.2.fastq.gz \
        -n 20 \
        -o example_dir \
        -T \
@@ -205,9 +205,9 @@ mutmap -r reference.fasta \
 ### Example 4 : run MutMap from multiple FASTQs and BAMs
 ```
 mutmap -r reference.fasta \
-       -c cultivar_1.1.fastq,cultivar_1.2.fastq \
+       -c cultivar_1.1.fastq.gz,cultivar_1.2.fastq.gz \
        -c cultivar_1.bam \
-       -b bulk_1.1.fastq,bulk_1.2.fastq \
+       -b bulk_1.1.fastq.gz,bulk_1.2.fastq.gz \
        -b bulk_2.bam \
        -b bulk_3.bam \
        -n 20 \
