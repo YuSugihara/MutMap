@@ -5,7 +5,7 @@
 - [What is MutMap?](#what-is-mutmap)
 - [Installation](#installation)
   + [Dependencies](#dependencies)
-  + [Installation using bioconda](#installation-using-bioconda)
+  + [Installation via bioconda](#installation-via-bioconda)
   + [Manual installation](#manual-installation)
 - [Usage](#usage)
   + [Example 1 : run MutMap from FASTQ without trimming](#example-1--run-mutmap-from-fastq-without-trimming)
@@ -56,12 +56,12 @@ git clone https://github.com/YuSugihara/MutMap.git
 cd MutMap
 pip install -e .
 ```
-You will then need to install other dependencies manually. We highly recommend installing SnpEff and Trimmomatic using bioconda.
+You will then need to install other dependencies manually. We highly recommend installing SnpEff and Trimmomatic via bioconda.
 ```
 conda install -c bioconda snpeff
 conda install -c bioconda trimmomatic
 ```
-After installation, please check whether SnpEff and Trimmomatic work by using the commands below.
+After installation, please check whether SnpEff and Trimmomatic are working by using the commands below.
 ```
 snpEff --help
 trimmomatic --help
@@ -69,7 +69,7 @@ trimmomatic --help
 
 ## Usage
 
-If your reference genome contains more than 50 contigs, only the significant contigs will be plotted.
+If your reference genome contains more than 50 contigs, only the significant ones will be plotted.
 
 ```
 mutmap -h
@@ -128,7 +128,7 @@ options:
   -v, --version      show program's version number and exit
 ```
 
-MutMap can run from FASTQ (without or with trimming) and BAM. If you want to run MutMap from VCF, please use MutPlot (example 5). Once you run MutMap, MutMap automatically completes the subprocesses.
+MutMap can be run from FASTQ (without or with trimming) and BAM. If you want to run MutMap from VCF, please use MutPlot (example 5). Once you run MutMap, MutMap automatically completes the subprocesses.
 
 + [Example 1 : run MutMap from FASTQ without trimming](#example-1--run-mutmap-from-fastq-without-trimming)
 + [Example 2 : run MutMap from FASTQ with trimming](#example-2--run-mutmap-from-fastq-with-trimming)
@@ -149,13 +149,13 @@ mutmap -r reference.fasta \
 
 `-r` : reference fasta
 
-`-c` : FASTQs of cultivar. Please input paired-end reads separated by commas. FASTQ files can be gzipped.
+`-c` : FASTQs of cultivar. Please input paired-end reads separated by a comma. FASTQ files can be gzipped.
 
-`-b` : FASTQs of bulk. Please input paired-end reads separated by commas. FASTQ files can be gzipped.
+`-b` : FASTQs of bulk. Please input paired-end reads separated by a comma. FASTQ files can be gzipped.
 
 `-n` : number of individuals in mutant bulk.
 
-`-o` : name of output directory. The specified directory name should not already exist.
+`-o` : name of output directory. The specified directory should not already exist.
 
 ### Example 2 : run MutMap from FASTQ with trimming
 ```
@@ -170,13 +170,13 @@ mutmap -r reference.fasta \
 
 `-r` : reference fasta
 
-`-c` : FASTQs of cultivar. Please input paired-end reads separated by commas. FASTQ files can be gzipped.
+`-c` : FASTQs of cultivar. Please input paired-end reads separated by a comma. FASTQ files can be gzipped.
 
-`-b` : FASTQs of mutant bulk. Please input paired-end reads separated by commas. FASTQ files can be gzipped.
+`-b` : FASTQs of mutant bulk. Please input paired-end reads separated by a comma. FASTQ files can be gzipped.
 
 `-n` : number of individuals in mutant bulk.
 
-`-o` : name of output directory. The specified directory name should not already exist.
+`-o` : name of output directory. The specified directory should not already exist.
 
 `-T` : trim your reads by trimmomatic.
 
@@ -199,7 +199,7 @@ mutmap -r reference.fasta \
 
 `-n` : number of individuals in mutant bulk.
 
-`-o` : name of output directory. The specified directory name should not already exist.
+`-o` : name of output directory. The specified directory should not already exist.
 
 ### Example 4 : run MutMap from multiple FASTQs and BAMs
 ```
@@ -213,7 +213,7 @@ mutmap -r reference.fasta \
        -o example_dir
 ```
 
-MutMap automatically merges multiple FASTQs and BAMs. Of course, you can merge FASTQs or BAMs using `cat` or `samtools merge` before input them to MutMap. If you specify `-c` multiple times, please make sure that those files include only one individual. On the other hand, `-b` can include more than one individual because they are bulked samples. MutMap automatically classifies FASTQs and BAMs based on whether comma exists or not.
+MutMap automatically merges multiple FASTQ and BAM files. Of course, you can merge FASTQ or BAM files using `cat` or `samtools merge` before inputting them into MutMap. If you specify `-c` multiple times, please make sure that those files include only one individual. On the other hand, `-b` can include more than one individual because they are bulked samples. MutMap automatically classifies FASTQ and BAM files based on whether comma exists or not.
 
 ### Example 5 : run MutPlot from VCF
 ```
@@ -338,7 +338,7 @@ Inside of `OUT_DIR` is like below.
 <img src="https://github.com/YuSugihara/MutMap/blob/master/images/2_result.png" width=600>
 
 ## About multiple testing correction
-Now this function is deprecated since v2.3.5.
+This function has been deprecated since v2.3.5.
 We highly recommend running MutMap without this function.
 However, if you would like to use this function, you can use it with versions of MutMap older than v2.3.5.
 
