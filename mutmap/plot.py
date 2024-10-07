@@ -1,4 +1,7 @@
+import os
 import sys
+import re
+import gzip
 import warnings
 warnings.filterwarnings("ignore")
 import pandas as pd
@@ -12,6 +15,7 @@ class Plot(object):
     def __init__(self, args):
         self.args = args
         self.out = args.out
+        self.vcf = args.vcf
         self.snpEff = args.snpEff
         self.line_colors = args.line_colors.split(',') #SNP-index, p95, and p99
         self.dot_color = args.dot_color
@@ -60,24 +64,28 @@ class Plot(object):
         snp_index['POSI'] = snp_index['POSI']/1000000
         sliding_window['CHROM'] = sliding_window['CHROM'].astype('str')
         sliding_window['POSI'] = sliding_window['POSI']/1000000
-        sliding_window = sliding_window.groupby('CHROM')
-
         return snp_index, sliding_window
 
-    def get_significant_contigs(self, N_chr, snp_index, sliding_window):
+    def read_contig_length(self):
+        root, ext = os.path.splitext(self.vcf)
+        if ext == '.gz':
+            vcf = gzip.open(self.vcf, 'rt')
+        else:
+            vcf = open(self.vcf, 'r')
+        contig_length = {}
+        for line in vcf:
+            if re.match(r'^##contig', line):
+                contig = line.split('=')[2].split(',')[0]
+                length = int(line.split('=')[3].replace('>', ''))
+                contig_length[contig] = length
+        return contig_length
 
-        print(('!!WARNING!! Your reference genome has too many contigs (>50). '
-               'Therefore, only significant contigs will be plotted.'), file=sys.stderr)
-        
-        significant_windows = sliding_window[abs(sliding_window['mean_p95']) <= \
-                                             abs(sliding_window['mean_SNPindex'])]
-
-        significant_contigs = list(significant_windows['CHROM'].drop_duplicates())
-
-        N_chr = len(significant_contigs)
-        snp_index = snp_index[snp_index['CHROM'].isin(significant_contigs)]
-        sliding_window = sliding_window[sliding_window['CHROM'].isin(significant_contigs)]
-
+    def get_50_contigs(self, N_chr, snp_index, sliding_window):
+        contig_length = self.read_contig_length()
+        contig_50_names = [k for k, v in sorted(contig_length.items(), key=lambda x:x[1], reverse=True)[:50]]
+        N_chr = len(contig_50_names)
+        snp_index = snp_index[snp_index['CHROM'].isin(contig_50_names)]
+        sliding_window = sliding_window[sliding_window['CHROM'].isin(contig_50_names)]
         return N_chr, snp_index, sliding_window
 
     def set_plot_style(self, N_chr):
@@ -98,9 +106,11 @@ class Plot(object):
         N_chr = len(sliding_window['CHROM'].unique())
 
         if N_chr > 50:
-            N_chr, self.snp_index, self.sliding_window = self.get_significant_contigs(N_chr, 
-                                                                                      snp_index, 
-                                                                                      sliding_window)
+            print(('!!WARNING!! Your reference genome has too many contigs (>50). '
+                   'Therefore, only the 50 longest contigs will be used for plotting.'), file=sys.stderr)
+            N_chr, snp_index, sliding_window = self.get_50_contigs(N_chr, 
+                                                                   snp_index, 
+                                                                   sliding_window)
 
         N_col, N_raw = self.set_plot_style(N_chr)
 
@@ -108,7 +118,7 @@ class Plot(object):
         plt.subplots_adjust(hspace=self.white_space)
 
         xmax = snp_index['POSI'].max()
-
+        sliding_window = sliding_window.groupby('CHROM')
         for i, (chr_name, chr_sliding_window) in enumerate(sliding_window):
             chr_snp_index = snp_index[snp_index['CHROM']==chr_name]
             if not self.plot_with_indel:
