@@ -156,7 +156,7 @@ class Plot(object):
                            marker='x',
                            color='firebrick')
 
-            ax.hlines([0.5], 0, xmax, linestyles='dashed')
+            ax.hlines([0.5], 0, xmax, linestyles='dashed', colors='black')
             ax.set_xlabel('position (Mb)', fontsize=15)
             ax.set_ylabel('SNP-index', fontsize=15)
             ax.set_xlim(0, xmax)
