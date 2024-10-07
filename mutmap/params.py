@@ -165,9 +165,28 @@ class Params(object):
                             '--snpEff',
                             action='store',
                             type=str,
-                            help=('Predict causal variant using SnpEff. Please\n'
+                            help=('Predict causal variants using SnpEff. Please\n'
                                   'check available databases in SnpEff.'),
                             metavar='')
+
+        parser.add_argument('--line-colors',
+                            action='store',
+                            default='red,lime,orange',
+                            type=str,
+                            help=('Colors for threshold lines in plots.\n'
+                                  'Please specify as comma separated list\n'
+                                  'in the order of SNP-index, p95, and p99.\n'
+                                  '[red,lime,orange]'),
+                            metavar='')
+
+        parser.add_argument('--dot-color',
+                            action='store',
+                            default='navy',
+                            type=str,
+                            help=('Color for dot in plot.\n'
+                                  '[navy]'),
+                            metavar='')
+
 
         parser.add_argument('--mem',
                             action='store',
@@ -312,7 +331,7 @@ class Params(object):
                             '--snpEff',
                             action='store',
                             type=str,
-                            help=('Predict causal variant using SnpEff. Please\n'
+                            help=('Predict causal variants using SnpEff. Please\n'
                                   'check available databases in SnpEff.'),
                             metavar='')
 
@@ -325,6 +344,24 @@ class Params(object):
                             action='store_true',
                             default=False,
                             help='Plot SNP-index with INDEL.')
+
+        parser.add_argument('--line-colors',
+                            action='store',
+                            default='red,lime,orange',
+                            type=str,
+                            help=('Colors for threshold lines in plots.\n'
+                                  'Please specify as comma separated list\n'
+                                  'in the order of SNP-index, p95, and p99.\n'
+                                  '[red,lime,orange]'),
+                            metavar='')
+
+        parser.add_argument('--dot-color',
+                            action='store',
+                            default='navy',
+                            type=str,
+                            help=('Color for dot in plot.\n'
+                                  '[navy]'),
+                            metavar='')
 
         parser.add_argument('--fig-width',
                             action='store',
@@ -366,9 +403,6 @@ class Params(object):
 
     def check_max_threads(self, args):
         max_cpu = multi.cpu_count()
-        print(time_stamp(),
-              'maximum number of threads which you can use is up to {}.'.format(max_cpu),
-              flush=True)
         if max_cpu <= args.threads:
             sys.stderr.write(('!!WARNING!! You can use up to {0} threads. '
                               'This program will use {0} threads.\n').format(max_cpu))
