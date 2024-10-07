@@ -121,12 +121,12 @@ class MutMap(object):
                         -D {5} \
                         -d {6} \
                         -o {0}/40_mutmap'.format(self.out,
-                                                self.args.N_bulk,
-                                                self.args.window,
-                                                self.args.step,
-                                                self.args.N_rep,
-                                                self.args.max_depth,
-                                                self.args.min_depth)
+                                                 self.args.N_bulk,
+                                                 self.args.window,
+                                                 self.args.step,
+                                                 self.args.N_rep,
+                                                 self.args.max_depth,
+                                                 self.args.min_depth)
         
         if self.args.snpEff is not None:
             cmd = cmd + ' -e {}'.format(self.args.snpEff)

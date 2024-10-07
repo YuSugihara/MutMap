@@ -64,9 +64,9 @@ class SnpFilt(object):
         record['cultivar_depth'] = sum([int(AD) for AD in cultivar_AD.split(',')])
         record['bulk_depth'] = record['bulk_ref_AD'] + record['bulk_alt_AD']
 
-        if record['cultivar_depth'] < self.minDP or record['cultivar_depth'] > self.maxDP:
+        if record['cultivar_depth'] < self.minDP or self.maxDP < record['cultivar_depth']:
             record['type'] = 'discard'
-        elif record['bulk_depth'] < self.minDP or record['bulk_depth'] > self.maxDP:
+        elif record['bulk_depth'] < self.minDP or self.maxDP < record['bulk_depth']:
             record['type'] = 'discard'
         return record
 
