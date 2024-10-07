@@ -213,7 +213,7 @@ mutmap -r reference.fasta \
        -o example_dir
 ```
 
-MutMap automatically merges multiple FASTQs and BAMs. Of course, you can merge FASTQs or BAMs using `cat` or `samtools merge` before input them to MutMap. If you specify `-c` multiple times, please make sure that those files include only one individual. On the other hand, `-b` can include more than one individual because they are bulked samples. MutMap automatically classifies FASTQs and BAMs from whether comma exists or not.
+MutMap automatically merges multiple FASTQs and BAMs. Of course, you can merge FASTQs or BAMs using `cat` or `samtools merge` before input them to MutMap. If you specify `-c` multiple times, please make sure that those files include only one individual. On the other hand, `-b` can include more than one individual because they are bulked samples. MutMap automatically classifies FASTQs and BAMs based on whether comma exists or not.
 
 ### Example 5 : run MutPlot from VCF
 ```
