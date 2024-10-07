@@ -342,7 +342,7 @@ This function has been deprecated since v2.3.5.
 We highly recommend running MutMap without this function.
 However, if you would like to use this function, you can use it with versions of MutMap older than v2.3.5.
 
-## Built and use your own database for snpEff
+## Build and use your own database for snpEff
 If you want to use your own database for snpEff, you need additional steps.
 Here we assume that you installed MutMap via anaconda distribution, creating new environment with `conda create`.
 
