@@ -114,19 +114,23 @@ class MutMap(object):
 
     def mutplot(self):
         cmd = 'mutplot -v {0}/30_vcf/mutmap.vcf.gz \
-                        -n {1} \
-                        -w {2} \
-                        -s {3} \
-                        -N {4} \
-                        -D {5} \
-                        -d {6} \
-                        -o {0}/40_mutmap'.format(self.out,
-                                                 self.args.N_bulk,
-                                                 self.args.window,
-                                                 self.args.step,
-                                                 self.args.N_rep,
-                                                 self.args.max_depth,
-                                                 self.args.min_depth)
+                       -n {1} \
+                       -w {2} \
+                       -s {3} \
+                       -N {4} \
+                       -D {5} \
+                       -d {6} \
+                       --dot-color {7} \
+                       --line-colors {8} \
+                       -o {0}/40_mutmap'.format(self.out,
+                                                self.args.N_bulk,
+                                                self.args.window,
+                                                self.args.step,
+                                                self.args.N_rep,
+                                                self.args.max_depth,
+                                                self.args.min_depth,
+                                                self.args.dot_color,
+                                                self.args.line_colors)
         
         if self.args.snpEff is not None:
             cmd = cmd + ' -e {}'.format(self.args.snpEff)
