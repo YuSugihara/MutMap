@@ -47,7 +47,7 @@ class Params(object):
                             help=('fastq or bam of cultivar. If you specify\n'
                                   'fastq, please separate pairs by comma,\n'
                                   'e.g. -c fastq1,fastq2. You can use this\n'
-                                  'optiion multiple times'),
+                                  'option multiple times'),
                             metavar='')
 
         parser.add_argument('-b',
@@ -58,7 +58,7 @@ class Params(object):
                             help=('fastq or bam of mutnat bulk. If you specify\n'
                                   'fastq, please separate pairs by comma,\n'
                                   'e.g. -b fastq1,fastq2. You can use this\n'
-                                  'optiion multiple times'),
+                                  'option multiple times'),
                             metavar='')
 
         parser.add_argument('-n',
@@ -74,8 +74,8 @@ class Params(object):
                             action='store',
                             required=True,
                             type=str,
-                            help=('Output directory. Specified name must not\n'
-                                  'exist.'),
+                            help=('Output directory. The specified directory must not\n'
+                                  'already exist.'), 
                             metavar='')
 
         parser.add_argument('-t',
@@ -84,8 +84,8 @@ class Params(object):
                             default=2,
                             type=int,
                             help=('Number of threads. If you specify the number\n'
-                                  'below one, then MutMap will use the threads\n'
-                                  'as many as possible. [2]'),
+                                  'below one, then MutMap will use as many\n'
+                                  'threads as possible. [2]'),
                             metavar='')
 
         parser.add_argument('-w',
@@ -109,7 +109,7 @@ class Params(object):
                             action='store',
                             default=250,
                             type=int,
-                            help=('Maximum depth of variants which will be used.\n'
+                            help=('Maximum depth of variants to be used.\n'
                                   'This cutoff will be applied in both of cultivar\n'
                                   'and bulk. [250]'),
                             metavar='')
@@ -119,7 +119,7 @@ class Params(object):
                             action='store',
                             default=8,
                             type=int,
-                            help=('Minimum depth of variants which will be used.\n'
+                            help=('Minimum depth of variants to be used.\n'
                                   'This cutoff will be applied in both of cultivar\n'
                                   'and bulk. [8]'),
                             metavar='')
@@ -154,7 +154,7 @@ class Params(object):
                                   'must be separated by comma with following\n'
                                   'order: phred, ILLUMINACLIP, LEADING, TRAILING,\n'
                                   'SLIDINGWINDOW, MINLEN. If you want to remove\n'
-                                  'adapters of illumina, please specify FASTA of\n'
+                                  'Illumina adapters, please specify FASTA of\n'
                                   'the adapter sequences with "--adapter". Specified\n'
                                   'name will be inserted into <ADAPTER_FASTA>. If you\n'
                                   "don't specify it, adapter trimming will be skipped.\n"
@@ -251,7 +251,8 @@ class Params(object):
                             action='store',
                             required=True,
                             type=str,
-                            help='Output directory. Specified name can exist.',
+                            help=('Output directory. The specified directory can already\n'
+                                  'exist.'),
                             metavar='')
 
         parser.add_argument('-n',
@@ -283,7 +284,7 @@ class Params(object):
                             action='store',
                             default=250,
                             type=int,
-                            help=('Maximum depth of variants which will be used.\n'
+                            help=('Maximum depth of variants to be used.\n'
                                   'This cutoff will be applied in both of cultivar\n'
                                   'and bulk. [250]'),
                             metavar='')
@@ -293,7 +294,7 @@ class Params(object):
                             action='store',
                             default=8,
                             type=int,
-                            help=('Minimum depth of variants which will be used.\n'
+                            help=('Minimum depth of variants to be used.\n'
                                   'This cutoff will be applied in both of cultivar\n'
                                   'and bulk. [8]'),
                             metavar='')
@@ -320,11 +321,11 @@ class Params(object):
                             action='store',
                             default=7,
                             type=int,
-                            help=('Filter spurious homo genotypes in cultivar using\n'
-                                  'strand bias. If ADF (or ADR) is higher than this\n'
-                                  'cutoff when ADR (or ADF) is 0, that SNP will be\n'
-                                  'filtered out. If you want to supress this filtering,\n'
-                                  'please set this cutoff to 0. [7]\n'),
+                            help=('Filter out spurious homozygous genotypes in the cultivar\n'
+                                  'based on strand bias. If ADF (or ADR) is higher than\n'
+                                  'this cutoff when ADR (or ADF) is 0, that SNP will be\n'
+                                  'filtered out. If you want to disable this filtering,\n'
+                                  'set this cutoff to 0. [7]\n'),
                             metavar='')
 
         parser.add_argument('-e',
@@ -382,7 +383,7 @@ class Params(object):
                             default=0.6,
                             type=float,
                             help=('White space between figures. (This option\n'
-                                  'only affect vertical direction.) [0.6]'),
+                                  'only affects vertical direction.) [0.6]'),
                             metavar='')
 
         parser.add_argument('-f',
@@ -390,7 +391,7 @@ class Params(object):
                             action='store',
                             default='png',
                             type=str,
-                            help=('Specifiy the format of an output image.\n'
+                            help=('Specify the format of an output image.\n'
                                   'eps/jpeg/jpg/pdf/pgf/png/rgba/svg/svgz/tif/tiff'),
                             metavar='')
 
