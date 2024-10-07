@@ -15,7 +15,7 @@
   + [Example 5 : run MutPlot from VCF](#example-5--run-mutplot-from-vcf)
 - [Outputs](#outputs)
 - [About multiple testing correction](#about-multiple-testing-correction)
-- [Build and use your own database for snpEff](#built-and-use-your-own-database-for-snpeff)
+- [Build and use your own database for snpEff](#build-and-use-your-own-database-for-snpeff)
 
 ## What is MutMap?
 <img src="https://github.com/YuSugihara/MutMap/blob/master/images/1_logo.png" width=200>
