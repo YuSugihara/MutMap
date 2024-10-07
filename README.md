@@ -15,12 +15,12 @@
   + [Example 5 : run MutPlot from VCF](#example-5--run-mutplot-from-vcf)
 - [Outputs](#outputs)
 - [About multiple testing correction](#about-multiple-testing-correction)
-- [Built and use your own database for snpEff](#built-and-use-your-own-database-for-snpeff)
+- [Build and use your own database for snpEff](#built-and-use-your-own-database-for-snpeff)
 
 ## What is MutMap?
 <img src="https://github.com/YuSugihara/MutMap/blob/master/images/1_logo.png" width=200>
 
-Bulked segregant analysis, as implemented in MutMap ([Abe et al., 2012](https://www.nature.com/articles/nbt.2095)), is a powerful and efficient method to identify agronomically important loci in crop plants. MutMap requires whole-genome resequencing of a single individual from the original cultivar and the pooled sequences of F2 progeny from a cross between the original cultivar and mutant. MutMap uses the sequence of the original cultivar to polarize the site frequencies of neighbouring markers and identifies loci with an unexpected site frequency, simulating the genotype of F2 progeny. **The updated pipeline is approximately 5-8 times faster than the previous pipeline, are easier for novice users to use and can be easily installed through bioconda with all dependencies.**
+Bulked segregant analysis, as implemented in MutMap ([Abe et al., 2012](https://www.nature.com/articles/nbt.2095)), is a powerful and efficient method to identify agronomically important loci in crop plants. MutMap requires whole-genome resequencing of a single individual from the original cultivar and the pooled sequences of F2 progeny from a cross between the original cultivar and mutant. MutMap uses the sequence of the original cultivar to polarize the site frequencies of neighbouring markers and identifies loci with an unexpected site frequency, simulating the genotype of F2 progeny. **The updated pipeline is approximately 5-8 times faster than the previous pipeline, is easier for novice users to use, and can be easily installed through bioconda with all dependencies.**
 
 #### Citation
 - Yu Sugihara, Lester Young, Hiroki Yaegashi, Satoshi Natsume, Daniel J. Shea, Hiroki Takagi, Helen Booker, Hideki Innan, Ryohei Terauchi, Akira Abe (2022). [High performance pipeline for MutMap and QTL-seq](https://doi.org/10.7717/peerj.13170). PeerJ, 10:e13170.
@@ -29,7 +29,7 @@ Bulked segregant analysis, as implemented in MutMap ([Abe et al., 2012](https://
 
 ## Installation
 ### Dependencies
-#### Softwares
+#### Software
 - [BWA](http://bio-bwa.sourceforge.net/)
 - [SAMtools](http://samtools.sourceforge.net/)
 - [BCFtools](http://samtools.github.io/bcftools/)
@@ -42,26 +42,26 @@ Bulked segregant analysis, as implemented in MutMap ([Abe et al., 2012](https://
 - pandas
 - seaborn (optional)
 
-### Installation using bioconda
-You can install MutMap using [bioconda](https://bioconda.github.io/index.html).
+### Installation via bioconda
+You can install MutMap via [bioconda](https://bioconda.github.io/index.html).
 ```
 conda create -c bioconda -n mutmap mutmap
 conda activate mutmap
 ```
 
 ### Manual installation
-If you got a error during installation, you can install MutMap, manually.
+If you encounter an error during installation, you can install MutMap manually.
 ```
 git clone https://github.com/YuSugihara/MutMap.git
 cd MutMap
 pip install -e .
 ```
-Then you have to install other dependencies by yourself. We highly recommend you to install SnpEff and Trimmomatic using bioconda.
+You will then need to install other dependencies manually. We highly recommend installing SnpEff and Trimmomatic using bioconda.
 ```
 conda install -c bioconda snpeff
 conda install -c bioconda trimmomatic
 ```
-After installation, please check whether SnpEff and Trimmomatic work through the commands below.
+After installation, please check whether SnpEff and Trimmomatic work by using the commands below.
 ```
 snpEff --help
 trimmomatic --help
@@ -69,7 +69,7 @@ trimmomatic --help
 
 ## Usage
 
-If your reference genome has more than 50 contigs (or chromosomes), only significant contigs will be plotted.
+If your reference genome contains more than 50 contigs, only the significant contigs will be plotted.
 
 ```
 mutmap -h
@@ -128,7 +128,7 @@ options:
   -v, --version      show program's version number and exit
 ```
 
-MutMap can run from FASTQ (without or with trimming) and BAM. If you want to run MutMap from VCF, please use MutPlot (example 5). Once you run MutMap, MutMap automatically complete the subprocesses.
+MutMap can run from FASTQ (without or with trimming) and BAM. If you want to run MutMap from VCF, please use MutPlot (example 5). Once you run MutMap, MutMap automatically completes the subprocesses.
 
 + [Example 1 : run MutMap from FASTQ without trimming](#example-1--run-mutmap-from-fastq-without-trimming)
 + [Example 2 : run MutMap from FASTQ with trimming](#example-2--run-mutmap-from-fastq-with-trimming)
@@ -149,13 +149,13 @@ mutmap -r reference.fasta \
 
 `-r` : reference fasta
 
-`-c` : FASTQs of cultivar. Please input pair-end reads separated by comma. FASTQs can be gzipped.
+`-c` : FASTQs of cultivar. Please input paired-end reads separated by commas. FASTQ files can be gzipped.
 
-`-b` : FASTQs of bulk. Please input pair-end reads separated by comma. FASTQs can be gzipped.
+`-b` : FASTQs of bulk. Please input paired-end reads separated by commas. FASTQ files can be gzipped.
 
 `-n` : number of individuals in mutant bulk.
 
-`-o` : name of output directory. Specified name should not exist.
+`-o` : name of output directory. The specified directory name should not already exist.
 
 ### Example 2 : run MutMap from FASTQ with trimming
 ```
@@ -170,13 +170,13 @@ mutmap -r reference.fasta \
 
 `-r` : reference fasta
 
-`-c` : FASTQs of cultivar. Please input pair-end reads separated by comma. FASTQs can be gzipped.
+`-c` : FASTQs of cultivar. Please input paired-end reads separated by commas. FASTQ files can be gzipped.
 
-`-b` : FASTQs of bulk. Please input pair-end reads separated by comma. FASTQs can be gzipped.
+`-b` : FASTQs of mutant bulk. Please input paired-end reads separated by commas. FASTQ files can be gzipped.
 
 `-n` : number of individuals in mutant bulk.
 
-`-o` : name of output directory. Specified name should not exist.
+`-o` : name of output directory. The specified directory name should not already exist.
 
 `-T` : trim your reads by trimmomatic.
 
@@ -195,11 +195,11 @@ mutmap -r reference.fasta \
 
 `-c` : BAM of cultivar.
 
-`-b` : BAM of bulk.
+`-b` : BAM of mutant bulk.
 
 `-n` : number of individuals in mutant bulk.
 
-`-o` : name of output directory. Specified name should not exist.
+`-o` : name of output directory. The specified directory name should not already exist.
 
 ### Example 4 : run MutMap from multiple FASTQs and BAMs
 ```
@@ -213,7 +213,7 @@ mutmap -r reference.fasta \
        -o example_dir
 ```
 
-MutMap can automatically merge multiple FASTQs and BAMs. Of course, you can merge FASTQs or BAMs using `cat` or `samtools merge` before input them to MutMap. If you specify `-c` multiple times, please make sure that those files include only 1 individual. On the other hand, `-b` can include more than 1 individuals because those are bulked samples. MutMap can automatically classify FASTQs and BAMs from whether comma exits or not.
+MutMap automatically merges multiple FASTQs and BAMs. Of course, you can merge FASTQs or BAMs using `cat` or `samtools merge` before input them to MutMap. If you specify `-c` multiple times, please make sure that those files include only one individual. On the other hand, `-b` can include more than one individual because they are bulked samples. MutMap automatically classifies FASTQs and BAMs from whether comma exists or not.
 
 ### Example 5 : run MutPlot from VCF
 ```
@@ -261,7 +261,7 @@ options:
                         eps/jpeg/jpg/pdf/pgf/png/rgba/svg/svgz/tif/tiff
   --version             show program's version number and exit
 ```
-MutPlot is included in MutMap. MutMap run MutPlot after making VCF. Then, MutPlot will work with default parameters. If you want to change some parameters, you can use VCF inside of `(OUT_DIR/30_vcf/mutmap.vcf.gz)` to retry plotting process like below.
+MutPlot is included in MutMap. MutMap runs MutPlot after making the VCF. Then, MutPlot will work with default parameters. If you want to change some parameters, you can use VCF inside of `(OUT_DIR/30_vcf/mutmap.vcf.gz)` to retry plotting process like below.
 
 ```
 mutplot -v OUT_DIR/30_vcf/mutmap.vcf.gz \
@@ -271,12 +271,12 @@ mutplot -v OUT_DIR/30_vcf/mutmap.vcf.gz \
         -s 100
 ```
 
-#### Use MutPlot for VCF which was made by yourself
-In this case, please make sure that:
-1. Your VCF include AD format.
-2. Your VCF include two columns of cultivar and mutant bulk in this order.
+#### Use MutPlot for a VCF which was made by yourself
+In this case:
+1. Ensure that your VCF includes the AD format.
+2. Ensure that your VCF includes two columns of cultivar and mutant bulk in this order.
 
-If you got a error, please try to run MutMap from FASTQ or BAM before asking in issues.
+If you encounter an error, please try running MutMap from FASTQ or BAM before reporting it in the issues.
 
 ## Outputs
 Inside of `OUT_DIR` is like below.
