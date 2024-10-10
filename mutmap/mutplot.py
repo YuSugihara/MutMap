@@ -33,7 +33,7 @@ class MutPlot(object):
 
     def run_snpEff(self):
         cmd = 'snpEff ann -Xmx8g \
-                           -s {0}/snpEff_summary.html \
+                          -s {0}/snpEff_summary.html \
                           {1} \
                           {2} \
                           1> {0}/mutmap.snpEff.vcf \

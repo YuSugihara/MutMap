@@ -166,18 +166,18 @@ class Params(object):
 
         parser.add_argument('--line-colors',
                             action='store',
-                            default='red,lime,orange',
+                            default='"#FE5F55,#6FD08C,#E3B505"',
                             type=str,
                             help=('Colors for threshold lines in plots. Specify a\n'
                                   'comma-separated list in the order of SNP-index,\n'
-                                  'p95, and p99. [red,lime,orange]'),
+                                  'p95, and p99. ["#FE5F55,#6FD08C,#E3B505"]'),
                             metavar='')
 
         parser.add_argument('--dot-color',
                             action='store',
-                            default='navy',
+                            default='"#40476D"',
                             type=str,
-                            help=('Color of the dots in plots. [navy]'),
+                            help=('Color of the dots in plots. ["#40476D"]'),
                             metavar='')
 
 
@@ -339,19 +339,18 @@ class Params(object):
 
         parser.add_argument('--line-colors',
                             action='store',
-                            default='red,lime,orange',
+                            default='"#FE5F55,#6FD08C,#E3B505"',
                             type=str,
                             help=('Colors for threshold lines in plots. Specify a\n'
                                   'comma-separated list in the order of SNP-index,\n'
-                                  'p95, and p99. [red,lime,orange]'),
+                                  'p95, and p99. ["#FE5F55,#6FD08C,#E3B505"]'),
                             metavar='')
 
         parser.add_argument('--dot-color',
                             action='store',
-                            default='navy',
+                            default='"#40476D"',
                             type=str,
-                            help=('Color for dot in plot.\n'
-                                  '[navy]'),
+                            help=('Color of the dots in plots. ["#40476D"]'),
                             metavar='')
 
         parser.add_argument('--fig-width',

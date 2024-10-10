@@ -1,5 +1,5 @@
 # MutMap User Guide
-#### version 2.3.6
+#### version 2.3.7
 
 ## Table of contents
 - [What is MutMap?](#what-is-mutmap)
@@ -77,7 +77,7 @@ mutmap -h
 usage: mutmap -r <FASTA> -c <BAM|FASTQ> -b <BAM|FASTQ>
               -n <INT> -o <OUT_DIR> [-T] [-e <DATABASE>]
 
-MutMap version 2.3.6
+MutMap version 2.3.7
 
 options:
   -h, --help         show this help message and exit
@@ -117,8 +117,8 @@ options:
                      available databases in SnpEff.
   --line-colors      Colors for threshold lines in plots. Specify a
                      comma-separated list in the order of SNP-index,
-                     p95, and p99. [red,lime,orange]
-  --dot-color        Color of the dots in plots. [navy]
+                     p95, and p99. ["#FE5F55,#6FD08C,#E3B505"]
+  --dot-color        Color of the dots in plots. ["#11001C"]
   --mem              Maximum memory per thread when sorting BAM files;
                      suffixes K/M/G are recognized. [1G]
   -q , --min-MQ      Minimum mapping quality for mpileup. [40]
@@ -223,7 +223,7 @@ usage: mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]
                [-D <INT>] [-d <INT>] [-N <INT>] [-m <FLOAT>]
                [-S <INT>] [-e <DATABASE>] [--igv] [--indel]
 
-MutPlot version 2.3.6
+MutPlot version 2.3.7
 
 options:
   -h, --help            show this help message and exit
@@ -252,9 +252,8 @@ options:
   --indel               Plot SNP-index with INDEL.
   --line-colors         Colors for threshold lines in plots. Specify a
                         comma-separated list in the order of SNP-index,
-                        p95, and p99. [red,lime,orange]
-  --dot-color           Color for dot in plot.
-                        [navy]
+                        p95, and p99. ["#FE5F55,#6FD08C,#E3B505"]
+  --dot-color           Color of the dots in plots. ["#11001C"]
   --fig-width           Width allocated in chromosome figure. [7.5]
   --fig-height          Height allocated in chromosome figure. [4.0]
   --white-space         White space between figures. (This option
