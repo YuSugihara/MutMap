@@ -8,6 +8,7 @@ import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+plt.rcParams["font.size"] = 13
 
 
 class Plot(object):
@@ -158,17 +159,17 @@ class Plot(object):
 
                 ax.scatter(chr_snp_index[chr_snp_index['impact']=='MODERATE']['POSI'],
                            chr_snp_index[chr_snp_index['impact']=='MODERATE']['SNPindex'],
-                           marker='.',
-                           color=self.dot_color)
+                           marker='x',
+                           color='#258EA6')
 
                 ax.scatter(chr_snp_index[chr_snp_index['impact']=='HIGH']['POSI'],
                            chr_snp_index[chr_snp_index['impact']=='HIGH']['SNPindex'],
                            marker='x',
-                           color='firebrick')
+                           color='#772D8B')
 
             ax.hlines([0.5], 0, xmax, linestyles='dashed', colors='black')
-            ax.set_xlabel('position (Mb)', fontsize=15)
-            ax.set_ylabel('SNP-index', fontsize=15)
+            ax.set_xlabel('Position (Mbp)')
+            ax.set_ylabel('SNP-index')
             ax.set_xlim(0, xmax)
             ax.set_ylim(0, 1.05)
             ax.set_title(chr_name, fontsize=17)

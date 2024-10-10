@@ -339,7 +339,7 @@ class Params(object):
 
         parser.add_argument('--line-colors',
                             action='store',
-                            default='"#FE5F55,#6FD08C,#E3B505"',
+                            default='#FE5F55,#6FD08C,#E3B505',
                             type=str,
                             help=('Colors for threshold lines in plots. Specify a\n'
                                   'comma-separated list in the order of SNP-index,\n'
@@ -348,7 +348,7 @@ class Params(object):
 
         parser.add_argument('--dot-color',
                             action='store',
-                            default='"#40476D"',
+                            default='#40476D',
                             type=str,
                             help=('Color of the dots in plots. ["#40476D"]'),
                             metavar='')
