@@ -159,8 +159,8 @@ class Plot(object):
 
                 ax.scatter(chr_snp_index[chr_snp_index['impact']=='MODERATE']['POSI'],
                            chr_snp_index[chr_snp_index['impact']=='MODERATE']['SNPindex'],
-                           marker='x',
-                           color='#258EA6')
+                           marker='+',
+                           color=self.dot_color)
 
                 ax.scatter(chr_snp_index[chr_snp_index['impact']=='HIGH']['POSI'],
                            chr_snp_index[chr_snp_index['impact']=='HIGH']['SNPindex'],
