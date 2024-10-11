@@ -198,12 +198,12 @@ This creates a CSI index that supports larger reference genomes.
 
 ## Step 6: Variant Calling with mpileup
 
-**Description**:\
+**Description**:  
 Once the BAM files are indexed, the next step is to call variants using **bcftools mpileup** and **bcftools call**. The `AD`, `ADF`, and `ADR` fields are critical for MutMap, as they provide allele depth information that is essential for the analysis. This command identifies SNPs and other variants in the sequencing data.
 
 For more information on **BCFtools**, refer to the manual [here](https://www.htslib.org/doc/bcftools.html).
 
-**Usage**:
+### Usage:
 
 ```bash
 bcftools mpileup -a AD,ADF,ADR -B -q 40 -Q 18 -C 50 -O u -f output_directory/10_ref/mutmap_ref.fasta \
@@ -212,7 +212,7 @@ bcftools call -vm -f GQ,GP -O u | \
 bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.vcf.gz
 ```
 
-**Explanation**:
+### Explanation:
 
 - `mpileup`: Generates per-base information for each position in the reference genome.
 - `-a AD,ADF,ADR`: Includes allele depth information in the output. These fields are crucial for MutMap analysis.
@@ -221,16 +221,25 @@ bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.vcf.gz
 - `-Q 18`: Filters bases with base quality less than 18.
 - `-C 50`: Adjusts the mapping quality to account for the use of BWA during alignment.
 
-**Note**: When generating the VCF file, the order in which the **cultivar** and **bulk** BAM files are passed into the `bcftools mpileup` command is important. The **cultivar** should come first, followed by the **bulk**. This order is critical for downstream analysis, especially when using **MutPlot**, as the software expects the **cultivar** data to be the first sample in the VCF file.
+### Important Note:
+When generating the VCF file, the order in which the **cultivar** and **bulk** BAM files are passed into the `bcftools mpileup` command is important. The **cultivar** should come first, followed by the **bulk**. This order is critical for downstream analysis, especially when using **MutPlot**, as the software expects the **cultivar** data to be the first sample in the VCF file.
 
-**Chromosome-specific processing**:\
-The `-r` option in `bcftools mpileup` allows for chromosome-specific processing, which can be used to parallelize the VCF generation for each chromosome individually.
+### Chromosome-specific processing:  
+The `-r` option in `bcftools mpileup` allows for chromosome-specific processing, which can be used to parallelize the VCF generation for each chromosome individually. This can help speed up the variant calling process for large genomes.
 
-**Concatenating VCF Files**:
+#### Usage for Chromosome-specific processing:
 
+```bash
+bcftools mpileup -r test_chr -a AD,ADF,ADR -B -q 40 -Q 18 -C 50 -O u -f output_directory/10_ref/mutmap_ref.fasta \
+output_directory/20_bam/cultivar.bam output_directory/20_bam/bulk.bam | \
+bcftools call -vm -f GQ,GP -O u | \
+bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.chr1.vcf.gz
+```
+
+### Concatenating VCF Files:  
 If the VCF files are generated separately for each chromosome, you can use `bcftools concat` to concatenate them into a single VCF file for easier analysis.
 
-**Usage**:
+#### Usage for Concatenating VCF Files:
 
 ```bash
 bcftools concat -O z -o output_directory/30_vcf/mutmap_combined.vcf.gz output_directory/30_vcf/mutmap.chr*.vcf.gz
@@ -238,7 +247,7 @@ bcftools concat -O z -o output_directory/30_vcf/mutmap_combined.vcf.gz output_di
 
 This command will concatenate all chromosome-specific VCF files (`mutmap.chr*.vcf.gz`) into a single compressed VCF file (`mutmap_combined.vcf.gz`).
 
-**Index the VCF file with Tabix**:
+### Index the VCF file with Tabix:
 
 For more information on **Tabix**, refer to the manual [here](https://www.htslib.org/doc/tabix.html).
 
@@ -251,8 +260,10 @@ tabix -f -p vcf output_directory/30_vcf/mutmap.vcf.gz
 For large genomes like wheat, using the default `tabix` indexing may not be sufficient. In such cases, use the `-C` option to create a CSI index that supports large reference genomes:
 
 ```bash
-tabix -f -C -p vcf output_directory/30_vcf/mutmap.vcf.gz
+tabix -C -f -p vcf output_directory/30_vcf/mutmap.vcf.gz
 ```
+
+This ensures compatibility with large genomes and allows for efficient access to the data.
 
 ---
 
