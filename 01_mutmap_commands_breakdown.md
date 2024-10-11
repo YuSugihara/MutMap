@@ -156,9 +156,7 @@ Sorting and indexing are performed on both the **cultivar** and **mutant bulk** 
 **Usage**:
 
 ```bash
-samtools sort -m 1G -@ 4 -o output_directory/20_bam/cultivar.bam output
-
-_directory/20_bam/cultivar.unsorted.bam
+samtools sort -m 1G -@ 4 -o output_directory/20_bam/cultivar.bam output_directory/20_bam/cultivar.unsorted.bam
 samtools index output_directory/20_bam/cultivar.bam
 
 samtools sort -m 1G -@ 4 -o output_directory/20_bam/mutant_bulk.bam output_directory/20_bam/mutant_bulk.unsorted.bam
