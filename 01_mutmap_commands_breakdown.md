@@ -249,7 +249,7 @@ tabix -f -p vcf output_directory/30_vcf/mutmap.vcf.gz
 For large genomes like wheat, using the default `tabix` indexing may not be sufficient. In such cases, use the `-C` option to create a CSI index that supports large reference genomes:
 
 ```bash
-tabix -C -p vcf output_directory/30_vcf/mutmap.vcf.gz
+tabix -f -C -p vcf output_directory/30_vcf/mutmap.vcf.gz
 ```
 
 ---
