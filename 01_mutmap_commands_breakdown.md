@@ -1,6 +1,6 @@
 # MutMap Commands Breakdown
 
-This document provides a detailed breakdown of the commands used in the MutMap pipeline. Each step is explained with its purpose, usage, and default parameters. The goal is to help users better understand the internal workings of MutMap and ensure efficient execution.
+This document provides a comprehensive overview of the commands used in the MutMap pipeline. By understanding each step's purpose, usage, and the default parameters employed in MutMap, users may be able to run the bash commands independently to troubleshoot and resolve issues more effectively. The goal is to help users better understand the internal workings of MutMap and ensure efficient execution.
 
 ## Table of Contents
 
@@ -35,10 +35,10 @@ mkdir -p output_directory/30_vcf
 
 ## Step 2: Quality Control and Trimming
 
-**Description**:  
+**Description**:\
 Trimming is the process of removing low-quality sequences and adapters from raw sequencing data. This step is essential to ensure that the data used for alignment is clean and of high quality. In MutMap, trimming is performed using **Trimmomatic** on both the **cultivar** and **mutant bulk** in the same manner.
 
-**Usage**:  
+**Usage**:
 
 ```bash
 trimmomatic PE -threads 4 \
@@ -54,7 +54,7 @@ trimmomatic PE -threads 4 \
                MINLEN:75
 ```
 
-**Explanation**:  
+**Explanation**:
 
 - `PE`: Specifies paired-end mode.
 - `ILLUMINACLIP`: Trims adapter sequences based on the adapter file provided.
@@ -81,16 +81,16 @@ trimmomatic PE -threads 4 \
 
 ## Step 3: Reference Genome Indexing
 
-**Description**:  
+**Description**:\
 Before aligning reads to the reference genome, the genome must be indexed. Indexing creates necessary data structures that make the alignment process more efficient. In MutMap, **BWA** and **SAMtools** are used for reference genome indexing. For more information on SAMtools, including correct usage and case sensitivity, please refer to the [SAMtools Manual](https://www.htslib.org/doc/samtools.html). Additionally, for more information on BWA, refer to the [BWA Manual](https://bio-bwa.sourceforge.net/bwa.shtml).
 
-**Reference Genome Indexing with BWA**:  
+**Reference Genome Indexing with BWA**:
 
 ```bash
 bwa index reference_genome.fasta -p output_directory/10_ref/reference
 ```
 
-**Reference Genome Indexing with SAMtools**:  
+**Reference Genome Indexing with SAMtools**:
 
 ```bash
 samtools faidx reference_genome.fasta -o output_directory/10_ref/reference.fai
@@ -100,10 +100,10 @@ samtools faidx reference_genome.fasta -o output_directory/10_ref/reference.fai
 
 ## Step 4: Read Alignment and BAM Processing
 
-**Description**:  
+**Description**:\
 After trimming and indexing the reference genome, the next step is to align the sequencing reads to the reference using **BWA**, followed by **SAMtools** for processing the SAM/BAM files.
 
-**Alignment and BAM Processing**:  
+**Alignment and BAM Processing**:
 
 ```bash
 bwa mem -t 4 output_directory/10_ref/reference input_R1.fastq.gz input_R2.fastq.gz | \
@@ -113,7 +113,7 @@ samtools markdup -r - - | \
 samtools view -b -f 2 -F 2048 -o output_directory/20_bam/sample.bam
 ```
 
-**Explanation**:  
+**Explanation**:
 
 - `mem`: Algorithm for aligning paired-end reads.
 - `-t 4`: Uses 4 threads for the alignment process.
@@ -128,10 +128,10 @@ samtools view -b -f 2 -F 2048 -o output_directory/20_bam/sample.bam
 
 ## Step 5: BAM Sorting and Indexing
 
-**Description**:  
+**Description**:\
 After aligning the reads, **SAMtools** is used to sort and index the resulting BAM files for efficient access and analysis. Sorting ensures that the reads are ordered by their position in the genome, and indexing creates a .bai file that allows for fast retrieval of specific regions during analysis.
 
-**Usage**:  
+**Usage**:
 
 ```bash
 samtools sort -m 1G -@ 4 -o output_directory/20_bam/cultivar.bam output_directory/20_bam/cultivar.unsorted.bam
@@ -140,7 +140,7 @@ samtools sort -m 1G -@ 4 -o output_directory/20_bam/bulk.bam output_directory/20
 samtools index output_directory/20_bam/bulk.bam
 ```
 
-**Explanation**:  
+**Explanation**:
 
 - `sort`: Sorts the BAM file by genomic coordinates, which is essential for downstream processing.
 - `-m 1G`: Limits memory usage per thread to 1 GB.
@@ -151,10 +151,10 @@ samtools index output_directory/20_bam/bulk.bam
 
 ## Step 6: Variant Calling with mpileup
 
-**Description**:  
+**Description**:\
 Once the BAM files are indexed, the next step is to call variants using **bcftools mpileup** and **bcftools call**. The `AD`, `ADF`, and `ADR` fields are critical for MutMap, as they provide allele depth information that is essential for the analysis. This command identifies SNPs and other variants in the sequencing data. For more information, refer to the [BCFtools Manual](https://www.htslib.org/doc/bcftools.html) and the [Tabix Manual](https://www.htslib.org/doc/tabix.html).
 
-**Usage**:  
+**Usage**:
 
 ```bash
 bcftools mpileup -a AD,ADF,ADR -B -q 40 -Q 18 -C 50 -O u -f output_directory/10_ref/reference.fasta \
@@ -163,7 +163,7 @@ bcftools call -vm -f GQ,GP -O u | \
 bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.vcf.gz
 ```
 
-**Explanation**:  
+**Explanation**:
 
 - `mpileup`: Generates per-base information for each position in the reference genome.
 - `-a AD,ADF,ADR`: Includes allele depth information in the output. These fields are crucial for MutMap analysis.
@@ -172,10 +172,10 @@ bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.vcf.gz
 - `-Q 18`: Filters bases with base quality less than 18.
 - `-C 50`: Adjusts the mapping quality to account for the use of BWA during alignment.
 
-**Chromosome-specific processing**:  
+**Chromosome-specific processing**:\
 Removing `-r chr1` will output a VCF for the entire genome, but this process can be time-consuming. To speed up the process, you can parallelize VCF generation by chromosome using the `-r` option, creating a VCF for each chromosome individually.
 
-**Index the VCF file with Tabix**:  
+**Index the VCF file with Tabix**:
 
 ```bash
 tabix -f -p vcf output_directory/30_vcf/mutmap.vcf.gz
@@ -185,30 +185,32 @@ tabix -f -p vcf output_directory/30_vcf/mutmap.vcf.gz
 
 ## Step 7: SNP Filtering, SNP Index Calculation, and Visualization with MutPlot
 
-**Description**:  
+**Description**:\
 MutPlot is used to filter SNPs, calculate SNP indices, and visualize the results. It helps identify significant SNPs and their impact on the genome, producing various files that assist in analyzing and visualizing the data. MutPlot also supports generating files compatible with genome viewers like IGV. For more information on MutPlot outputs, please refer to the [MutMap GitHub Outputs section](https://github.com/YuSugihara/MutMap/tree/master?tab=readme-ov-file#outputs).
 
-**Usage**:  
+**Usage**:
 
 ```bash
 mutplot -v output_directory/30_vcf/mutmap.vcf.gz -o output_directory/40_plot -n 20
 ```
 
-**Required Options**:  
+**Required Options**:
+
 - `-v`: Specifies the input VCF file generated by the variant calling step.
 - `-o`: Specifies the output directory for the visualization results.
 - `-n`: Specifies the number of individuals in the mutant bulk, which is necessary for proper analysis.
 
-**Optional: Using MutPlot with SnpEff**:  
+**Optional: Using MutPlot with SnpEff**:\
 MutPlot can be run in combination with **SnpEff** to annotate variants for their potential effects. This allows for a more detailed understanding of how SNPs may impact gene function. For more information on SnpEff, please refer to the [SnpEff Documentation](https://pcingola.github.io/SnpEff/snpeff/introduction/).
 
-**Usage**:  
+**Usage**:
 
 ```bash
 mutplot -v output_directory/30_vcf/mutmap.vcf.gz -o output_directory/40_plot -n 20 --snpEff snpEff_database
 ```
 
-**Additional Option**:  
+**Additional Option**:
+
 - `--snpEff`: Specifies the SnpEff database to use for annotating variants. Ensure that the correct SnpEff database is installed and available before running this command.
 
 ---
