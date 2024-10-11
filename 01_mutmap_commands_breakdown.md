@@ -162,9 +162,7 @@ samtools view -b -f 2 -F 2048 -o output_directory/20_bam/bulk.bam
 
 ## Step 5: BAM Sorting and Indexing
 
-**
-
-Description**:\
+**Description**:\
 Sorting and indexing are performed on both the **cultivar** and **bulk** in the same manner. After aligning the reads, **SAMtools** is used to sort and index the resulting BAM files for efficient access and analysis. Sorting ensures that the reads are ordered by their position in the genome, and indexing creates a .bai file that allows for fast retrieval of specific regions during analysis.
 
 **Usage**:
