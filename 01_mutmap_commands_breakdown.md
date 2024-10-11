@@ -62,26 +62,18 @@ trimmomatic PE -threads 4 \
 - `SLIDINGWINDOW`: Performs sliding window trimming, trimming when the average quality within the window falls below a threshold.
 - `MINLEN`: Discards reads that are shorter than the specified length.
 
-**Note**: The options and parameters introduced here are the default values used within MutMap.
-
 **Additional Information**:
 
 1. **Trimmomatic GitHub Repository**: For more information on Trimmomatic, refer to its [GitHub repository](https://github.com/usadellab/Trimmomatic).
-
-2. **Adapter Sequences**: The adapter sequences used in the trimming process can be found on the [Trimmomatic GitHub](https://github.com/timflutre/trimmomatic/tree/master/adapters). However, these should be selected based on the specific experimental design. It is important to verify which adapter sequences are most appropriate for your dataset.
-
-3. **Creating Adapter FASTA Files**: A useful explanation on how to properly prepare adapter FASTA files, particularly when using the NEB library, can be found in this [issue](https://github.com/usadellab/Trimmomatic/issues/20). This provides insights into why certain adapter formats are necessary.
-
-4. **Quality Control**: After trimming, it is recommended to perform quality control (QC) on the resulting FASTQ files using software like [FastQC](https://github.com/s-andrews/FastQC).
-
-5. **Alternative Software - fastp**: If you are unsure about which adapter sequences were used, the software [fastp](https://github.com/OpenGene/fastp) may be useful. It includes the `--detect_adapter_for_pe` option, which automatically detects and removes adapter sequences. However, please note that MutMap has not been extensively tested with fastp, so its compatibility cannot be guaranteed.
+2. **Adapter Sequences**: The adapter sequences used in the trimming process can be found on the [Trimmomatic GitHub](https://github.com/timflutre/trimmomatic/tree/master/adapters).
+3. **Quality Control**: After trimming, it is recommended to perform quality control on the resulting FASTQ files using [FastQC](https://github.com/s-andrews/FastQC).
 
 ---
 
 ## Step 3: Reference Genome Indexing
 
 **Description**:\
-Before aligning reads to the reference genome, the genome must be indexed. Indexing creates necessary data structures that make the alignment process more efficient. In MutMap, **BWA** and **SAMtools** are used for reference genome indexing. For more information on SAMtools, please refer to the [SAMtools Manual](https://www.htslib.org/doc/samtools.html). Additionally, for more information on BWA, refer to the [BWA Manual](https://bio-bwa.sourceforge.net/bwa.shtml).
+Before aligning reads to the reference genome, the genome must be indexed. Indexing creates necessary data structures that make the alignment process more efficient. In MutMap, **BWA** and **SAMtools** are used for reference genome indexing.
 
 **Reference Genome Indexing**:
 
@@ -103,7 +95,7 @@ samtools faidx output_directory/10_ref/reference_genome.fasta
 **Description**:\
 Alignment is performed on both the **cultivar** and **mutant bulk** in the same manner. After trimming and indexing the reference genome, the next step is to align the sequencing reads to the reference using **BWA**, followed by **SAMtools** for processing the SAM/BAM files.
 
-**Alignment and BAM Processing**:
+**Usage**:
 
 ```bash
 bwa mem -t 4 output_directory/10_ref/reference input_R1.fastq.gz input_R2.fastq.gz | \
@@ -115,17 +107,17 @@ samtools view -b -f 2 -F 2048 -o output_directory/20_bam/sample.bam
 
 **Explanation**:
 
-- `mem`: Algorithm for aligning paired-end reads.
-- `-t 4`: Specifies the number of threads to use.
-- `fixmate`: Adjusts mate-pair information to ensure consistency.
+- `mem`: The algorithm used by BWA to align paired-end reads.
+- `-t 4`: Specifies the number of threads to use (in this case, 4 threads).
+- `fixmate`: Adjusts mate-pair information in the BAM file for consistency.
 - `-m`: Specifies the maximum memory available per thread for sorting (e.g., `-m 1G` limits memory usage to 1 GB).
-- `sort`: Sorts the BAM file by genomic coordinate.
-- `-@`: Specifies the number of threads to use for sorting (e.g., `-@ 4` uses 4 threads).
-- `markdup`: Removes duplicate reads, which are often artifacts of PCR amplification, to avoid bias in variant calling.
+- `sort`: Sorts the BAM file by genomic coordinates.
+- `-@ 4`: Specifies the number of threads to use for sorting (here, 4 threads).
+- `markdup`: Removes PCR duplicates to avoid bias in variant calling.
 - `view`: Converts the data into BAM format.
-- `-b`: Outputs in BAM format.
-- `-f 2`: Selects only properly paired reads (both reads in the pair are mapped).
-- `-F 2048`: Excludes supplementary alignments.
+- `-b`: Outputs the data in BAM format.
+- `-f 2`: Selects properly paired reads.
+- `-F 2048`: Excludes supplementary alignments (e.g., secondary mappings).
 
 ---
 
@@ -146,30 +138,28 @@ samtools index output_directory/20_bam/bulk.bam
 
 **Explanation**:
 
-- `sort`: Sorts the BAM file by genomic coordinates, which is essential for downstream processing.
-- `-m 1G`: Limits memory usage per thread to 1 GB.
+- `sort`: Sorts the BAM file by genomic coordinates.
+- `-m 1G`: Limits the memory usage to 1 GB per thread.
 - `-@ 4`: Uses 4 threads for sorting.
-- `index`: Creates an index file (.bai) for the sorted BAM file, allowing for fast retrieval of specific genomic regions.
+- `index`: Creates an index file (.bai) for the sorted BAM file.
 
 ### Note for Large Genomes (e.g., Wheat):
 
-For larger genomes like wheat, using the default `samtools index` may lead to inefficiencies or errors due to the size of the BAM file
-
-. In such cases, it is recommended to use the `-c` option to create a CSI index for both **cultivar** and **mutant bulk** BAM files:
+For larger genomes like wheat, using the default `samtools index` may lead to inefficiencies due to the size of the BAM file. In such cases, it is recommended to use the `-c` option:
 
 ```bash
 samtools index -c output_directory/20_bam/cultivar.bam
 samtools index -c output_directory/20_bam/bulk.bam
 ```
 
-This creates CSI indexes, which support larger reference genomes.
+This creates a CSI index that supports larger reference genomes.
 
 ---
 
 ## Step 6: Variant Calling with mpileup
 
 **Description**:\
-Once the BAM files are indexed, the next step is to call variants using **bcftools mpileup** and **bcftools call**. The `AD`, `ADF`, and `ADR` fields are critical for MutMap, as they provide allele depth information that is essential for the analysis. This command identifies SNPs and other variants in the sequencing data. For more information, refer to the [BCFtools Manual](https://www.htslib.org/doc/bcftools.html) and the [Tabix Manual](https://www.htslib.org/doc/tabix.html).
+Once the BAM files are indexed, the next step is to call variants using **bcftools mpileup** and **bcftools call**. The `AD`, `ADF`, and `ADR` fields are critical for MutMap, as they provide allele depth information that is essential for the analysis. This command identifies SNPs and other variants in the sequencing data.
 
 **Usage**:
 
@@ -182,7 +172,9 @@ bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.vcf.gz
 
 **Explanation**:
 
-- `mpileup`: Generates per-base information for each position in the reference genome.
+-
+
+ `mpileup`: Generates per-base information for each position in the reference genome.
 - `-a AD,ADF,ADR`: Includes allele depth information in the output. These fields are crucial for MutMap analysis.
 - `-B`: Disables BAQ computation.
 - `-q 40`: Filters reads with mapping quality less than 40.
@@ -218,14 +210,12 @@ For large genomes like wheat, using the default `tabix` indexing may not be suff
 tabix -C -p vcf output_directory/30_vcf/mutmap.vcf.gz
 ```
 
-This ensures compatibility with large genomes and allows for efficient access to the data.
-
 ---
 
 ## Step 7: SNP Filtering, SNP Index Calculation, and Visualization with MutPlot
 
 **Description**:\
-MutPlot is used to filter SNPs, calculate SNP indices, and visualize the results. It helps identify significant SNPs and their impact on the genome, producing various files that assist in analyzing and visualizing the data.  For more information on MutPlot outputs, please refer to the [MutMap GitHub Outputs section](https://github.com/YuSugihara/MutMap/tree/master?tab=readme-ov-file#outputs).
+MutPlot is used to filter SNPs, calculate SNP indices, and visualize the results. It helps identify significant SNPs and their impact on the genome, producing various files that assist in analyzing and visualizing the data.
 
 **Usage**:
 
@@ -237,7 +227,7 @@ mutplot -v output_directory/30_vcf/mutmap.vcf.gz -o output_directory/40_plot -n 
 
 - `-v`: Specifies the input VCF file generated by the variant calling step.
 - `-o`: Specifies the output directory for the visualization results.
-- `-n`: Specifies the number of individuals in the mutant bulk, which is necessary for proper analysis.
+- `-n`: Specifies the number of individuals in the mutant bulk.
 
 **Optional: Using MutPlot with SnpEff**:\
 MutPlot can be run in combination with **SnpEff** to annotate variants for their potential effects. This allows for a more detailed understanding of how SNPs may impact gene function. For more information on SnpEff, please refer to the [SnpEff Documentation](https://pcingola.github.io/SnpEff/snpeff/introduction/).
