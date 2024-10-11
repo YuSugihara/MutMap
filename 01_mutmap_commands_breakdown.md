@@ -83,6 +83,18 @@ trimmomatic PE -threads 4 \
 - `SLIDINGWINDOW`: Performs sliding window trimming, trimming when the average quality within the window falls below a threshold.
 - `MINLEN`: Discards reads that are shorter than the specified length.
 
+**Additional Information**:
+
+1. **Trimmomatic GitHub Repository**: For more information on Trimmomatic, refer to its [GitHub repository](https://github.com/usadellab/Trimmomatic).
+
+2. **Adapter Sequences**: The adapter sequences used in the trimming process can be found on the [Trimmomatic GitHub](https://github.com/timflutre/trimmomatic/tree/master/adapters). However, these should be selected based on the specific experimental design. It is important to verify which adapter sequences are most appropriate for your dataset.
+
+3. **Creating Adapter FASTA Files**: A useful explanation on how to properly prepare adapter FASTA files, particularly when using the NEB library, can be found in this [issue](https://github.com/usadellab/Trimmomatic/issues/20). This provides insights into why certain adapter formats are necessary.
+
+4. **Quality Control**: After trimming, it is recommended to perform quality control (QC) on the resulting FASTQ files using software like [FastQC](https://github.com/s-andrews/FastQC).
+
+5. **Alternative Software - fastp**: If you are unsure about which adapter sequences were used, the software [fastp](https://github.com/OpenGene/fastp) may be useful. It includes the `--detect_adapter_for_pe` option, which automatically detects and removes adapter sequences. However, please note that MutMap has not been extensively tested with fastp, so its compatibility cannot be guaranteed.
+
 ---
 
 ## Step 3: Reference Genome Indexing
@@ -146,6 +158,8 @@ samtools view -b -f 2 -F 2048 -o output_directory/20_bam/bulk.bam
 
 ---
 
+
+
 ## Step 5: BAM Sorting and Indexing
 
 **Description**:\
@@ -170,9 +184,7 @@ samtools index output_directory/20_bam/bulk.bam
 
 ### Note for Large Genomes (e.g., Wheat):
 
-For larger genomes
-
- like wheat, using the default `samtools index` may lead to inefficiencies due to the size of the BAM file. In such cases, it is recommended to use the `-c` option:
+For larger genomes like wheat, using the default `samtools index` may lead to inefficiencies due to the size of the BAM file. In such cases, it is recommended to use the `-c` option:
 
 ```bash
 samtools index -c output_directory/20_bam/cultivar.bam
