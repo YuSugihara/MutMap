@@ -81,7 +81,7 @@ trimmomatic PE -threads 4 \
 ## Step 3: Reference Genome Indexing
 
 **Description**:  
-Indexing is performed on both the **cultivar** and **mutant bulk** in the same manner. Before aligning reads to the reference genome, the genome must be indexed. Indexing creates necessary data structures that make the alignment process more efficient. In MutMap, **BWA** and **SAMtools** are used for reference genome indexing. For more information on SAMtools, including correct usage and case sensitivity, please refer to the [SAMtools Manual](https://www.htslib.org/doc/samtools.html). Additionally, for more information on BWA, refer to the [BWA Manual](https://bio-bwa.sourceforge.net/bwa.shtml).
+Before aligning reads to the reference genome, the genome must be indexed. Indexing creates necessary data structures that make the alignment process more efficient. In MutMap, **BWA** and **SAMtools** are used for reference genome indexing. For more information on SAMtools, including correct usage and case sensitivity, please refer to the [SAMtools Manual](https://www.htslib.org/doc/samtools.html). Additionally, for more information on BWA, refer to the [BWA Manual](https://bio-bwa.sourceforge.net/bwa.shtml).
 
 **Reference Genome Indexing with BWA**:  
 
@@ -210,3 +210,4 @@ mutplot -v output_directory/30_vcf/mutmap.vcf.gz -o output_directory/40_plot -n 
 
 **Additional Option**:  
 - `--snpEff`: Specifies the SnpEff database to use for annotating variants. Ensure that the correct SnpEff database is installed and available before running this command.
+
