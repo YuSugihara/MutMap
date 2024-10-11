@@ -190,7 +190,7 @@ tabix -f -p vcf output_directory/30_vcf/mutmap.vcf.gz
 ## Step 7: SNP Filtering, SNP Index Calculation, and Visualization with MutPlot
 
 **Description**:  
-MutPlot is used to filter SNPs, calculate SNP indices, and visualize the results. It helps identify significant SNPs and their impact on the genome, producing various files that assist in analyzing and visualizing the data. MutPlot also supports generating files compatible with genome viewers like IGV. For more information on MutPlot outputs, please refer to the [MutMap GitHub Outputs section](https://github.com/YuSugihara/MutMap/tree/master?tab=readme-ov-file#outputs).
+MutPlot is used to filter SNPs, calculate SNP indices, and visualize the results. It helps identify significant SNPs and their impact on the genome, producing various files that assist in analyzing and visualizing the data.  For more information on MutPlot outputs, please refer to the [MutMap GitHub Outputs section](https://github.com/YuSugihara/MutMap/tree/master?tab=readme-ov-file#outputs).
 
 **Usage**:
 
