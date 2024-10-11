@@ -4,13 +4,22 @@ This document provides a comprehensive overview of the commands used in the MutM
 
 ## Table of Contents
 
-1. [Step 1: Directory Setup](#step-1-directory-setup)
-2. [Step 2: Quality Control and Trimming](#step-2-quality-control-and-trimming)
-3. [Step 3: Reference Genome Indexing](#step-3-reference-genome-indexing)
-4. [Step 4: Read Alignment and BAM Processing](#step-4-read-alignment-and-bam-processing)
-5. [Step 5: BAM Sorting and Indexing](#step-5-bam-sorting-and-indexing)
-6. [Step 6: Variant Calling with mpileup](#step-6-variant-calling-with-mpileup)
-7. [Step 7: SNP Filtering, SNP Index Calculation, and Visualization with MutPlot](#step-7-snp-filtering-snp-index-calculation-and-visualization-with-mutplot)
+1. [Using the Test Dataset](#using-the-test-dataset)
+2. [Step 1: Directory Setup](#step-1-directory-setup)
+3. [Step 2: Quality Control and Trimming](#step-2-quality-control-and-trimming)
+4. [Step 3: Reference Genome Indexing](#step-3-reference-genome-indexing)
+5. [Step 4: Read Alignment and BAM Processing](#step-4-read-alignment-and-bam-processing)
+6. [Step 5: BAM Sorting and Indexing](#step-5-bam-sorting-and-indexing)
+7. [Step 6: Variant Calling with mpileup](#step-6-variant-calling-with-mpileup)
+8. [Step 7: SNP Filtering, SNP Index Calculation, and Visualization with MutPlot](#step-7-snp-filtering-snp-index-calculation-and-visualization-with-mutplot)
+
+---
+
+## Using the Test Dataset
+
+To get started with MutMap and verify the pipeline's functionality, you can use the test dataset available in the MutMap GitHub repository. The test dataset is located [here](https://github.com/YuSugihara/MutMap/tree/master/test), and it includes all the necessary files to run the pipeline.
+
+By using this test dataset, you can execute the commands in this document step by step to ensure that the pipeline runs smoothly and correctly.
 
 ---
 
@@ -61,12 +70,6 @@ trimmomatic PE -threads 4 \
 - `TRAILING`: Trims low-quality bases from the end of the read.
 - `SLIDINGWINDOW`: Performs sliding window trimming, trimming when the average quality within the window falls below a threshold.
 - `MINLEN`: Discards reads that are shorter than the specified length.
-
-**Additional Information**:
-
-1. **Trimmomatic GitHub Repository**: For more information on Trimmomatic, refer to its [GitHub repository](https://github.com/usadellab/Trimmomatic).
-2. **Adapter Sequences**: The adapter sequences used in the trimming process can be found on the [Trimmomatic GitHub](https://github.com/timflutre/trimmomatic/tree/master/adapters).
-3. **Quality Control**: After trimming, it is recommended to perform quality control on the resulting FASTQ files using [FastQC](https://github.com/s-andrews/FastQC).
 
 ---
 
@@ -172,9 +175,9 @@ bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.vcf.gz
 
 **Explanation**:
 
--
+- `mpileup`: Generates per-base information for each position in the reference genome.
 
- `mpileup`: Generates per-base information for each position in the reference genome.
+
 - `-a AD,ADF,ADR`: Includes allele depth information in the output. These fields are crucial for MutMap analysis.
 - `-B`: Disables BAQ computation.
 - `-q 40`: Filters reads with mapping quality less than 40.
