@@ -94,7 +94,7 @@ Before aligning reads to the reference genome, the genome must be indexed. Index
 
 ```bash
 # Create a symbolic link to reference genome in 10_ref
-ln -s mutmap_ref.fasta output_directory/10_ref/mutmap_ref.fasta
+ln -s $(pwd)/mutmap_ref.fasta output_directory/10_ref/mutmap_ref.fasta
 
 # Index the reference genome using BWA
 bwa index output_directory/10_ref/mutmap_ref.fasta
