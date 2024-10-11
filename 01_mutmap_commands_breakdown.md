@@ -81,7 +81,7 @@ trimmomatic PE -threads 4 \
 ## Step 3: Reference Genome Indexing
 
 **Description**:  
-Before aligning reads to the reference genome, the genome must be indexed. Indexing creates necessary data structures that make the alignment process more efficient. In MutMap, **BWA** and **SAMtools** are used for reference genome indexing. For more information on SAMtools, including correct usage and case sensitivity, please refer to the [SAMtools Manual](https://www.htslib.org/doc/samtools.html). Additionally, for more information on BWA, refer to the [BWA Manual](https://bio-bwa.sourceforge.net/bwa.shtml).
+Before aligning reads to the reference genome, the genome must be indexed. Indexing creates necessary data structures that make the alignment process more efficient. In MutMap, **BWA** and **SAMtools** are used for reference genome indexing. For more information on SAMtools, please refer to the [SAMtools Manual](https://www.htslib.org/doc/samtools.html). Additionally, for more information on BWA, refer to the [BWA Manual](https://bio-bwa.sourceforge.net/bwa.shtml).
 
 **Reference Genome Indexing with BWA**:  
 
