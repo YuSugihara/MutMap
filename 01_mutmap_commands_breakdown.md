@@ -50,12 +50,24 @@ Trimming is the process of removing low-quality sequences and adapters from raw 
 
 ```bash
 trimmomatic PE -threads 4 \
-               -phred33 input_R1.fastq.gz input_R2.fastq.gz \
-               output_directory/00_fastq/output_R1_paired.fastq.gz \
-               output_directory/00_fastq/output_R1_unpaired.fastq.gz \
-               output_directory/00_fastq/output_R2_paired.fastq.gz \
-               output_directory/00_fastq/output_R2_unpaired.fastq.gz \
-               ILLUMINACLIP:adapter.fasta:2:30:10 \
+               -phred33 test/mutmap_cultivar.1.fastq.gz test/mutmap_cultivar.2.fastq.gz \
+               output_directory/00_fastq/cultivar_R1_paired.fastq.gz \
+               output_directory/00_fastq/cultivar_R1_unpaired.fastq.gz \
+               output_directory/00_fastq/cultivar_R2_paired.fastq.gz \
+               output_directory/00_fastq/cultivar_R2_unpaired.fastq.gz \
+               ILLUMINACLIP:test/adapter.fasta:2:30:10 \
+               LEADING:20 \
+               TRAILING:20 \
+               SLIDINGWINDOW:4:15 \
+               MINLEN:75
+
+trimmomatic PE -threads 4 \
+               -phred33 test/mutmap_bulk.1.fastq.gz test/mutmap_bulk.2.fastq.gz \
+               output_directory/00_fastq/bulk_R1_paired.fastq.gz \
+               output_directory/00_fastq/bulk_R1_unpaired.fastq.gz \
+               output_directory/00_fastq/bulk_R2_paired.fastq.gz \
+               output_directory/00_fastq/bulk_R2_unpaired.fastq.gz \
+               ILLUMINACLIP:test/adapter.fasta:2:30:10 \
                LEADING:20 \
                TRAILING:20 \
                SLIDINGWINDOW:4:15 \
@@ -82,13 +94,13 @@ Before aligning reads to the reference genome, the genome must be indexed. Index
 
 ```bash
 # Create a symbolic link to reference genome in 10_ref
-ln -s reference_genome.fasta output_directory/10_ref/reference_genome.fasta
+ln -s test/mutmap_ref.fasta output_directory/10_ref/mutmap_ref.fasta
 
 # Index the reference genome using BWA
-bwa index output_directory/10_ref/reference_genome.fasta
+bwa index output_directory/10_ref/mutmap_ref.fasta
 
 # Index the reference genome using SAMtools
-samtools faidx output_directory/10_ref/reference_genome.fasta
+samtools faidx output_directory/10_ref/mutmap_ref.fasta
 ```
 
 ---
@@ -101,11 +113,21 @@ Alignment is performed on both the **cultivar** and **mutant bulk** in the same 
 **Usage**:
 
 ```bash
-bwa mem -t 4 output_directory/10_ref/reference input_R1.fastq.gz input_R2.fastq.gz | \
+bwa mem -t 4 output_directory/10_ref/mutmap_ref.fasta \
+    output_directory/00_fastq/cultivar_R1_paired.fastq.gz \
+    output_directory/00_fastq/cultivar_R2_paired.fastq.gz | \
 samtools fixmate -m - - | \
 samtools sort -m 1G -@ 4 | \
 samtools markdup -r - - | \
-samtools view -b -f 2 -F 2048 -o output_directory/20_bam/sample.bam
+samtools view -b -f 2 -F 2048 -o output_directory/20_bam/cultivar.bam
+
+bwa mem -t 4 output_directory/10_ref/mutmap_ref.fasta \
+    output_directory/00_fastq/bulk_R1_paired.fastq.gz \
+    output_directory/00_fastq/bulk_R2_paired.fastq.gz | \
+samtools fixmate -m - - | \
+samtools sort -m 1G -@ 4 | \
+samtools markdup -r - - | \
+samtools view -b -f 2 -F 2048 -o output_directory/20_bam/bulk.bam
 ```
 
 **Explanation**:
@@ -141,7 +163,9 @@ samtools index output_directory/20_bam/bulk.bam
 
 **Explanation**:
 
-- `sort`: Sorts the BAM file by genomic coordinates.
+-
+
+ `sort`: Sorts the BAM file by genomic coordinates.
 - `-m 1G`: Limits the memory usage to 1 GB per thread.
 - `-@ 4`: Uses 4 threads for sorting.
 - `index`: Creates an index file (.bai) for the sorted BAM file.
@@ -167,7 +191,7 @@ Once the BAM files are indexed, the next step is to call variants using **bcftoo
 **Usage**:
 
 ```bash
-bcftools mpileup -a AD,ADF,ADR -B -q 40 -Q 18 -C 50 -O u -f output_directory/10_ref/reference.fasta \
+bcftools mpileup -a AD,ADF,ADR -B -q 40 -Q 18 -C 50 -O u -f output_directory/10_ref/mutmap_ref.fasta \
 output_directory/20_bam/cultivar.bam output_directory/20_bam/bulk.bam | \
 bcftools call -vm -f GQ,GP -O u | \
 bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.vcf.gz
@@ -176,8 +200,6 @@ bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.vcf.gz
 **Explanation**:
 
 - `mpileup`: Generates per-base information for each position in the reference genome.
-
-
 - `-a AD,ADF,ADR`: Includes allele depth information in the output. These fields are crucial for MutMap analysis.
 - `-B`: Disables BAQ computation.
 - `-q 40`: Filters reads with mapping quality less than 40.
