@@ -177,7 +177,7 @@ bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.vcf.gz
 - `-C 50`: Adjusts the mapping quality to account for the use of BWA during alignment.
 
 **Chromosome-specific processing**:  
-Removing `-r chr1` will output a VCF for the entire genome, but this process can be time-consuming. To speed up the process, you can parallelize VCF generation by chromosome using the `-r` option, creating a VCF for each chromosome individually.
+The `-r` option in `bcftools mpileup` allows for chromosome-specific processing, which can be used to parallelize the VCF generation for each chromosome individually.
 
 **Index the VCF file with Tabix**:
 
