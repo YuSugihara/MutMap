@@ -131,7 +131,7 @@ bwa mem -t 4 output_directory/10_ref/mutmap_ref.fasta \
     output_directory/00_fastq/cultivar_R1_paired.fastq.gz \
     output_directory/00_fastq/cultivar_R2_paired.fastq.gz | \
 samtools fixmate -m - - | \
-samtools sort -m 1G -@ 4 | \
+samtools sort -m 1G -@ 4 -o output_directory/20_bam/cultivar.unsorted.bam - | \
 samtools markdup -r - - | \
 samtools view -b -f 2 -F 2048 -o output_directory/20_bam/cultivar.bam
 
@@ -139,7 +139,7 @@ bwa mem -t 4 output_directory/10_ref/mutmap_ref.fasta \
     output_directory/00_fastq/bulk_R1_paired.fastq.gz \
     output_directory/00_fastq/bulk_R2_paired.fastq.gz | \
 samtools fixmate -m - - | \
-samtools sort -m 1G -@ 4 | \
+samtools sort -m 1G -@ 4 -o output_directory/20_bam/bulk.unsorted.bam - | \
 samtools markdup -r - - | \
 samtools view -b -f 2 -F 2048 -o output_directory/20_bam/bulk.bam
 ```
@@ -156,7 +156,9 @@ samtools view -b -f 2 -F 2048 -o output_directory/20_bam/bulk.bam
 - `view`: Converts the data into BAM format.
 - `-b`: Outputs the data in BAM format.
 - `-f 2`: Selects properly paired reads.
-- `-F 2048`: Excludes supplementary alignments (e.g., secondary mappings).
+- `-F 2048
+
+`: Excludes supplementary alignments (e.g., secondary mappings).
 
 ---
 
