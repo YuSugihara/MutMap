@@ -233,7 +233,7 @@ The `-r` option in `bcftools mpileup` allows for chromosome-specific processing,
 bcftools mpileup -r test_chr -a AD,ADF,ADR -B -q 40 -Q 18 -C 50 -O u -f output_directory/10_ref/mutmap_ref.fasta \
 output_directory/20_bam/cultivar.bam output_directory/20_bam/bulk.bam | \
 bcftools call -vm -f GQ,GP -O u | \
-bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.chr1.vcf.gz
+bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.test_chr.vcf.gz
 ```
 
 ### Concatenating VCF Files:  
@@ -242,10 +242,10 @@ If the VCF files are generated separately for each chromosome, you can use `bcft
 #### Usage for Concatenating VCF Files:
 
 ```bash
-bcftools concat -O z -o output_directory/30_vcf/mutmap_combined.vcf.gz output_directory/30_vcf/mutmap.chr*.vcf.gz
+bcftools concat -O z -o output_directory/30_vcf/mutmap_combined.vcf.gz output_directory/30_vcf/mutmap.*.vcf.gz
 ```
 
-This command will concatenate all chromosome-specific VCF files (`mutmap.chr*.vcf.gz`) into a single compressed VCF file (`mutmap_combined.vcf.gz`).
+This command will concatenate all chromosome-specific VCF files (`mutmap.*.vcf.gz`) into a single compressed VCF file (`mutmap_combined.vcf.gz`).
 
 ### Index the VCF file with Tabix:
 
