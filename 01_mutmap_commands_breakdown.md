@@ -11,7 +11,6 @@ This document provides a comprehensive overview of the commands used in the MutM
 5. [Step 5: BAM Sorting and Indexing](#step-5-bam-sorting-and-indexing)
 6. [Step 6: Variant Calling with mpileup](#step-6-variant-calling-with-mpileup)
 7. [Step 7: SNP Filtering, SNP Index Calculation, and Visualization with MutPlot](#step-7-snp-filtering-snp-index-calculation-and-visualization-with-mutplot)
-8. [References](#references)
 
 ---
 
@@ -213,9 +212,3 @@ mutplot -v output_directory/30_vcf/mutmap.vcf.gz -o output_directory/40_plot -n 
 
 - `--snpEff`: Specifies the SnpEff database to use for annotating variants. Ensure that the correct SnpEff database is installed and available before running this command.
 
----
-
-## References
-
-- [MutMap GitHub Repository](https://github.com/YuSugihara/MutMap)
-- [MutMap Research Paper](https://peerj.com/articles/13170/)
