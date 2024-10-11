@@ -44,7 +44,7 @@ mkdir -p output_directory/30_vcf
 ## Step 2: Quality Control and Trimming
 
 **Description**:\
-Trimming is the process of removing low-quality sequences and adapters from raw sequencing data. This step is essential to ensure that the data used for alignment is clean and of high quality. In MutMap, trimming is performed using **Trimmomatic** on both the **cultivar** and **mutant bulk** in the same manner.
+Trimming is the process of removing low-quality sequences and adapters from raw sequencing data. This step is essential to ensure that the data used for alignment is clean and of high quality. In MutMap, trimming is performed using **Trimmomatic** on both the **cultivar** and **bulk** (mutant bulk) in the same manner.
 
 **Usage**:
 
@@ -63,10 +63,10 @@ trimmomatic PE -threads 4 \
 
 trimmomatic PE -threads 4 \
                -phred33 mutmap_bulk.1.fastq.gz mutmap_bulk.2.fastq.gz \
-               output_directory/00_fastq/mutant_bulk_R1_paired.fastq.gz \
-               output_directory/00_fastq/mutant_bulk_R1_unpaired.fastq.gz \
-               output_directory/00_fastq/mutant_bulk_R2_paired.fastq.gz \
-               output_directory/00_fastq/mutant_bulk_R2_unpaired.fastq.gz \
+               output_directory/00_fastq/bulk_R1_paired.fastq.gz \
+               output_directory/00_fastq/bulk_R1_unpaired.fastq.gz \
+               output_directory/00_fastq/bulk_R2_paired.fastq.gz \
+               output_directory/00_fastq/bulk_R2_unpaired.fastq.gz \
                ILLUMINACLIP:adapter.fasta:2:30:10 \
                LEADING:20 \
                TRAILING:20 \
@@ -100,6 +100,8 @@ trimmomatic PE -threads 4 \
 **Description**:\
 Before aligning reads to the reference genome, the genome must be indexed. Indexing creates necessary data structures that make the alignment process more efficient. In MutMap, **BWA** and **SAMtools** are used for reference genome indexing.
 
+For more information, please refer to the **BWA** manual [here](http://bio-bwa.sourceforge.net/bwa.shtml) and the **SAMtools** manual [here](https://www.htslib.org/doc/samtools.html).
+
 **Reference Genome Indexing**:
 
 ```bash
@@ -118,7 +120,9 @@ samtools faidx output_directory/10_ref/mutmap_ref.fasta
 ## Step 4: Read Alignment and BAM Processing
 
 **Description**:\
-Alignment is performed on both the **cultivar** and **mutant bulk** in the same manner. After trimming and indexing the reference genome, the next step is to align the sequencing reads to the reference using **BWA**, followed by **SAMtools** for processing the SAM/BAM files.
+Alignment is performed on both the **cultivar** and **bulk** in the same manner. After trimming and indexing the reference genome, the next step is to align the sequencing reads to the reference using **BWA**, followed by **SAMtools** for processing the SAM/BAM files.
+
+For more information on **BWA**, refer to its manual [here](http://bio-bwa.sourceforge.net/bwa.shtml).
 
 **Usage**:
 
@@ -127,13 +131,17 @@ bwa mem -t 4 output_directory/10_ref/mutmap_ref.fasta \
     output_directory/00_fastq/cultivar_R1_paired.fastq.gz \
     output_directory/00_fastq/cultivar_R2_paired.fastq.gz | \
 samtools fixmate -m - - | \
-samtools sort -m 1G -@ 4 -o output_directory/20_bam/cultivar.unsorted.bam -
+samtools sort -m 1G -@ 4 | \
+samtools markdup -r - - | \
+samtools view -b -f 2 -F 2048 -o output_directory/20_bam/cultivar.bam
 
 bwa mem -t 4 output_directory/10_ref/mutmap_ref.fasta \
-    output_directory/00_fastq/mutant_bulk_R1_paired.fastq.gz \
-    output_directory/00_fastq/mutant_bulk_R2_paired.fastq.gz | \
+    output_directory/00_fastq/bulk_R1_paired.fastq.gz \
+    output_directory/00_fastq/bulk_R2_paired.fastq.gz | \
 samtools fixmate -m - - | \
-samtools sort -m 1G -@ 4 -o output_directory/20_bam/mutant_bulk.unsorted.bam -
+samtools sort -m 1G -@ 4 | \
+samtools markdup -r - - | \
+samtools view -b -f 2 -F 2048 -o output_directory/20_bam/bulk.bam
 ```
 
 **Explanation**:
@@ -144,14 +152,20 @@ samtools sort -m 1G -@ 4 -o output_directory/20_bam/mutant_bulk.unsorted.bam -
 - `-m`: Specifies the maximum memory available per thread for sorting (e.g., `-m 1G` limits memory usage to 1 GB).
 - `sort`: Sorts the BAM file by genomic coordinates.
 - `-@ 4`: Specifies the number of threads to use for sorting (here, 4 threads).
-- `-o`: Specifies the output file for the sorted BAM.
+- `markdup`: Removes PCR duplicates to avoid bias in variant calling.
+- `view`: Converts the data into BAM format.
+- `-b`: Outputs the data in BAM format.
+- `-f 2`: Selects properly paired reads.
+- `-F 2048`: Excludes supplementary alignments (e.g., secondary mappings).
 
 ---
 
 ## Step 5: BAM Sorting and Indexing
 
-**Description**:\
-Sorting and indexing are performed on both the **cultivar** and **mutant bulk** in the same manner. After aligning the reads, **SAMtools** is used to sort and index the resulting BAM files for efficient access and analysis. Sorting ensures that the reads are ordered by their position in the genome, and indexing creates a .bai file that allows for fast retrieval of specific regions during analysis.
+**
+
+Description**:\
+Sorting and indexing are performed on both the **cultivar** and **bulk** in the same manner. After aligning the reads, **SAMtools** is used to sort and index the resulting BAM files for efficient access and analysis. Sorting ensures that the reads are ordered by their position in the genome, and indexing creates a .bai file that allows for fast retrieval of specific regions during analysis.
 
 **Usage**:
 
@@ -159,8 +173,8 @@ Sorting and indexing are performed on both the **cultivar** and **mutant bulk** 
 samtools sort -m 1G -@ 4 -o output_directory/20_bam/cultivar.bam output_directory/20_bam/cultivar.unsorted.bam
 samtools index output_directory/20_bam/cultivar.bam
 
-samtools sort -m 1G -@ 4 -o output_directory/20_bam/mutant_bulk.bam output_directory/20_bam/mutant_bulk.unsorted.bam
-samtools index output_directory/20_bam/mutant_bulk.bam
+samtools sort -m 1G -@ 4 -o output_directory/20_bam/bulk.bam output_directory/20_bam/bulk.unsorted.bam
+samtools index output_directory/20_bam/bulk.bam
 ```
 
 **Explanation**:
@@ -176,7 +190,7 @@ For larger genomes like wheat, using the default `samtools index` may lead to in
 
 ```bash
 samtools index -c output_directory/20_bam/cultivar.bam
-samtools index -c output_directory/20_bam/mutant_bulk.bam
+samtools index -c output_directory/20_bam/bulk.bam
 ```
 
 This creates a CSI index that supports larger reference genomes.
@@ -188,11 +202,13 @@ This creates a CSI index that supports larger reference genomes.
 **Description**:\
 Once the BAM files are indexed, the next step is to call variants using **bcftools mpileup** and **bcftools call**. The `AD`, `ADF`, and `ADR` fields are critical for MutMap, as they provide allele depth information that is essential for the analysis. This command identifies SNPs and other variants in the sequencing data.
 
+For more information on **BCFtools**, refer to the manual [here](https://www.htslib.org/doc/bcftools.html).
+
 **Usage**:
 
 ```bash
 bcftools mpileup -a AD,ADF,ADR -B -q 40 -Q 18 -C 50 -O u -f output_directory/10_ref/mutmap_ref.fasta \
-output_directory/20_bam/cultivar.bam output_directory/20_bam/mutant_bulk.bam | \
+output_directory/20_bam/cultivar.bam output_directory/20_bam/bulk.bam | \
 bcftools call -vm -f GQ,GP -O u | \
 bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.vcf.gz
 ```
@@ -222,6 +238,8 @@ bcftools concat -O z -o output_directory/30_vcf/mutmap_combined.vcf.gz output_di
 This command will concatenate all chromosome-specific VCF files (`mutmap.chr*.vcf.gz`) into a single compressed VCF file (`mutmap_combined.vcf.gz`).
 
 **Index the VCF file with Tabix**:
+
+For more information on **Tabix**, refer to the manual [here](https://www.htslib.org/doc/tabix.html).
 
 ```bash
 tabix -f -p vcf output_directory/30_vcf/mutmap.vcf.gz
