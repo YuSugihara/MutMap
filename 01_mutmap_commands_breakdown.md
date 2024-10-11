@@ -210,12 +210,11 @@ MutPlot can be run in combination with **SnpEff** to annotate variants for their
 **Usage**:
 
 ```bash
-snpEff ann -Xmx8g -s output_directory/40_plot/snpEff_summary.html database output_directory/30_vcf/mutmap.vcf.gz > output_directory/40_plot/mutmap.snpEff.vcf
-mutplot -v output_directory/40_plot/mutmap.snpEff.vcf -o output_directory/40_plot -n 20
+mutplot -v output_directory/30_vcf/mutmap.vcf.gz -o output_directory/40_plot -n 20 -e database
 ```
 
 **Additional Option**:
 
-- `--snpEff`: Specifies the SnpEff database to use for annotating variants. Ensure that the correct SnpEff database is installed and available before running this command.
+- `-e database`: Specifies the SnpEff database to use for annotating variants. Ensure that the correct SnpEff database is installed and available before running this command.. Ensure that the correct SnpEff database is installed and available before running this command.
 
 ---
