@@ -50,7 +50,7 @@ Trimming is the process of removing low-quality sequences and adapters from raw 
 
 ```bash
 trimmomatic PE -threads 4 \
-               -phred33 test/mutmap_cultivar.1.fastq.gz test/mutmap_cultivar.2.fastq.gz \
+               -phred33 mutmap_cultivar.1.fastq.gz mutmap_cultivar.2.fastq.gz \
                output_directory/00_fastq/cultivar_R1_paired.fastq.gz \
                output_directory/00_fastq/cultivar_R1_unpaired.fastq.gz \
                output_directory/00_fastq/cultivar_R2_paired.fastq.gz \
@@ -62,7 +62,7 @@ trimmomatic PE -threads 4 \
                MINLEN:75
 
 trimmomatic PE -threads 4 \
-               -phred33 test/mutmap_bulk.1.fastq.gz test/mutmap_bulk.2.fastq.gz \
+               -phred33 mutmap_bulk.1.fastq.gz mutmap_bulk.2.fastq.gz \
                output_directory/00_fastq/bulk_R1_paired.fastq.gz \
                output_directory/00_fastq/bulk_R1_unpaired.fastq.gz \
                output_directory/00_fastq/bulk_R2_paired.fastq.gz \
@@ -94,7 +94,7 @@ Before aligning reads to the reference genome, the genome must be indexed. Index
 
 ```bash
 # Create a symbolic link to reference genome in 10_ref
-ln -s test/mutmap_ref.fasta output_directory/10_ref/mutmap_ref.fasta
+ln -s mutmap_ref.fasta output_directory/10_ref/mutmap_ref.fasta
 
 # Index the reference genome using BWA
 bwa index output_directory/10_ref/mutmap_ref.fasta
@@ -163,16 +163,16 @@ samtools index output_directory/20_bam/bulk.bam
 
 **Explanation**:
 
--
-
- `sort`: Sorts the BAM file by genomic coordinates.
+- `sort`: Sorts the BAM file by genomic coordinates.
 - `-m 1G`: Limits the memory usage to 1 GB per thread.
 - `-@ 4`: Uses 4 threads for sorting.
 - `index`: Creates an index file (.bai) for the sorted BAM file.
 
 ### Note for Large Genomes (e.g., Wheat):
 
-For larger genomes like wheat, using the default `samtools index` may lead to inefficiencies due to the size of the BAM file. In such cases, it is recommended to use the `-c` option:
+For larger genomes
+
+ like wheat, using the default `samtools index` may lead to inefficiencies due to the size of the BAM file. In such cases, it is recommended to use the `-c` option:
 
 ```bash
 samtools index -c output_directory/20_bam/cultivar.bam
