@@ -14,6 +14,8 @@
   + [Example 4 : run MutMap from multiple FASTQs and BAMs](#example-4--run-mutmap-from-multiple-fastqs-and-bams)
   + [Example 5 : run MutPlot from VCF](#example-5--run-mutplot-from-vcf)
 - [Outputs](#outputs)
+- [Additional Resources](#additional-resources)
+  + [MutMap commands breakdown](#mutmap-commands-breakdown)
 - [About multiple testing correction](#about-multiple-testing-correction)
 - [Build and use your own database for snpEff](#build-and-use-your-own-database-for-snpeff)
 
@@ -337,6 +339,12 @@ Inside of `OUT_DIR` is like below.
     - **<span style="color: green; ">GREEN line</span>** : mean p95
 
 <img src="https://github.com/YuSugihara/MutMap/blob/master/images/2_result.png" width=600>
+
+## Additional Resources
+
+### MutMap commands breakdown
+
+For a detailed breakdown of the commands used in MutMap, including explanations of each step, parameters, and best practices for troubleshooting, please refer to the [MutMap Commands Breakdown](01_mutmap_commands_breakdown.md) document.
 
 ## About multiple testing correction
 This function has been deprecated since v2.3.5.
