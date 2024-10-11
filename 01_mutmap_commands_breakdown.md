@@ -55,7 +55,7 @@ trimmomatic PE -threads 4 \
                output_directory/00_fastq/cultivar_R1_unpaired.fastq.gz \
                output_directory/00_fastq/cultivar_R2_paired.fastq.gz \
                output_directory/00_fastq/cultivar_R2_unpaired.fastq.gz \
-               ILLUMINACLIP:test/adapter.fasta:2:30:10 \
+               ILLUMINACLIP:adapter.fasta:2:30:10 \
                LEADING:20 \
                TRAILING:20 \
                SLIDINGWINDOW:4:15 \
@@ -67,7 +67,7 @@ trimmomatic PE -threads 4 \
                output_directory/00_fastq/bulk_R1_unpaired.fastq.gz \
                output_directory/00_fastq/bulk_R2_paired.fastq.gz \
                output_directory/00_fastq/bulk_R2_unpaired.fastq.gz \
-               ILLUMINACLIP:test/adapter.fasta:2:30:10 \
+               ILLUMINACLIP:adapter.fasta:2:30:10 \
                LEADING:20 \
                TRAILING:20 \
                SLIDINGWINDOW:4:15 \
