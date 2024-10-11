@@ -221,6 +221,8 @@ bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.vcf.gz
 - `-Q 18`: Filters bases with base quality less than 18.
 - `-C 50`: Adjusts the mapping quality to account for the use of BWA during alignment.
 
+**Note**: When generating the VCF file, the order in which the **cultivar** and **bulk** BAM files are passed into the `bcftools mpileup` command is important. The **cultivar** should come first, followed by the **bulk**. This order is critical for downstream analysis, especially when using **MutPlot**, as the software expects the **cultivar** data to be the first sample in the VCF file.
+
 **Chromosome-specific processing**:\
 The `-r` option in `bcftools mpileup` allows for chromosome-specific processing, which can be used to parallelize the VCF generation for each chromosome individually.
 
