@@ -122,7 +122,7 @@ samtools faidx output_directory/10_ref/mutmap_ref.fasta
 **Description**:\
 Alignment is performed on both the **cultivar** and **bulk** in the same manner. After trimming and indexing the reference genome, the next step is to align the sequencing reads to the reference using **BWA**, followed by **SAMtools** for processing the SAM/BAM files.
 
-For more information on **BWA**, refer to its manual [here](http://bio-bwa.sourceforge.net/bwa.shtml).
+For more information on **BWA**, refer to its manual [here](http://bio-bwa.sourceforge.net/bwa.shtml). Additionally, refer to the **SAMtools** manual [here](https://www.htslib.org/doc/samtools.html).
 
 **Usage**:
 
@@ -148,17 +148,16 @@ samtools view -b -f 2 -F 2048 -o output_directory/20_bam/bulk.bam
 
 - `mem`: The algorithm used by BWA to align paired-end reads.
 - `-t 4`: Specifies the number of threads to use (in this case, 4 threads).
-- `fixmate`: Adjusts mate-pair information in the BAM file for consistency.
-- `-m`: Specifies the maximum memory available per thread for sorting (e.g., `-m 1G` limits memory usage to 1 GB).
+- `fixmate -m`: Adjusts mate-pair information in the BAM file for consistency and adds the `ms` (mate score) tag, which is used by `markdup` to select the best reads to keep during duplicate marking.
 - `sort`: Sorts the BAM file by genomic coordinates.
 - `-@ 4`: Specifies the number of threads to use for sorting (here, 4 threads).
 - `markdup`: Removes PCR duplicates to avoid bias in variant calling.
 - `view`: Converts the data into BAM format.
-- `-b`: Outputs the data in BAM format.
-- `-f 2`: Selects properly paired reads.
-- `-F 2048
+- `-b`:
 
-`: Excludes supplementary alignments (e.g., secondary mappings).
+ Outputs the data in BAM format.
+- `-f 2`: Selects properly paired reads.
+- `-F 2048`: Excludes supplementary alignments (e.g., secondary mappings).
 
 ---
 
