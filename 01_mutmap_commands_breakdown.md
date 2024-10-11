@@ -115,16 +115,17 @@ samtools view -b -f 2 -F 2048 -o output_directory/20_bam/sample.bam
 
 **Explanation**:
 
-- `mem`: Algorithm for aligning paired-end reads, suitable for longer reads produced by Illumina sequencers.
-- `-t 4`: Specifies the number of threads to use, which helps speed up the alignment process by parallelizing the computation.
-- `fixmate`: Adjusts mate-pair information to ensure consistency, which is particularly important for downstream processing.
+- `mem`: Algorithm for aligning paired-end reads.
+- `-t 4`: Specifies the number of threads to use.
+- `fixmate`: Adjusts mate-pair information to ensure consistency.
 - `-m`: Specifies the maximum memory available per thread for sorting (e.g., `-m 1G` limits memory usage to 1 GB).
-- `sort`: Sorts the BAM file by genomic coordinate, a requirement for indexing and efficient querying of the data.
+- `sort`: Sorts the BAM file by genomic coordinate.
 - `-@`: Specifies the number of threads to use for sorting (e.g., `-@ 4` uses 4 threads).
 - `markdup`: Removes duplicate reads, which are often artifacts of PCR amplification, to avoid bias in variant calling.
 - `view`: Converts the data into BAM format.
+- `-b`: Outputs in BAM format.
 - `-f 2`: Selects only properly paired reads (both reads in the pair are mapped).
-- `-F 2048`: Excludes supplementary alignments, which are secondary alignments that may interfere with accurate variant calling.
+- `-F 2048`: Excludes supplementary alignments.
 
 ---
 
