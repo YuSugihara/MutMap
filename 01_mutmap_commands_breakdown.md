@@ -89,14 +89,11 @@ Before aligning reads to the reference genome, the genome must be indexed. Index
 # Create a symbolic link to reference genome in 10_ref
 ln -s reference_genome.fasta output_directory/10_ref/reference_genome.fasta
 
-# Change directory to 10_ref
-cd output_directory/10_ref
-
 # Index the reference genome using BWA
-bwa index reference_genome.fasta
+bwa index output_directory/10_ref/reference_genome.fasta
 
 # Index the reference genome using SAMtools
-samtools faidx reference_genome.fasta
+samtools faidx output_directory/10_ref/reference_genome.fasta
 ```
 
 ---
