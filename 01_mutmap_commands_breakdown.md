@@ -63,10 +63,10 @@ trimmomatic PE -threads 4 \
 
 trimmomatic PE -threads 4 \
                -phred33 mutmap_bulk.1.fastq.gz mutmap_bulk.2.fastq.gz \
-               output_directory/00_fastq/bulk_R1_paired.fastq.gz \
-               output_directory/00_fastq/bulk_R1_unpaired.fastq.gz \
-               output_directory/00_fastq/bulk_R2_paired.fastq.gz \
-               output_directory/00_fastq/bulk_R2_unpaired.fastq.gz \
+               output_directory/00_fastq/mutant_bulk_R1_paired.fastq.gz \
+               output_directory/00_fastq/mutant_bulk_R1_unpaired.fastq.gz \
+               output_directory/00_fastq/mutant_bulk_R2_paired.fastq.gz \
+               output_directory/00_fastq/mutant_bulk_R2_unpaired.fastq.gz \
                ILLUMINACLIP:adapter.fasta:2:30:10 \
                LEADING:20 \
                TRAILING:20 \
@@ -87,13 +87,11 @@ trimmomatic PE -threads 4 \
 
 1. **Trimmomatic GitHub Repository**: For more information on Trimmomatic, refer to its [GitHub repository](https://github.com/usadellab/Trimmomatic).
 
-2. **Adapter Sequences**: The adapter sequences used in the trimming process can be found on the [Trimmomatic GitHub](https://github.com/timflutre/trimmomatic/tree/master/adapters). However, these should be selected based on the specific experimental design. It is important to verify which adapter sequences are most appropriate for your dataset.
+2. **Adapter Sequences**: The adapter sequences used in the trimming process can be found on the [Trimmomatic GitHub](https://github.com/timflutre/trimmomatic/tree/master/adapters).
 
-3. **Creating Adapter FASTA Files**: A useful explanation on how to properly prepare adapter FASTA files, particularly when using the NEB library, can be found in this [issue](https://github.com/usadellab/Trimmomatic/issues/20). This provides insights into why certain adapter formats are necessary.
+3. **Quality Control**: After trimming, it is recommended to perform quality control (QC) on the resulting FASTQ files using software like [FastQC](https://github.com/s-andrews/FastQC).
 
-4. **Quality Control**: After trimming, it is recommended to perform quality control (QC) on the resulting FASTQ files using software like [FastQC](https://github.com/s-andrews/FastQC).
-
-5. **Alternative Software - fastp**: If you are unsure about which adapter sequences were used, the software [fastp](https://github.com/OpenGene/fastp) may be useful. It includes the `--detect_adapter_for_pe` option, which automatically detects and removes adapter sequences. However, please note that MutMap has not been extensively tested with fastp, so its compatibility cannot be guaranteed.
+4. **Alternative Software - fastp**: If you are unsure about which adapter sequences were used, the software [fastp](https://github.com/OpenGene/fastp) may be useful. It includes the `--detect_adapter_for_pe` option, which automatically detects and removes adapter sequences. However, please note that MutMap has not been extensively tested with fastp, so its compatibility cannot be guaranteed.
 
 ---
 
@@ -129,17 +127,13 @@ bwa mem -t 4 output_directory/10_ref/mutmap_ref.fasta \
     output_directory/00_fastq/cultivar_R1_paired.fastq.gz \
     output_directory/00_fastq/cultivar_R2_paired.fastq.gz | \
 samtools fixmate -m - - | \
-samtools sort -m 1G -@ 4 | \
-samtools markdup -r - - | \
-samtools view -b -f 2 -F 2048 -o output_directory/20_bam/cultivar.bam
+samtools sort -m 1G -@ 4 -o output_directory/20_bam/cultivar.unsorted.bam -
 
 bwa mem -t 4 output_directory/10_ref/mutmap_ref.fasta \
-    output_directory/00_fastq/bulk_R1_paired.fastq.gz \
-    output_directory/00_fastq/bulk_R2_paired.fastq.gz | \
+    output_directory/00_fastq/mutant_bulk_R1_paired.fastq.gz \
+    output_directory/00_fastq/mutant_bulk_R2_paired.fastq.gz | \
 samtools fixmate -m - - | \
-samtools sort -m 1G -@ 4 | \
-samtools markdup -r - - | \
-samtools view -b -f 2 -F 2048 -o output_directory/20_bam/bulk.bam
+samtools sort -m 1G -@ 4 -o output_directory/20_bam/mutant_bulk.unsorted.bam -
 ```
 
 **Explanation**:
@@ -150,15 +144,9 @@ samtools view -b -f 2 -F 2048 -o output_directory/20_bam/bulk.bam
 - `-m`: Specifies the maximum memory available per thread for sorting (e.g., `-m 1G` limits memory usage to 1 GB).
 - `sort`: Sorts the BAM file by genomic coordinates.
 - `-@ 4`: Specifies the number of threads to use for sorting (here, 4 threads).
-- `markdup`: Removes PCR duplicates to avoid bias in variant calling.
-- `view`: Converts the data into BAM format.
-- `-b`: Outputs the data in BAM format.
-- `-f 2`: Selects properly paired reads.
-- `-F 2048`: Excludes supplementary alignments (e.g., secondary mappings).
+- `-o`: Specifies the output file for the sorted BAM.
 
 ---
-
-
 
 ## Step 5: BAM Sorting and Indexing
 
@@ -168,11 +156,13 @@ Sorting and indexing are performed on both the **cultivar** and **mutant bulk** 
 **Usage**:
 
 ```bash
-samtools sort -m 1G -@ 4 -o output_directory/20_bam/cultivar.bam output_directory/20_bam/cultivar.unsorted.bam
+samtools sort -m 1G -@ 4 -o output_directory/20_bam/cultivar.bam output
+
+_directory/20_bam/cultivar.unsorted.bam
 samtools index output_directory/20_bam/cultivar.bam
 
-samtools sort -m 1G -@ 4 -o output_directory/20_bam/bulk.bam output_directory/20_bam/bulk.unsorted.bam
-samtools index output_directory/20_bam/bulk.bam
+samtools sort -m 1G -@ 4 -o output_directory/20_bam/mutant_bulk.bam output_directory/20_bam/mutant_bulk.unsorted.bam
+samtools index output_directory/20_bam/mutant_bulk.bam
 ```
 
 **Explanation**:
@@ -188,7 +178,7 @@ For larger genomes like wheat, using the default `samtools index` may lead to in
 
 ```bash
 samtools index -c output_directory/20_bam/cultivar.bam
-samtools index -c output_directory/20_bam/bulk.bam
+samtools index -c output_directory/20_bam/mutant_bulk.bam
 ```
 
 This creates a CSI index that supports larger reference genomes.
@@ -204,7 +194,7 @@ Once the BAM files are indexed, the next step is to call variants using **bcftoo
 
 ```bash
 bcftools mpileup -a AD,ADF,ADR -B -q 40 -Q 18 -C 50 -O u -f output_directory/10_ref/mutmap_ref.fasta \
-output_directory/20_bam/cultivar.bam output_directory/20_bam/bulk.bam | \
+output_directory/20_bam/cultivar.bam output_directory/20_bam/mutant_bulk.bam | \
 bcftools call -vm -f GQ,GP -O u | \
 bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.vcf.gz
 ```
