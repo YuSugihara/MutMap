@@ -163,9 +163,7 @@ samtools sort -m 1G -@ 4 | \
 samtools markdup -r - - | \
 samtools view -b -f 2 -F 2048 -o output_directory/20_bam/cultivar.bam
 
-samtools fixmate -m output_directory/20_bam/b
-
-ulk.unsorted.bam - | \
+samtools fixmate -m output_directory/20_bam/bulk.unsorted.bam - | \
 samtools sort -m 1G -@ 4 | \
 samtools markdup -r - - | \
 samtools view -b -f 2 -F 2048 -o output_directory/20_bam/bulk.bam
