@@ -15,15 +15,17 @@ class Alignment(object):
               flush=True)
 
         cmd = 'bwa mem -t {0} \
-                       {1} {2} {3} \
-                       1> {4}/20_bam/{5}.bam \
-                       2>> {4}/log/bwa.log'.format(self.args.threads,
-                                                   self.args.ref,
-                                                   fastq1,
-                                                   fastq2,
-                                                   self.out,
-                                                   index)
-        
+                       {1} {2} {3} | \
+               samtools view -b \
+                             -o {4}/20_bam/{5}.bam \
+                             >> {4}/log/alignment.log \
+                             2>&1'.format(self.args.threads,
+                                          self.args.ref,
+                                          fastq1,
+                                          fastq2,
+                                          self.out,
+                                          index)
+
         cmd = clean_cmd(cmd)
 
         try:
@@ -33,7 +35,7 @@ class Alignment(object):
                     shell=True,
                     check=True)
         except sbp.CalledProcessError:
-            call_log(self.out, 'bwa', cmd)
+            call_log(self.out, 'alignment', cmd)
             sys.exit(1)
 
         print(time_stamp(),
