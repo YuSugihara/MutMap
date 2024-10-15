@@ -43,7 +43,7 @@ mkdir -p output_directory/30_vcf
 
 ## Step 2: Quality Control and Trimming
 
-**Description**:\
+**Description**:  
 Trimming is the process of removing low-quality sequences and adapters from raw sequencing data. This step is essential to ensure that the data used for alignment is clean and of high quality. In MutMap, trimming is performed using **Trimmomatic** on both the **cultivar** and **bulk** (mutant bulk) in the same manner.
 
 **Usage**:
@@ -83,21 +83,11 @@ trimmomatic PE -threads 4 \
 - `SLIDINGWINDOW`: Performs sliding window trimming, trimming when the average quality within the window falls below a threshold.
 - `MINLEN`: Discards reads that are shorter than the specified length.
 
-**Additional Information**:
-
-1. **Trimmomatic GitHub Repository**: For more information on Trimmomatic, refer to its [GitHub repository](https://github.com/usadellab/Trimmomatic).
-
-2. **Adapter Sequences**: The adapter sequences used in the trimming process can be found on the [Trimmomatic GitHub](https://github.com/timflutre/trimmomatic/tree/master/adapters).
-
-3. **Quality Control**: After trimming, it is recommended to perform quality control (QC) on the resulting FASTQ files using software like [FastQC](https://github.com/s-andrews/FastQC).
-
-4. **Alternative Software - fastp**: If you are unsure about which adapter sequences were used, the software [fastp](https://github.com/OpenGene/fastp) may be useful. It includes the `--detect_adapter_for_pe` option, which automatically detects and removes adapter sequences. However, please note that MutMap has not been extensively tested with fastp, so its compatibility cannot be guaranteed.
-
 ---
 
 ## Step 3: Reference Genome Indexing
 
-**Description**:\
+**Description**:  
 Before aligning reads to the reference genome, the genome must be indexed. Indexing creates necessary data structures that make the alignment process more efficient. In MutMap, **BWA** and **SAMtools** are used for reference genome indexing.
 
 For more information, please refer to the **BWA** manual [here](http://bio-bwa.sourceforge.net/bwa.shtml) and the **SAMtools** manual [here](https://www.htslib.org/doc/samtools.html).
@@ -119,7 +109,7 @@ samtools faidx output_directory/10_ref/mutmap_ref.fasta
 
 ## Step 4: Read Alignment and BAM Processing
 
-**Description**:\
+**Description**:  
 Alignment is performed on both the **cultivar** and **bulk** in the same manner. After trimming and indexing the reference genome, the next step is to align the sequencing reads to the reference using **BWA**, followed by **SAMtools** for processing the SAM/BAM files.
 
 For more information on **BWA**, refer to its manual [here](http://bio-bwa.sourceforge.net/bwa.shtml). Additionally, refer to the **SAMtools** manual [here](https://www.htslib.org/doc/samtools.html).
@@ -150,12 +140,9 @@ samtools view -b -f 2 -F 2048 -o output_directory/20_bam/bulk.bam
 - `-t 4`: Specifies the number of threads to use (in this case, 4 threads).
 - `fixmate -m`: Adjusts mate-pair information in the BAM file for consistency and adds the `ms` (mate score) tag, which is used by `markdup` to select the best reads to keep during duplicate marking.
 - `sort`: Sorts the BAM file by genomic coordinates.
-- `-@ 4`: Specifies the number of threads to use for sorting (here, 4 threads).
 - `markdup`: Removes PCR duplicates to avoid bias in variant calling.
 - `view`: Converts the data into BAM format.
-- `-b`:
-
- Outputs the data in BAM format.
+- `-b`: Outputs the data in BAM format.
 - `-f 2`: Selects properly paired reads.
 - `-F 2048`: Excludes supplementary alignments (e.g., secondary mappings).
 
@@ -163,8 +150,8 @@ samtools view -b -f 2 -F 2048 -o output_directory/20_bam/bulk.bam
 
 ## Step 5: BAM Sorting and Indexing
 
-**Description**:\
-Sorting and indexing are performed on both the **cultivar** and **bulk** in the same manner. After aligning the reads, **SAMtools** is used to sort and index the resulting BAM files for efficient access and analysis. Sorting ensures that the reads are ordered by their position in the genome, and indexing creates a .bai file that allows for fast retrieval of specific regions during analysis.
+**Description**:  
+Sorting and indexing are performed on both the **cultivar** and **bulk** in the same manner. After aligning the reads, **SAMtools** is used to sort and index the resulting BAM files for efficient access and analysis. Sorting ensures that the reads are ordered by their position in the genome, and indexing creates a .bai or .csi file that allows for fast retrieval of specific regions during analysis.
 
 **Usage**:
 
@@ -172,7 +159,9 @@ Sorting and indexing are performed on both the **cultivar** and **bulk** in the 
 samtools sort -m 1G -@ 4 -o output_directory/20_bam/cultivar.bam output_directory/20_bam/cultivar.unsorted.bam
 samtools index output_directory/20_bam/cultivar.bam
 
-samtools sort -m 1G -@ 4 -o output_directory/20_bam/bulk.bam output_directory/20_bam/bulk.unsorted.bam
+samtools sort -m 1G -@ 4 -
+
+o output_directory/20_bam/bulk.bam output_directory/20_bam/bulk.unsorted.bam
 samtools index output_directory/20_bam/bulk.bam
 ```
 
@@ -185,14 +174,14 @@ samtools index output_directory/20_bam/bulk.bam
 
 ### Note for Large Genomes (e.g., Wheat):
 
-For larger genomes like wheat, using the default `samtools index` may lead to inefficiencies due to the size of the BAM file. In such cases, it is recommended to use the `-c` option:
+For larger genomes like wheat, attempting to create a standard `.bai` index file using `samtools index` without the `-c` option may result in an error due to the file size limitations of `.bai` indexes. In such cases, it is necessary to use the `-c` option, which generates a `.csi` index that supports large reference genomes:
 
 ```bash
 samtools index -c output_directory/20_bam/cultivar.bam
 samtools index -c output_directory/20_bam/bulk.bam
 ```
 
-This creates a CSI index that supports larger reference genomes.
+This `.csi` index is suitable for handling large genomes that exceed the size limitations of `.bai`.
 
 ---
 
@@ -212,7 +201,7 @@ bcftools call -vm -f GQ,GP -O u | \
 bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.vcf.gz
 ```
 
-### Explanation:
+**Explanation**:
 
 - `mpileup`: Generates per-base information for each position in the reference genome.
 - `-a AD,ADF,ADR`: Includes allele depth information in the output. These fields are crucial for MutMap analysis.
@@ -224,29 +213,6 @@ bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.vcf.gz
 ### Important Note:
 When generating the VCF file, the order in which the **cultivar** and **bulk** BAM files are passed into the `bcftools mpileup` command is important. The **cultivar** should come first, followed by the **bulk**. This order is critical for downstream analysis, especially when using **MutPlot**, as the software expects the **cultivar** data to be the first sample in the VCF file.
 
-### Chromosome-specific processing:  
-The `-r` option in `bcftools mpileup` allows for chromosome-specific processing, which can be used to parallelize the VCF generation for each chromosome individually. This can help speed up the variant calling process for large genomes.
-
-#### Usage for Chromosome-specific processing:
-
-```bash
-bcftools mpileup -r test_chr -a AD,ADF,ADR -B -q 40 -Q 18 -C 50 -O u -f output_directory/10_ref/mutmap_ref.fasta \
-output_directory/20_bam/cultivar.bam output_directory/20_bam/bulk.bam | \
-bcftools call -vm -f GQ,GP -O u | \
-bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.test_chr.vcf.gz
-```
-
-### Concatenating VCF Files:  
-If the VCF files are generated separately for each chromosome, you can use `bcftools concat` to concatenate them into a single VCF file for easier analysis.
-
-#### Usage for Concatenating VCF Files:
-
-```bash
-bcftools concat -O z -o output_directory/30_vcf/mutmap_combined.vcf.gz output_directory/30_vcf/mutmap.*.vcf.gz
-```
-
-This command will concatenate all chromosome-specific VCF files (`mutmap.*.vcf.gz`) into a single compressed VCF file (`mutmap_combined.vcf.gz`).
-
 ### Index the VCF file with Tabix:
 
 For more information on **Tabix**, refer to the manual [here](https://www.htslib.org/doc/tabix.html).
@@ -257,19 +223,19 @@ tabix -f -p vcf output_directory/30_vcf/mutmap.vcf.gz
 
 ### Note for Large Genomes (e.g., Wheat):
 
-For large genomes like wheat, using the default `tabix` indexing may not be sufficient. In such cases, use the `-C` option to create a CSI index that supports large reference genomes:
+For large genomes like wheat, using the default `tabix` indexing without the `-C` option may result in an error due to file size limitations. In such cases, it is necessary to use the `-C` option, which generates a `.csi` index that supports large reference genomes:
 
 ```bash
 tabix -C -f -p vcf output_directory/30_vcf/mutmap.vcf.gz
 ```
 
-This ensures compatibility with large genomes and allows for efficient access to the data.
+This `.csi` index is suitable for handling large genomes that exceed the size limitations of standard `.tbi` indexes.
 
 ---
 
 ## Step 7: SNP Filtering, SNP Index Calculation, and Visualization with MutPlot
 
-**Description**:\
+**Description**:  
 MutPlot is used to filter SNPs, calculate SNP indices, and visualize the results. It helps identify significant SNPs and their impact on the genome, producing various files that assist in analyzing and visualizing the data.
 
 **Usage**:
