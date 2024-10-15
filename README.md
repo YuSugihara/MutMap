@@ -343,7 +343,7 @@ Inside of `OUT_DIR` is like below.
 
 ### MutMap commands breakdown
 
-For a detailed breakdown of the commands used in MutMap, including explanations of each step, parameters, and best practices for troubleshooting, please refer to the [MutMap Commands Breakdown](docs/01_mutmap_commands_breakdown.md) document.
+For a detailed breakdown of the commands used in MutMap, including explanations of each step, parameters, and best practices for troubleshooting, please refer to the [MutMap Commands Breakdown](docs/01_MutMap_Commands_Breakdown.md) document.
 
 ## About multiple testing correction
 This function has been deprecated since v2.3.5.
