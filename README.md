@@ -309,10 +309,9 @@ Inside of `OUT_DIR` is like below.
 │   ├── sliding_window.p99.tsv
 |   `-- mutmap_plot.png
 `-- log
+    |-- alignment.log
     |-- bcftools.log
-    |-- bgzip.log
     |-- bwa.log
-    |-- mutplot.log
     |-- samtools.log
     `-- tabix.log
 ```
