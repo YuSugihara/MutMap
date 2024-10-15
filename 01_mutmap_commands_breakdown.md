@@ -12,6 +12,7 @@ This document provides a comprehensive overview of the commands used in the MutM
 6. [Step 5: BAM Sorting and Indexing](#step-5-bam-sorting-and-indexing)
 7. [Step 6: Variant Calling with mpileup](#step-6-variant-calling-with-mpileup)
 8. [Step 7: SNP Filtering, SNP Index Calculation, and Visualization with MutPlot](#step-7-snp-filtering-snp-index-calculation-and-visualization-with-mutplot)
+9. [Using SnpEff for Variant Annotation](#using-snpeff-for-variant-annotation)
 
 ---
 
@@ -83,6 +84,16 @@ trimmomatic PE -threads 4 \
 - `SLIDINGWINDOW`: Performs sliding window trimming, trimming when the average quality within the window falls below a threshold.
 - `MINLEN`: Discards reads that are shorter than the specified length.
 
+**Additional Information**:
+
+1. **Trimmomatic GitHub Repository**: For more information on Trimmomatic, refer to its [GitHub repository](https://github.com/usadellab/Trimmomatic).
+
+2. **Adapter Sequences**: The adapter sequences used in the trimming process can be found on the [Trimmomatic GitHub](https://github.com/timflutre/trimmomatic/tree/master/adapters).
+
+3. **Quality Control**: After trimming, it is recommended to perform quality control (QC) on the resulting FASTQ files using software like [FastQC](https://github.com/s-andrews/FastQC).
+
+4. **Alternative Software - fastp**: If you are unsure about which adapter sequences were used, the software [fastp](https://github.com/OpenGene/fastp) may be useful. It includes the `--detect_adapter_for_pe` option, which automatically detects and removes adapter sequences. However, please note that MutMap has not been extensively tested with fastp, so its compatibility cannot be guaranteed.
+
 ---
 
 ## Step 3: Reference Genome Indexing
@@ -141,7 +152,9 @@ samtools view -b -f 2 -F 2048 -o output_directory/20_bam/bulk.bam
 - `fixmate -m`: Adjusts mate-pair information in the BAM file for consistency and adds the `ms` (mate score) tag, which is used by `markdup` to select the best reads to keep during duplicate marking.
 - `sort`: Sorts the BAM file by genomic coordinates.
 - `markdup`: Removes PCR duplicates to avoid bias in variant calling.
-- `view`: Converts the data into BAM format.
+- `view`: Converts the data
+
+ into BAM format.
 - `-b`: Outputs the data in BAM format.
 - `-f 2`: Selects properly paired reads.
 - `-F 2048`: Excludes supplementary alignments (e.g., secondary mappings).
@@ -159,9 +172,7 @@ Sorting and indexing are performed on both the **cultivar** and **bulk** in the 
 samtools sort -m 1G -@ 4 -o output_directory/20_bam/cultivar.bam output_directory/20_bam/cultivar.unsorted.bam
 samtools index output_directory/20_bam/cultivar.bam
 
-samtools sort -m 1G -@ 4 -
-
-o output_directory/20_bam/bulk.bam output_directory/20_bam/bulk.unsorted.bam
+samtools sort -m 1G -@ 4 -o output_directory/20_bam/bulk.bam output_directory/20_bam/bulk.unsorted.bam
 samtools index output_directory/20_bam/bulk.bam
 ```
 
@@ -213,6 +224,29 @@ bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.vcf.gz
 ### Important Note:
 When generating the VCF file, the order in which the **cultivar** and **bulk** BAM files are passed into the `bcftools mpileup` command is important. The **cultivar** should come first, followed by the **bulk**. This order is critical for downstream analysis, especially when using **MutPlot**, as the software expects the **cultivar** data to be the first sample in the VCF file.
 
+### Chromosome-specific processing:  
+The `-r` option in `bcftools mpileup` allows for chromosome-specific processing, which can be used to parallelize the VCF generation for each chromosome individually. This can help speed up the variant calling process for large genomes.
+
+#### Usage for Chromosome-specific processing:
+
+```bash
+bcftools mpileup -r test_chr -a AD,ADF,ADR -B -q 40 -Q 18 -C 50 -O u -f output_directory/10_ref/mutmap_ref.fasta \
+output_directory/20_bam/cultivar.bam output_directory/20_bam/bulk.bam | \
+bcftools call -vm -f GQ,GP -O u | \
+bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.test_chr.vcf.gz
+```
+
+### Concatenating VCF Files:  
+If the VCF files are generated separately for each chromosome, you can use `bcftools concat` to concatenate them into a single VCF file for easier analysis.
+
+#### Usage for Concatenating VCF Files:
+
+```bash
+bcftools concat -O z -o output_directory/30_vcf/mutmap_combined.vcf.gz output_directory/30_vcf/mutmap.*.vcf.gz
+```
+
+This command will concatenate all chromosome-specific VCF files (`mutmap.*.vcf.gz`) into a single compressed VCF file (`mutmap_combined.vcf.gz`).
+
 ### Index the VCF file with Tabix:
 
 For more information on **Tabix**, refer to the manual [here](https://www.htslib.org/doc/tabix.html).
@@ -250,7 +284,11 @@ mutplot -v output_directory/30_vcf/mutmap.vcf.gz -o output_directory/40_plot -n 
 - `-o`: Specifies the output directory for the visualization results.
 - `-n`: Specifies the number of individuals in the mutant bulk.
 
-**Optional: Using MutPlot with SnpEff**:\
+---
+
+## Using SnpEff for Variant Annotation
+
+**Optional: Using MutPlot with SnpEff**:  
 MutPlot can be run in combination with **SnpEff** to annotate variants for their potential effects. This allows for a more detailed understanding of how SNPs may impact gene function. For more information on SnpEff, please refer to the [SnpEff Documentation](https://pcingola.github.io/SnpEff/snpeff/introduction/).
 
 **Usage**:
