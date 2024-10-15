@@ -120,8 +120,8 @@ class MutMap(object):
                        -N {4} \
                        -D {5} \
                        -d {6} \
-                       --dot-color {7} \
-                       --line-colors {8} \
+                       --dot-color "{7}" \
+                       --line-colors "{8}" \
                        -o {0}/40_mutmap'.format(self.out,
                                                 self.args.N_bulk,
                                                 self.args.window,

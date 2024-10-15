@@ -86,18 +86,15 @@ class Mpileup(object):
                         shell=True, 
                         check=True)
             except sbp.CalledProcessError:
-                call_log(self.out, 'samtools', cmd3)
-                sys.exit(1)
-
-            try:
-                sbp.run(cmd4, 
-                        stdout=sbp.DEVNULL, 
-                        stderr=sbp.DEVNULL, 
-                        shell=True, 
-                        check=True)
-            except sbp.CalledProcessError:
-                call_log(self.out, 'samtools', cmd4)
-                sys.exit(1)
+                try:
+                    sbp.run(cmd4, 
+                            stdout=sbp.DEVNULL, 
+                            stderr=sbp.DEVNULL, 
+                            shell=True, 
+                            check=True)
+                except sbp.CalledProcessError:
+                    call_log(self.out, 'samtools', cmd4)
+                    sys.exit(1)
 
             sbp.run(cmd5, 
                     stdout=sbp.DEVNULL, 
@@ -162,13 +159,11 @@ class Mpileup(object):
         cmd2 = 'cat {0}/log/bcftools.*.log > {0}/log/bcftools.log'.format(self.out)
         cmd3 = 'rm -f {}/30_vcf/mutmap.*.vcf.gz'.format(self.out)
         cmd4 = 'rm -f {}/log/bcftools.*.log'.format(self.out)
-        cmd5 = 'rm -f {}/log/tabix.*.log'.format(self.out)
 
         cmd1 = clean_cmd(cmd1)
         cmd2 = clean_cmd(cmd2)
         cmd3 = clean_cmd(cmd3)
         cmd4 = clean_cmd(cmd4)
-        cmd5 = clean_cmd(cmd5)
 
         try:
             sbp.run(cmd1, 
@@ -183,7 +178,6 @@ class Mpileup(object):
         sbp.run(cmd2, stdout=sbp.DEVNULL, stderr=sbp.DEVNULL, shell=True, check=True)
         sbp.run(cmd3, stdout=sbp.DEVNULL, stderr=sbp.DEVNULL, shell=True, check=True)
         sbp.run(cmd4, stdout=sbp.DEVNULL, stderr=sbp.DEVNULL, shell=True, check=True)
-        sbp.run(cmd5, stdout=sbp.DEVNULL, stderr=sbp.DEVNULL, shell=True, check=True)
 
     def mkindex(self):
         cmd1 = 'tabix -f \
@@ -209,18 +203,15 @@ class Mpileup(object):
                     shell=True, 
                     check=True)
         except sbp.CalledProcessError:
-            call_log(self.out, 'tabix', cmd1)
-            sys.exit(1)
-
-        try:
-            sbp.run(cmd2, 
-                    stdout=sbp.DEVNULL, 
-                    stderr=sbp.DEVNULL, 
-                    shell=True, 
-                    check=True)
-        except sbp.CalledProcessError:
-            call_log(self.out, 'tabix', cmd2)
-            sys.exit(1)
+            try:
+                sbp.run(cmd2, 
+                        stdout=sbp.DEVNULL, 
+                        stderr=sbp.DEVNULL, 
+                        shell=True, 
+                        check=True)
+            except sbp.CalledProcessError:
+                call_log(self.out, 'tabix', cmd2)
+                sys.exit(1)
 
     def run(self):
         print(time_stamp(), 'start to merge BAMs.', flush=True)
