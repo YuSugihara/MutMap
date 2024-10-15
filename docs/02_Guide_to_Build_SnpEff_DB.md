@@ -1,70 +1,111 @@
 # Building a Custom SnpEff Database
 
 ## Table of Contents
-1. Introduction
-2. Important Notes: Reading the SnpEff Documentation
-3. Prerequisites: Conda Installation
-4. Using Pre-built SnpEff Databases
-5. When to Build a Custom SnpEff Database
-6. Formatting and Errors: Handling GFF Files
-7. Verifying Mutations with IGV
+1. [Introduction](#1-introduction)  
+2. [Downloading Reference and Annotation Data](#2-downloading-reference-and-annotation-data)  
+3. [Setting Paths and Navigating to the snpEff Directory](#3-setting-paths-and-navigating-to-the-snpeff-directory)  
+4. [Editing snpEff.config](#4-editing-snpeffconfig)  
+5. [Building the SnpEff Database](#5-building-the-snpeff-database)  
+6. [Verifying Mutations with IGV](#6-verifying-mutations-with-igv)
 
 ---
 
 ## 1. Introduction
 
-In this tutorial, we will guide you through the process of building a custom SnpEff database. The steps outlined here are meant for users who need to annotate genomic variants using their own reference genome or custom annotations that may not be available in the pre-built SnpEff databases.
+In this tutorial, we will guide you through the process of building a custom SnpEff database using **NCBI RefSeq Annotations** for **rice (Oryza sativa)**. The steps outlined here are meant for users who need to annotate genomic variants using their own reference genome or custom annotations that may not be available in the pre-built SnpEff databases.
 
-## 2. Important Notes: Reading the SnpEff Documentation
+Before proceeding, it is **highly recommended** to carefully read the [SnpEff documentation](https://pcingola.github.io/SnpEff/snpeff/introduction/). This tutorial assumes that you have already installed SnpEff using Conda (`conda install -c bioconda snpeff`). If your reference genome is already available in a pre-built SnpEff database, you can avoid building a custom database. For MutMap users, please refer to the [MutMap manual](https://github.com/YuSugihara/MutMap) for details on how to use the `-e` option to select pre-built databases.
 
-Before proceeding with this tutorial, it is essential that you carefully read the official SnpEff documentation. The official guide provides valuable insights and details on how SnpEff operates, which can help avoid common pitfalls during the database-building process. You can find the official documentation at the following URL:
+## 2. Downloading Reference and Annotation Data
 
-[SnpEff Documentation](https://pcingola.github.io/SnpEff/snpeff/introduction/)
+For this tutorial, we will use the **NCBI RefSeq Annotations** for **rice (Oryza sativa)**. The dataset can be accessed at the following URL:
 
-Taking the time to understand this material will improve the accuracy and reliability of your custom annotations.
+[NCBI RefSeq Annotations for Oryza sativa](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_034140825.1/)
 
-## 3. Prerequisites: Conda Installation
+We will use the following links to download the reference FASTA and GFF files using `wget`, then decompress them using `gunzip`:
 
-This tutorial assumes that you have already installed SnpEff using Conda. If you have not installed it yet, please follow the instructions provided in the official SnpEff documentation or execute the following command to install it:
+- Reference FASTA: [GCF_034140825.1_ASM3414082v1_genomic.fna.gz](https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/034/140/825/GCF_034140825.1_ASM3414082v1/GCF_034140825.1_ASM3414082v1_genomic.fna.gz)
+- GFF file: [GCF_034140825.1_ASM3414082v1_genomic.gff.gz](https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/034/140/825/GCF_034140825.1_ASM3414082v1/GCF_034140825.1_ASM3414082v1_genomic.gff.gz)
 
-```bash
-conda install -c bioconda snpeff
-```
-
-## 4. Using Pre-built SnpEff Databases
-
-If your reference genome is already available in a pre-built SnpEff database, you can simply use the `-e` option followed by the name of the database. This allows you to avoid building a custom database. For example:
+To download and decompress these files, run the following commands:
 
 ```bash
-snpeff -e GRCh38.99 input.vcf > annotated.vcf
+# Download reference FASTA
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/034/140/825/GCF_034140825.1_ASM3414082v1/GCF_034140825.1_ASM3414082v1_genomic.fna.gz
+
+# Download GFF file
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/034/140/825/GCF_034140825.1_ASM3414082v1/GCF_034140825.1_ASM3414082v1_genomic.gff.gz
+
+# Decompress the files
+gunzip GCF_034140825.1_ASM3414082v1_genomic.fna.gz
+gunzip GCF_034140825.1_ASM3414082v1_genomic.gff.gz
 ```
 
-This command will use the pre-built GRCh38.99 database for variant annotation.
+Next, define the paths to these files as variables:
 
-## 5. When to Build a Custom SnpEff Database
+```bash
+PATH_TO_FASTA=$(pwd)/GCF_034140825.1_ASM3414082v1_genomic.fna
+PATH_TO_GFF=$(pwd)/GCF_034140825.1_ASM3414082v1_genomic.gff
+```
 
-There are situations where you may need to build your own SnpEff database. These include:
+## 3. Setting Paths and Navigating to the snpEff Directory
 
-- Your reference genome is not available in the existing SnpEff databases.
-- You want to use a custom annotation that you have created or downloaded.
+Once the reference and annotation files are downloaded and paths are set, you need to navigate to the directory where `snpEff` is installed. If you installed `snpEff` using Conda, it is typically located at:
 
-In these cases, this tutorial will guide you through the necessary steps to build your own database from scratch.
+```
+${HOME}/anaconda/envs/mutmap/share/snpeff-5.2-1
+```
 
-## 6. Formatting and Errors: Handling GFF Files
+However, the exact path may vary depending on whether you are using Conda or Mamba, and it may also differ based on the version of `snpEff` you have installed.
 
-When building a custom SnpEff database, one of the most critical components is ensuring that your GFF (General Feature Format) file is correctly formatted. GFF files are used to describe gene structures and other annotations in your reference genome.
+After navigating to this directory, you should see the following directories and files:
 
-However, GFF files can vary greatly in format, and this can lead to errors during the SnpEff database build process. In some cases, errors may not be immediately obvious, but incorrect formatting can lead to unexpected or incorrect annotation results.
+- `scripts`
+- `snpEff`
+- `snpEff.config`
+- `snpEff.jar`
 
-### Common Issues with GFF Files
+Now, create a directory for your custom genome data:
 
-- Missing or malformed attributes.
-- Incorrect gene model structures.
-- Formatting discrepancies that are tolerated by some tools but not by SnpEff.
+```bash
+mkdir -p data/GCF_034140825.1
+```
 
-To avoid these issues, it is essential to validate your GFF files using dedicated tools, or to carefully inspect the structure before proceeding with the database build.
+Next, create symbolic links for the reference FASTA and GFF files in the newly created directory:
 
-## 7. Verifying Mutations with IGV
+```bash
+ln -s ${PATH_TO_FASTA} data/GCF_034140825.1/sequences.fa
+ln -s ${PATH_TO_GFF} data/GCF_034140825.1/genes.gff
+```
+
+## 4. Editing snpEff.config
+
+After setting up the files, the next step is to edit the `snpEff.config` file to register your custom genome. Open `snpEff.config` in a text editor and add the following line:
+
+```
+GCF_034140825.1.genome : GCF_034140825.1
+```
+
+Make sure that the second `GCF_034140825.1` matches the directory name you created in the `data/` folder. This line tells `snpEff` where to find the genome data for your custom annotation.
+
+Save the file after adding the line.
+
+## 5. Building the SnpEff Database
+
+Once the `snpEff.config` file is updated, you can start building the SnpEff database using the following command:
+
+```bash
+snpEff build -gff3 -noCheckCds -noCheckProtein GCF_034140825.1
+```
+
+Here’s what each option does:
+- `-gff3`: Specifies that the input annotation file is in GFF3 format.
+- `-noCheckCds`: Disables the check for coding sequences (CDS).
+- `-noCheckProtein`: Disables the check for proteins.
+
+This command builds the database using the reference genome and annotation files located in `data/GCF_034140825.1/`.
+
+## 6. Verifying Mutations with IGV
 
 Even if your SnpEff database is built correctly and no errors are reported, it is highly recommended that you verify the results for high-impact mutations manually. The SnpEff annotation process may flag certain mutations as high-impact, but the actual effect of the mutation on gene function should be validated using genome visualization tools like IGV (Integrative Genomics Viewer).
 
