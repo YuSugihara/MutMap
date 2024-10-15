@@ -6,7 +6,8 @@
 3. [Setting Paths and Navigating to the snpEff Directory](#3-setting-paths-and-navigating-to-the-snpeff-directory)  
 4. [Editing snpEff.config](#4-editing-snpeffconfig)  
 5. [Building the SnpEff Database](#5-building-the-snpeff-database)  
-6. [Verifying Mutations with IGV](#6-verifying-mutations-with-igv)
+6. [Handling Errors During Build](#6-handling-errors-during-build)  
+7. [Verifying Mutations with IGV](#7-verifying-mutations-with-igv)
 
 ---
 
@@ -98,18 +99,50 @@ Once the `snpEff.config` file is updated, you can start building the SnpEff data
 snpEff build -gff3 -noCheckCds -noCheckProtein GCF_034140825.1
 ```
 
-Here’s what each option does:
-- `-gff3`: Specifies that the input annotation file is in GFF3 format.
-- `-noCheckCds`: Disables the check for coding sequences (CDS).
-- `-noCheckProtein`: Disables the check for proteins.
-
 This command builds the database using the reference genome and annotation files located in `data/GCF_034140825.1/`.
 
-## 6. Verifying Mutations with IGV
+## 6. Handling Errors During Build
 
-Even if your SnpEff database is built correctly and no errors are reported, it is highly recommended that you verify the results for high-impact mutations manually. The SnpEff annotation process may flag certain mutations as high-impact, but the actual effect of the mutation on gene function should be validated using genome visualization tools like IGV (Integrative Genomics Viewer).
+If the GFF file is correctly formatted and compatible with `snpEff`, the build process will complete successfully, and you will be able to annotate variants using the `-e` option with the specified genome.
 
-IGV allows you to visualize the reference genome alongside your variant data, helping you to understand how the variants affect gene structures and functions.
+However, in some cases, you might encounter errors such as:
+
+```
+WARNING_CHROMOSOME_CIRCULAR: Chromosome 'NC_001320.1'
+WARNING_GENE_NOT_FOUND: Gene 'null' (NC_001751.1:1732-2019)
+```
+
+These indicate that the build process has failed due to issues with annotations for certain contigs (e.g., organelle sequences) in the GFF file.
+
+### Removing Problematic Contigs from the GFF
+
+To fix this issue, you can remove the problematic contig annotations from the GFF file before building the database. Below is an example of how to do this using `grep` to filter out both `NC_001320.1` and `NC_001751.1`:
+
+```bash
+# Create a new GFF file excluding the problematic contigs
+grep -v -e "NC_001320.1" -e "NC_001751.1" ${PATH_TO_GFF} > filtered_genes.gff
+
+# Update the symbolic link to point to the new filtered GFF file
+ln -sf $(pwd)/filtered_genes.gff data/GCF_034140825.1/genes.gff
+```
+
+This command will exclude any lines in the GFF file that contain `NC_001320.1` or `NC_001751.1`, the contigs causing the issue. After creating the new `filtered_genes.gff` file, update the symbolic link for the GFF file in the `snpEff` data directory.
+
+### Re-running the Build Command
+
+Once the GFF file has been filtered, you can re-run the `snpEff build` command:
+
+```bash
+snpEff build -gff3 -noCheckCds -noCheckProtein GCF_034140825.1
+```
+
+If the problematic contigs were the only cause of the error, the build should now complete successfully.
+
+## 7. Verifying Mutations with IGV
+
+Even if your SnpEff database is built without errors, it is important to manually verify the annotations. GFF format inconsistencies may still cause SnpEff to annotate variants incorrectly, even when no errors are reported during the build process.
+
+To check the accuracy of the annotations, you can use a genome visualization tool like IGV (Integrative Genomics Viewer). IGV allows you to visually inspect the variant locations and assess their impact on gene function.
 
 You can download IGV and learn more about it from the following link:
 
