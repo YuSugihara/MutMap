@@ -298,3 +298,4 @@ mutplot -v output_directory/30_vcf/mutmap.vcf.gz -o output_directory/40_plot -n 
 **Additional Option**:
 
 - `-e database`: Specifies the SnpEff database to use for annotating variants. Ensure that the correct SnpEff database is installed and available before running this command.
+
