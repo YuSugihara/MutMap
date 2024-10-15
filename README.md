@@ -345,10 +345,10 @@ Inside of `OUT_DIR` is like below.
 
 For a detailed breakdown of the commands used in MutMap, including explanations of each step, parameters, and best practices for troubleshooting, please refer to the [MutMap Commands Breakdown](docs/01_MutMap_Commands_Breakdown.md) document.
 
+### Build a custom SnpEff database
+If you are working with a non-model organism or your own reference genome, you may need to build a custom SnpEff database. For detailed instructions on how to build a custom SnpEff database, please refer to the [Build a Custom SnpEff Database](docs/02_Guide_to_Build_SnpEff_DB.md) document.
+
 ## About multiple testing correction
 This function has been deprecated since v2.3.5.
 We highly recommend running MutMap without this function.
 However, if you would like to use this function, you can use it with versions of MutMap older than v2.3.5.
-
-### Build a custom SnpEff database
-If you are working with a non-model organism or your own reference genome, you may need to build a custom SnpEff database. For detailed instructions on how to build a custom SnpEff database, please refer to the [Build a Custom SnpEff Database](docs/02_Guide_to_Build_SnpEff_DB.md) document.
