@@ -8,7 +8,7 @@ This document provides a comprehensive overview of the commands used in the MutM
 2. [Step 1: Directory Setup](#step-1-directory-setup)
 3. [Step 2: Quality Control and Trimming](#step-2-quality-control-and-trimming)
 4. [Step 3: Reference Genome Indexing](#step-3-reference-genome-indexing)
-5. [Step 4: Read Alignment and BAM Processing](#step-4-read-alignment-and-bam-processing)
+5. [Step 4: Read Alignment](#step-4-read-alignment)
 6. [Step 5: BAM Sorting and Indexing](#step-5-bam-sorting-and-indexing)
 7. [Step 6: Variant Calling with mpileup](#step-6-variant-calling-with-mpileup)
 8. [Step 7: SNP Filtering, SNP Index Calculation, and Visualization with MutPlot](#step-7-snp-filtering-snp-index-calculation-and-visualization-with-mutplot)
@@ -118,10 +118,10 @@ samtools faidx output_directory/10_ref/mutmap_ref.fasta
 
 ---
 
-## Step 4: Read Alignment and BAM Processing
+## Step 4: Read Alignment
 
 **Description**:  
-Alignment is performed on both the **cultivar** and **bulk** in the same manner. After trimming and indexing the reference genome, the next step is to align the sequencing reads to the reference using **BWA**, followed by **SAMtools** for processing the SAM/BAM files.
+Alignment is performed on both the **cultivar** and **bulk** in the same manner. After trimming and indexing the reference genome, the next step is to align the sequencing reads to the reference using **BWA**, followed by **SAMtools** for converting the output to BAM format.
 
 For more information on **BWA**, refer to its manual [here](http://bio-bwa.sourceforge.net/bwa.shtml). Additionally, refer to the **SAMtools** manual [here](https://www.htslib.org/doc/samtools.html).
 
@@ -131,61 +131,61 @@ For more information on **BWA**, refer to its manual [here](http://bio-bwa.sourc
 bwa mem -t 4 output_directory/10_ref/mutmap_ref.fasta \
     output_directory/00_fastq/cultivar_R1_paired.fastq.gz \
     output_directory/00_fastq/cultivar_R2_paired.fastq.gz | \
-samtools fixmate -m - - | \
-samtools sort -m 1G -@ 4 -o output_directory/20_bam/cultivar.unsorted.bam - | \
-samtools markdup -r - - | \
-samtools view -b -f 2 -F 2048 -o output_directory/20_bam/cultivar.bam
+samtools view -b \
+              -o output_directory/20_bam/cultivar.unsorted.bam
 
 bwa mem -t 4 output_directory/10_ref/mutmap_ref.fasta \
     output_directory/00_fastq/bulk_R1_paired.fastq.gz \
     output_directory/00_fastq/bulk_R2_paired.fastq.gz | \
-samtools fixmate -m - - | \
-samtools sort -m 1G -@ 4 -o output_directory/20_bam/bulk.unsorted.bam - | \
-samtools markdup -r - - | \
-samtools view -b -f 2 -F 2048 -o output_directory/20_bam/bulk.bam
+samtools view -b \
+              -o output_directory/20_bam/bulk.unsorted.bam
 ```
 
 **Explanation**:
 
 - `mem`: The algorithm used by BWA to align paired-end reads.
 - `-t 4`: Specifies the number of threads to use (in this case, 4 threads).
-- `fixmate -m`: Adjusts mate-pair information in the BAM file for consistency and adds the `ms` (mate score) tag, which is used by `markdup` to select the best reads to keep during duplicate marking.
-- `sort`: Sorts the BAM file by genomic coordinates.
-- `markdup`: Removes PCR duplicates to avoid bias in variant calling.
-- `view`: Converts the data
-
- into BAM format.
-- `-b`: Outputs the data in BAM format.
-- `-f 2`: Selects properly paired reads.
-- `-F 2048`: Excludes supplementary alignments (e.g., secondary mappings).
+- `view -b`: Converts the data into BAM format.
+- `-o`: Specifies the output BAM file location.
 
 ---
 
 ## Step 5: BAM Sorting and Indexing
 
 **Description**:  
-Sorting and indexing are performed on both the **cultivar** and **bulk** in the same manner. After aligning the reads, **SAMtools** is used to sort and index the resulting BAM files for efficient access and analysis. Sorting ensures that the reads are ordered by their position in the genome, and indexing creates a .bai or .csi file that allows for fast retrieval of specific regions during analysis.
+Sorting and indexing are performed on the **cultivar** and **bulk** in the same manner. After aligning the reads, **SAMtools** is used to sort and index the resulting BAM files for efficient access and analysis. Sorting ensures that the reads are ordered by their position in the genome, and indexing creates a `.bai` or `.csi` file that allows for fast retrieval of specific regions during analysis.
 
 **Usage**:
 
 ```bash
-samtools sort -m 1G -@ 4 -o output_directory/20_bam/cultivar.bam output_directory/20_bam/cultivar.unsorted.bam
-samtools index output_directory/20_bam/cultivar.bam
+samtools fixmate -m output_directory/20_bam/cultivar.unsorted.bam - | \
+samtools sort -m 1G -@ 4 | \
+samtools markdup -r - - | \
+samtools view -b -f 2 -F 2048 -o output_directory/20_bam/cultivar.bam
 
-samtools sort -m 1G -@ 4 -o output_directory/20_bam/bulk.bam output_directory/20_bam/bulk.unsorted.bam
-samtools index output_directory/20_bam/bulk.bam
+samtools fixmate -m output_directory/20_bam/b
+
+ulk.unsorted.bam - | \
+samtools sort -m 1G -@ 4 | \
+samtools markdup -r - - | \
+samtools view -b -f 2 -F 2048 -o output_directory/20_bam/bulk.bam
 ```
 
 **Explanation**:
 
+- `fixmate -m`: Adjusts mate-pair information and adds `ms` (mate score) tags, used by `markdup` to select the best reads for duplicate marking.
 - `sort`: Sorts the BAM file by genomic coordinates.
-- `-m 1G`: Limits the memory usage to 1 GB per thread.
-- `-@ 4`: Uses 4 threads for sorting.
-- `index`: Creates an index file (.bai) for the sorted BAM file.
+- `markdup`: Marks duplicate reads by setting a DUP flag (without `-r`, duplicate reads are marked but not removed). To remove duplicates, the `-r` option can be added.
+- `view -b`: Outputs the sorted and duplicate-marked data in BAM format.
 
-### Note for Large Genomes (e.g., Wheat):
+**Indexing BAM files**:
 
-For larger genomes like wheat, attempting to create a standard `.bai` index file using `samtools index` without the `-c` option may result in an error due to the file size limitations of `.bai` indexes. In such cases, it is necessary to use the `-c` option, which generates a `.csi` index that supports large reference genomes:
+```bash
+samtools index output_directory/20_bam/cultivar.bam
+samtools index output_directory/20_bam/bulk.bam
+```
+
+For large genomes (e.g., wheat), attempting to create a standard `.bai` index file using `samtools index` without the `-c` option may result in an error due to file size limitations. In such cases, it is necessary to use the `-c` option, which generates a `.csi` index that supports large reference genomes:
 
 ```bash
 samtools index -c output_directory/20_bam/cultivar.bam
@@ -212,7 +212,7 @@ bcftools call -vm -f GQ,GP -O u | \
 bcftools filter -i "INFO/MQ>=40" -O z -o output_directory/30_vcf/mutmap.vcf.gz
 ```
 
-**Explanation**:
+### Explanation:
 
 - `mpileup`: Generates per-base information for each position in the reference genome.
 - `-a AD,ADF,ADR`: Includes allele depth information in the output. These fields are crucial for MutMap analysis.
