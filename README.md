@@ -331,6 +331,7 @@ Inside of `OUT_DIR` is like below.
     - **MEAN p99** : mean of p99
     - **MEAN p95** : mean of p95
     - **MEAN SNP-index** : mean SNP-index
+  + `snp_index.p95.tsv` and `snp_index.p99.tsv` contain only the SNPs that exceed the respective thresholds (95% or 99%). Similarly, `sliding_window.p95.tsv` and `sliding_window.p99.tsv` contain only the windows that exceed the respective thresholds.
   + `mutmap_plot.png` : resulting plot (like below)
     - **<span style="color: blue; ">BLUE dot</span>** : variant
     - **<span style="color: red; ">RED line</span>** : mean SNP-index
@@ -338,8 +339,9 @@ Inside of `OUT_DIR` is like below.
     - **<span style="color: green; ">GREEN line</span>** : mean p95
   + If you run MutMap with SnpEff, the following additional outputs will be generated:
     - **mutmap.snpEff.vcf**: The updated VCF file after annotation by SnpEff, located in the `40_mutmap` directory.
-    - **snp_index.p95.tsv** and **snp_index.p99.tsv**: These files will contain a new column, **impact**, which includes the mutation impact information predicted by SnpEff.
+    - **snp_index.tsv**: This file will contain a new column, **impact**, which includes the mutation impact information predicted by SnpEff.
     - When plotting the results, variants classified as **MODERATE** by SnpEff are marked with a `+` symbol, while variants classified as **HIGH** are marked with an `x` symbol in the plot.
+
 
 
 <img src="https://github.com/YuSugihara/MutMap/blob/master/images/2_result.png" width=600>
