@@ -293,14 +293,14 @@ Inside of `OUT_DIR` is like below.
 |   |-- reference.fasta.pac
 |   `-- reference.fasta.sa
 |-- 20_bam
-|   |-- bulk.filt.bam
-|   |-- bulk.filt.bam.bai
-|   |-- cultivar.filt.bam
-|   `-- cultivar.filt.bam.bai
+|   |-- bulk.bam
+|   |-- bulk.bam.bai
+|   |-- cultivar.bam
+|   `-- cultivar.bam.bai
 |-- 30_vcf
 |   |-- mutmap.vcf.gz
 |   `-- mutmap.vcf.gz.tbi
-|-- 40_mutmap
+|-- 40_plot
 |   |-- snp_index.tsv
 │   ├── snp_index.p95.tsv
 │   ├── snp_index.p99.tsv
@@ -336,6 +336,11 @@ Inside of `OUT_DIR` is like below.
     - **<span style="color: red; ">RED line</span>** : mean SNP-index
     - **<span style="color: orange; ">ORANGE line</span>** : mean p99
     - **<span style="color: green; ">GREEN line</span>** : mean p95
+  + If you run MutMap with SnpEff, the following additional outputs will be generated:
+    - **mutmap.snpEff.vcf**: The updated VCF file after annotation by SnpEff, located in the `40_plot` directory.
+    - **snp_index.p95.tsv** and **snp_index.p99.tsv**: These files will contain a new column, **impact**, which includes the mutation impact information predicted by SnpEff.
+    - When plotting the results, variants classified as **MODERATE** by SnpEff are marked with a `+` symbol, while variants classified as **HIGH** are marked with an `x` symbol in the plot.
+
 
 <img src="https://github.com/YuSugihara/MutMap/blob/master/images/2_result.png" width=600>
 
