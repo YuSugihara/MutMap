@@ -362,7 +362,7 @@ If you are working with a non-model organism or your own reference genome, you m
 ## Frequently Asked Questions
 
 ### Choosing the reference genome  
-You can use a line that was not involved in the cross. In the version of MutMap published by [Abe et al., 2012](https://www.nature.com/articles/nbt.2095), the reference fasta was rebuilt using the wild-type cultivar’s reads to create a consensus sequence. However, starting from version 2, that step has been omitted. Instead, the VCF file is used to determine which mutations are derived from the wild-type cultivar and which are from the mutant.
+You can use a line that was not involved in the cross as the reference genome. In the version of MutMap published by [Abe et al., 2012](https://www.nature.com/articles/nbt.2095), the reference fasta was rebuilt using the wild-type cultivar’s reads to create a consensus sequence. However, starting from version 2, that step has been omitted. Instead, the VCF file is used to determine which mutations are derived from the wild-type cultivar and which are from the mutant.
 
 ### When there are many contigs  
 The current setting has been updated to pick the top 50 contigs based on length, so only these contigs will be displayed in the plot. However, the table contains SNP-index information for all contigs, allowing you to confirm significant SNPs even for contigs not shown in the plot. You can also generate plots for these SNPs independently if needed. Since contigs smaller than the sliding window size often produce less reliable results, excluding them from the analysis should not be an issue.
