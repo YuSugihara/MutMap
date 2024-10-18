@@ -17,7 +17,11 @@
 - [Additional Resources](#additional-resources)
   + [MutMap commands breakdown](#mutmap-commands-breakdown)
   + [Build a custom SnpEff database](#build-a-custom-snpEff-database)
-- [About multiple testing correction](#about-multiple-testing-correction)
+- [Frequently Asked Questions](#frequently-asked-questions)
+  + [Choosing the reference genome](#choosing-the-reference-genome)
+  + [When there are many contigs](#when-there-are-many-contigs)
+  + [How to filter for higher-confidence SNPs](#how-to-filter-for-higher-confidence-snps)
+  + [About multiple testing correction](#about-multiple-testing-correction)
 
 ## What is MutMap?
 <img src="https://github.com/YuSugihara/MutMap/blob/master/images/1_logo.png" width=200>
@@ -355,7 +359,17 @@ For a detailed breakdown of the commands used in MutMap, including explanations 
 ### Build a custom SnpEff database
 If you are working with a non-model organism or your own reference genome, you may need to build a custom SnpEff database. For detailed instructions on how to build a custom SnpEff database, please refer to the [Build a Custom SnpEff Database](docs/02_Guide_to_Build_SnpEff_DB.md) document.
 
-## About multiple testing correction
-This function has been deprecated since v2.3.5.
-We highly recommend running MutMap without this function.
-However, if you would like to use this function, you can use it with versions of MutMap older than v2.3.5.
+## Frequently Asked Questions
+
+### Choosing the reference genome  
+You can use a line that was not involved in the cross. In the version of MutMap published by [Abe et al., 2012](https://www.nature.com/articles/nbt.2095), the reference fasta was rebuilt using the wild-type cultivar’s reads to create a consensus sequence. However, starting from version 2, that step has been omitted. Instead, the VCF file is used to determine which mutations are derived from the wild-type cultivar and which are from the mutant.
+
+### When there are many contigs  
+The current setting has been updated to pick the top 50 contigs based on length, so only these contigs will be displayed in the plot. However, the table contains SNP-index information for all contigs, allowing you to confirm significant SNPs even for contigs not shown in the plot. You can also generate plots for these SNPs independently if needed. Since contigs smaller than the sliding window size often produce less reliable results, excluding them from the analysis should not be an issue.
+
+### How to filter for higher-confidence SNPs  
+You should be able to identify some regions with the default settings. However, if you want to focus on higher-confidence SNPs, you can sequence both parents and retain only the SNPs that are clearly 0/0 in one parent and 1/1 in the other in the VCF file, which should produce cleaner results. Also, in MutMap, keep in mind that you cannot input the mutant parent's sequence—only the sequence of the original cultivar can be used as input. For creating a VCF that includes mutants, you might find this [link](https://github.com/YuSugihara/MutMap/blob/master/docs/01_MutMap_Commands_Breakdown.md) helpful. Additionally, when inputting the VCF into mutplot, be sure to keep any columns you added for filtering purposes.
+
+### About multiple testing correction  
+This function has been deprecated since v2.3.5. We highly recommend running MutMap without this function. However, if you would like to use this function, you can use it with versions of MutMap older than v2.3.5.
+
