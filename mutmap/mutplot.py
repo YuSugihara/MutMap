@@ -26,13 +26,13 @@ class MutPlot(object):
     def check_outdir(self):
         if os.path.exists(self.out):
             print(time_stamp(),
-                  'output directory already exist.'.format(self.out),
+                  'Output directory already exists.'.format(self.out),
                   flush=True)
         else:
             os.mkdir(self.out)
 
     def run_snpEff(self):
-        cmd = 'snpEff ann -Xmx8g \
+        cmd = 'snpEff ann -Xmx4g \
                           -s {0}/snpEff_summary.html \
                           {1} \
                           {2} \
@@ -42,9 +42,9 @@ class MutPlot(object):
                                                     self.vcf)
         cmd = clean_cmd(cmd)
 
-        print(time_stamp(), 'start to run SnpEff.', flush=True)
+        print(time_stamp(), 'Running SnpEff annotation.', flush=True)
         sbp.run(cmd, stdout=sbp.DEVNULL, stderr=sbp.DEVNULL, shell=True, check=True)
-        print(time_stamp(), 'SnpEff successfully finished.', flush=True)
+        print(time_stamp(), 'SnpEff annotation completed successfully.', flush=True)
 
         self.args.vcf = '{}/mutmap.snpEff.vcf'.format(self.out)
 
@@ -175,7 +175,7 @@ class MutPlot(object):
         v2i = Vcf2Index(self.args)
         v2i.run()
 
-        print(time_stamp(), 'plotting now...', flush=True)
+        print(time_stamp(), 'Generating plot...', flush=True)
         pt = Plot(self.args)
         pt.run()
 
@@ -186,10 +186,10 @@ class MutPlot(object):
             self.make_igv_file()
 
 def main():
-    print(time_stamp(), 'start to run MutPlot.', flush=True)
+    print(time_stamp(), 'Starting MutPlot.', flush=True)
     mp = MutPlot(args)
     mp.run()
-    print(time_stamp(), 'MutPlot successfully finished.', flush=True)
+    print(time_stamp(), 'MutPlot completed successfully.', flush=True)
 
 if __name__ == '__main__':
     main()

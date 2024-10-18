@@ -153,9 +153,9 @@ class MutMap(object):
         self.mutplot()
 
 def main():
-    print(time_stamp(), 'start to run MutMap.', flush=True)
+    print(time_stamp(), 'Starting MutMap analysis.', flush=True)
     MutMap(args).run()
-    print(time_stamp(), 'MutMap successfully finished.\n', flush=True)
+    print(time_stamp(), 'MutMap analysis completed successfully.\n', flush=True)
 
 if __name__ == '__main__':
     main()

@@ -40,14 +40,12 @@ class Vcf2Index(object):
                 try:
                     GT_pos = fields.index('GT')
                 except ValueError:
-                    sys.stderr.write(('{} No GT field'
-                                      ' in your VCF!!\n').format(time_stamp()))
+                    sys.stderr.write(('{} Error: No GT (Genotype) field found in your VCF file!\n').format(time_stamp()))
                     sys.exit(1)
                 try:
                     AD_pos = fields.index('AD')
                 except ValueError:
-                    sys.stderr.write(('{} No AD field'
-                                      ' in your VCF!!\n').format(time_stamp()))
+                    sys.stderr.write(('{} Error: No AD (Allelic Depth) field found in your VCF file!\n').format(time_stamp()))
                     sys.exit(1)
 
                 if 'ADF' in fields and 'ADR' in fields:
@@ -56,10 +54,8 @@ class Vcf2Index(object):
                 else:
                     ADF_pos = None
                     ADR_pos = None
-                    sys.stderr.write(('{} no ADF or ADR field'
-                                      ' in your VCF.\n').format(time_stamp()))
-                    sys.stderr.write(('{} strand bias filter '
-                                      'will be skipped.\n').format(time_stamp()))
+                    sys.stderr.write(('{} Warning: No ADF (Allelic Depth Forward) or ADR (Allelic Depth Reverse) field found in your VCF file.\n').format(time_stamp()))
+                    sys.stderr.write(('{} Warning: Strand bias filtering will be skipped.\n').format(time_stamp()))
                 break
         vcf.close()
         return GT_pos, AD_pos, ADF_pos, ADR_pos
@@ -172,12 +168,12 @@ class Vcf2Index(object):
         vcf.close()
 
     def run(self):
-        print(time_stamp(), 'start to calculate SNP-index.', flush=True)
+        print(time_stamp(), 'Calculating SNP-index.', flush=True)
         field_pos = self.get_field()
         self.calc_SNPindex(field_pos)
-        print(time_stamp(), 'SNP-index successfully finished.', flush=True)
+        print(time_stamp(), 'SNP-index calculation completed successfully.', flush=True)
 
-        print(time_stamp(), 'start to smooth SNP-index.', flush=True)
+        print(time_stamp(), 'Smoothing SNP-index.', flush=True)
         sm = Smooth(self.args)
         sm.run()
-        print(time_stamp(), 'smoothing process successfully finished.', flush=True)
+        print(time_stamp(), 'SNP-index smoothing completed successfully.', flush=True)
