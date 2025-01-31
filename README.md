@@ -1,5 +1,5 @@
 # MutMap User Guide
-#### version 2.3.8
+#### version 2.3.9
 
 ## Table of contents
 - [What is MutMap?](#what-is-mutmap)
@@ -83,7 +83,7 @@ mutmap -h
 usage: mutmap -r <FASTA> -c <BAM|FASTQ> -b <BAM|FASTQ>
               -n <INT> -o <OUT_DIR> [-T] [-e <DATABASE>]
 
-MutMap version 2.3.8
+MutMap version 2.3.9
 
 options:
   -h, --help         show this help message and exit
@@ -229,7 +229,7 @@ usage: mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]
                [-D <INT>] [-d <INT>] [-N <INT>] [-m <FLOAT>]
                [-S <INT>] [-e <DATABASE>] [--igv] [--indel]
 
-MutPlot version 2.3.8
+MutPlot version 2.3.9
 
 options:
   -h, --help            show this help message and exit
