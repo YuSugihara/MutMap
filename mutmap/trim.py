@@ -1,5 +1,4 @@
 import sys
-import os
 import subprocess as sbp
 from mutmap.alignment import Alignment
 from mutmap.utils import time_stamp, clean_cmd, call_log
@@ -13,7 +12,13 @@ class Trim(object):
         self.trim_params = self.params_parser(args.trim_params)
 
     def params_parser(self, trim_params):
-        params_list = trim_params.split(',')
+        params_list = [param.strip() for param in trim_params.split(',')]
+        if len(params_list) != 6:
+            sys.stderr.write(('  Error: "--trim-params" must have exactly 6 comma-separated values.\n'
+                              '  Please specify them in this order:\n'
+                              '  Phred score, ILLUMINACLIP, LEADING, TRAILING, SLIDINGWINDOW, MINLEN\n\n'))
+            sys.exit(1)
+
         trim_params = {}
         trim_params['phred'] = params_list[0]
         trim_params['ILLUMINACLIP'] = params_list[1]

@@ -7,24 +7,17 @@ args = pm.set_options()
 
 import os
 import sys
-import glob
 import subprocess as sbp
 from multiprocessing import set_start_method
-set_start_method('fork')
-# These environment variables can avoid the potential errors
-# in python and java
-if os.environ.get('OMP_NUM_THREADS') == None:
-    os.environ['OMP_NUM_THREADS'] = str(args.threads)
-if os.environ.get('USE_SIMPLE_THREADED_LEVEL3') == None:
-    os.environ['USE_SIMPLE_THREADED_LEVEL3'] = str(args.threads)
-if os.environ.get('JAVA_TOOL_OPTIONS') == None:
-    os.environ['JAVA_TOOL_OPTIONS'] = '-Xmx4000m'
+try:
+    set_start_method('fork')
+except (RuntimeError, ValueError):
+    pass
 from mutmap.refindex import RefIndex
 from mutmap.trim import Trim
 from mutmap.alignment import Alignment
 from mutmap.mpileup import Mpileup
-from mutmap.vcf2index import Vcf2Index
-from mutmap.utils import time_stamp, clean_cmd, call_log
+from mutmap.utils import time_stamp, check_executables
 
 
 class MutMap(object):
@@ -37,6 +30,8 @@ class MutMap(object):
         self.cultivar_fastq, self.cultivar_bam = self.get_files(args.cultivar)
         self.bulk_fastq, self.bulk_bam = self.get_files(args.bulk)
 
+        self.check_dependencies()
+        self.set_runtime_environment()
         self.mkdir()
         self.link_ref()
         self.link_bam('cultivar', self.cultivar_bam)
@@ -52,8 +47,25 @@ class MutMap(object):
                 bam.append(input_name)
         return fastq, bam
 
+    def check_dependencies(self):
+        commands = ['bwa', 'samtools', 'bcftools', 'tabix']
+        if self.args.trim:
+            commands.append('trimmomatic')
+        if self.args.snpEff is not None:
+            commands.append('snpEff')
+        check_executables(commands, program_name='MutMap')
+
+    def set_runtime_environment(self):
+        # These environment variables can avoid potential threading/runtime issues.
+        if os.environ.get('OMP_NUM_THREADS') is None:
+            os.environ['OMP_NUM_THREADS'] = str(self.args.threads)
+        if os.environ.get('USE_SIMPLE_THREADED_LEVEL3') is None:
+            os.environ['USE_SIMPLE_THREADED_LEVEL3'] = str(self.args.threads)
+        if os.environ.get('JAVA_TOOL_OPTIONS') is None:
+            os.environ['JAVA_TOOL_OPTIONS'] = '-Xmx4000m'
+
     def mkdir(self):
-        os.mkdir('{}'.format(self.out))
+        os.makedirs('{}'.format(self.out))
         os.mkdir('{}/log'.format(self.out))
         if self.N_fastq > 0 and self.args.trim:
             os.mkdir('{}/00_fastq'.format(self.out))
@@ -75,11 +87,11 @@ class MutMap(object):
                        '{}/20_bam/{}.bam'.format(self.out, index))
 
     def refindex(self):
-        ri = RefIndex(args)
+        ri = RefIndex(self.args)
         ri.run()
 
     def trimming(self):
-        tm = Trim(args)
+        tm = Trim(self.args)
         for i, fastq in enumerate(self.cultivar_fastq):
             fastq1 = fastq.split(',')[0]
             fastq2 = fastq.split(',')[1]
@@ -93,7 +105,7 @@ class MutMap(object):
             tm.run(fastq1, fastq2, index)
 
     def alignment(self):
-        aln = Alignment(args)
+        aln = Alignment(self.args)
         for i, fastq in enumerate(self.cultivar_fastq):
             fastq1 = fastq.split(',')[0]
             fastq2 = fastq.split(',')[1]
@@ -112,36 +124,45 @@ class MutMap(object):
         mp.run()
 
     def mutplot(self):
-        cmd = 'mutplot -v {0}/30_vcf/mutmap.vcf.gz \
-                       -n {1} \
-                       -w {2} \
-                       -s {3} \
-                       -N {4} \
-                       -D {5} \
-                       -d {6} \
-                       --dot-color "{7}" \
-                       --line-colors "{8}" \
-                       -o {0}/40_mutmap'.format(self.out,
-                                                self.args.N_bulk,
-                                                self.args.window,
-                                                self.args.step,
-                                                self.args.N_rep,
-                                                self.args.max_depth,
-                                                self.args.min_depth,
-                                                self.args.dot_color,
-                                                self.args.line_colors)
-        
-        if self.args.snpEff is not None:
-            cmd = cmd + ' -e {}'.format(self.args.snpEff)
+        cmd = [sys.executable,
+               '-m',
+               'mutmap.mutplot',
+               '-v',
+               '{}/30_vcf/mutmap.vcf.gz'.format(self.out),
+               '-n',
+               str(self.args.N_bulk),
+               '-w',
+               str(self.args.window),
+               '-s',
+               str(self.args.step),
+               '-N',
+               str(self.args.N_rep),
+               '-D',
+               str(self.args.max_depth),
+               '-d',
+               str(self.args.min_depth),
+               '--dot-color',
+               self.args.dot_color,
+               '--line-colors',
+               self.args.line_colors,
+               '-o',
+               '{}/40_mutmap'.format(self.out)]
 
-        cmd = clean_cmd(cmd)
+        if self.args.snpEff is not None:
+            cmd.extend(['-e', self.args.snpEff])
+
         p = sbp.Popen(cmd,
                       stdout=sbp.PIPE,
                       stderr=sbp.STDOUT,
-                      shell=True)
+                      text=True)
 
-        for line in iter(p.stdout.readline, b''):
-            print(line.rstrip().decode('utf-8'), flush=True)
+        for line in p.stdout:
+            print(line.rstrip(), flush=True)
+
+        return_code = p.wait()
+        if return_code != 0:
+            sys.stderr.write(('{} Error: MutPlot failed during the post-processing step.\n').format(time_stamp()))
+            sys.exit(return_code)
 
     def run(self):
         self.refindex()

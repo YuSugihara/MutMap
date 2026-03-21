@@ -42,7 +42,7 @@ class RefIndex(object):
                     shell=True,
                     check=True)
         except sbp.CalledProcessError:
-            call_log(self.out, 'samtools', cmd1)
+            call_log(self.out, 'samtools', cmd2)
             sys.exit(1)
 
         print(time_stamp(),

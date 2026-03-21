@@ -1,11 +1,12 @@
 # MutMap User Guide
-#### version 2.3.9
+#### version 2.4.0
 
 ## Table of contents
 - [What is MutMap?](#what-is-mutmap)
 - [Installation](#installation)
   + [Dependencies](#dependencies)
   + [Installation via bioconda](#installation-via-bioconda)
+  + [Installation via environment file](#installation-via-environment-file)
   + [Manual installation](#manual-installation)
 - [Usage](#usage)
   + [Example 1 : run MutMap from FASTQ without trimming](#example-1--run-mutmap-from-fastq-without-trimming)
@@ -22,6 +23,7 @@
   + [When there are many contigs](#when-there-are-many-contigs)
   + [How to filter for higher-confidence SNPs](#how-to-filter-for-higher-confidence-snps)
   + [About multiple testing correction](#about-multiple-testing-correction)
+  + [Troubleshooting common errors](#troubleshooting-common-errors)
 
 ## What is MutMap?
 <img src="https://github.com/YuSugihara/MutMap/blob/master/images/1_logo.png" width=200>
@@ -55,6 +57,19 @@ conda create -c bioconda -n mutmap mutmap
 conda activate mutmap
 ```
 
+### Installation via environment file
+If you install from this repository, `environment.yml` is the easiest way to install MutMap with external dependencies in one step.
+```
+git clone https://github.com/YuSugihara/MutMap.git
+cd MutMap
+conda env create -f environment.yml
+conda activate mutmap
+```
+If the environment already exists and you want to sync it with the latest file, run:
+```
+conda env update -f environment.yml --prune
+```
+
 ### Manual installation
 If you encounter an error during installation, you can install MutMap manually.
 ```
@@ -62,7 +77,8 @@ git clone https://github.com/YuSugihara/MutMap.git
 cd MutMap
 pip install -e .
 ```
-You will then need to install other dependencies manually. We highly recommend installing SnpEff and Trimmomatic via bioconda.
+`pip install -e .` installs the required Python libraries (`numpy`, `pandas`, `matplotlib`).
+You still need to install external command-line tools manually. We highly recommend installing SnpEff and Trimmomatic via bioconda.
 ```
 conda install -c bioconda snpeff
 conda install -c bioconda trimmomatic
@@ -72,6 +88,7 @@ After installation, please check whether SnpEff and Trimmomatic are working by u
 snpEff --help
 trimmomatic --help
 ```
+MutMap also checks required external commands at startup and reports missing commands before running the pipeline.
 
 ## Usage
 
@@ -83,7 +100,7 @@ mutmap -h
 usage: mutmap -r <FASTA> -c <BAM|FASTQ> -b <BAM|FASTQ>
               -n <INT> -o <OUT_DIR> [-T] [-e <DATABASE>]
 
-MutMap version 2.3.9
+MutMap version 2.4.0
 
 options:
   -h, --help         show this help message and exit
@@ -123,8 +140,8 @@ options:
                      available databases in SnpEff.
   --line-colors      Colors for threshold lines in plots. Specify a
                      comma-separated list in the order of SNP-index,
-                     p95, and p99. ["#FE5F55,#6FD08C,#E3B505"]
-  --dot-color        Color of the dots in plots. ["#11001C"]
+                     p95, and p99. ["#D55D00,#009E72,#FDB003"]
+  --dot-color        Color of the dots in plots. ["#B3B8DD"]
   --mem              Maximum memory per thread when sorting BAM files;
                      suffixes K/M/G are recognized. [1G]
   -q , --min-MQ      Minimum mapping quality for mpileup. [40]
@@ -229,7 +246,7 @@ usage: mutplot -v <VCF> -o <OUT_DIR> -n <INT> [-w <INT>] [-s <INT>]
                [-D <INT>] [-d <INT>] [-N <INT>] [-m <FLOAT>]
                [-S <INT>] [-e <DATABASE>] [--igv] [--indel]
 
-MutPlot version 2.3.9
+MutPlot version 2.4.0
 
 options:
   -h, --help            show this help message and exit
@@ -258,8 +275,8 @@ options:
   --indel               Plot SNP-index with INDEL.
   --line-colors         Colors for threshold lines in plots. Specify a
                         comma-separated list in the order of SNP-index,
-                        p95, and p99. ["#FE5F55,#6FD08C,#E3B505"]
-  --dot-color           Color of the dots in plots. ["#11001C"]
+                        p95, and p99. ["#D55D00,#009E72,#FDB003"]
+  --dot-color           Color of the dots in plots. ["#B3B8DD"]
   --fig-width           Width allocated in chromosome figure. [7.5]
   --fig-height          Height allocated in chromosome figure. [4.0]
   --white-space         White space between figures. (This option
@@ -372,3 +389,15 @@ If the phenotype is clear and the sequence data is clean, the default settings s
 
 ### About multiple testing correction  
 This function has been deprecated since v2.3.5. We highly recommend running MutMap without this function. However, if you would like to use this function, you can use it with versions of MutMap older than v2.3.5.
+
+### Troubleshooting common errors
+- If MutPlot reports that no variants passed filters, relax one or more filters and retry:
+  - `-d/--min-depth`
+  - `-D/--max-depth`
+  - `-m/--min-SNPindex`
+  - `-S/--strand-bias`
+- If you specify colors manually, `--line-colors` must contain exactly 3 comma-separated values in this order:
+  - SNP-index, p95, p99
+- If MutMap stops before running commands, check whether required external tools are installed and in your `PATH`:
+  - `bwa`, `samtools`, `bcftools`, `tabix` (plus `trimmomatic` when `-T`, and `snpEff` when `-e`)
+- If plotting fails because of crowded panels or clipped labels, increase `--fig-width` / `--fig-height` and rerun `mutplot` using `OUT_DIR/30_vcf/mutmap.vcf.gz`.

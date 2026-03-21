@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 import argparse
 from multiprocessing import Pool
 import multiprocessing as multi
@@ -403,46 +404,77 @@ class Params(object):
         return args
 
     def check_args(self, args):
-        if os.path.isdir(args.out):
-            sys.stderr.write(('  Error: Output directory already exists.\n'
-                              '  Please rename the output directory or '
-                              'remove the existing directory.\n\n'))
+        args.out = args.out.strip()
+        args.ref = args.ref.strip()
+
+        if args.out == '':
+            sys.stderr.write(('  Error: Output directory path is empty.\n\n'))
             sys.exit(1)
 
-        if args.adapter is not None:
-            if not args.trim:
-                sys.stderr.write(('!!WARNING!! You specified "--adapter" but did not specify "--trim".\n'
-                                  '!!WARNING!! "--trim" has been automatically added.\n'))
-                sys.stderr.flush()
+        if args.ref == '':
+            sys.stderr.write(('  Error: Reference FASTA path is empty.\n\n'))
+            sys.exit(1)
 
-        if args.trim:
-            if args.trim_params is None:
-                args.trim_params = '33,<ADAPTER_FASTA>:2:30:10,20,20,4:15,75'
-        else:
-            if args.trim_params is not None:
-                sys.stderr.write(('!!WARNING!! You specified "--trim-params" but did not specify "--trim".\n'
-                                  '!!WARNING!! "--trim" has been automatically added.\n'))
-                sys.stderr.flush()
+        if os.path.exists(args.out):
+            sys.stderr.write(('  Error: Output path already exists.\n'
+                              '  Please rename the output path or '
+                              'remove the existing path.\n\n'))
+            sys.exit(1)
+
+        if not os.path.isfile(args.ref):
+            sys.stderr.write(('  Error: Reference FASTA was not found.\n'
+                              '  Please check "{}".\n\n').format(args.ref))
+            sys.exit(1)
+
+        if args.adapter is not None and not args.trim:
+            sys.stderr.write(('!!WARNING!! You specified "--adapter" but did not specify "--trim".\n'
+                              '!!WARNING!! "--trim" has been automatically added.\n'))
+            sys.stderr.flush()
+            args.trim = True
+
+        if args.trim_params is not None and not args.trim:
+            sys.stderr.write(('!!WARNING!! You specified "--trim-params" but did not specify "--trim".\n'
+                              '!!WARNING!! "--trim" has been automatically added.\n'))
+            sys.stderr.flush()
+            args.trim = True
+
+        if args.trim and args.trim_params is None:
+            args.trim_params = '33,<ADAPTER_FASTA>:2:30:10,20,20,4:15,75'
 
         N_fastq = 0
 
-        for input_name in args.cultivar:
+        for i, input_name in enumerate(args.cultivar):
+            input_name = input_name.strip()
+            args.cultivar[i] = input_name
             n_comma = input_name.count(',')
             if n_comma == 0:
                 root, ext = os.path.splitext(input_name)
-                if ext != '.bam':
+                if ext.lower() != '.bam':
                     sys.stderr.write(('  Error: Please check "{}".\n'
                                       '  The file extension is not "bam".\n'
                                       '  If you intended to specify FASTQ files, please provide them as paired-end reads separated by a comma. e.g., -c fastq1,fastq2\n\n').format(input_name))
                     sys.exit(1)
+                if not os.path.isfile(input_name):
+                    sys.stderr.write(('  Error: Input file was not found.\n'
+                                      '  Please check "{}".\n\n').format(input_name))
+                    sys.exit(1)
             elif n_comma == 1:
-                fastqs = input_name.split(',')
+                fastqs = [fastq.strip() for fastq in input_name.split(',')]
+                if '' in fastqs:
+                    sys.stderr.write(('  Error: Please check "{}".\n'
+                                      '  FASTQ file path is empty around a comma.\n\n').format(input_name))
+                    sys.exit(1)
+                args.cultivar[i] = ','.join(fastqs)
                 for fastq in fastqs:
                     root, ext = os.path.splitext(fastq)
-                    if ext == '.bam':
+                    if ext.lower() == '.bam':
                         sys.stderr.write(('  Error: Please check "{}".\n'
                                           '  The file extension should not be "bam".\n'
                                           '  If you intended to specify BAM files, please input them separately. e.g., -c bam1 -c bam2\n\n').format(input_name))
+                        sys.exit(1)
+                    if not os.path.isfile(fastq):
+                        sys.stderr.write(('  Error: Input file was not found.\n'
+                                          '  Please check "{}".\n\n').format(fastq))
                         sys.exit(1)
                 N_fastq += 1
             else:
@@ -450,23 +482,38 @@ class Params(object):
                                   '  You have specified too many files, or the file name contains a comma.\n\n').format(input_name))
                 sys.exit(1)
 
-        for input_name in args.bulk:
+        for i, input_name in enumerate(args.bulk):
+            input_name = input_name.strip()
+            args.bulk[i] = input_name
             n_comma = input_name.count(',')
             if n_comma == 0:
                 root, ext = os.path.splitext(input_name)
-                if ext != '.bam':
+                if ext.lower() != '.bam':
                     sys.stderr.write(('  Error: Please check "{}".\n'
                                       '  The file extension is not "bam".\n'
                                       '  If you intended to specify FASTQ files, please provide them as paired-end reads separated by a comma. e.g., -b fastq1,fastq2\n\n').format(input_name))
                     sys.exit(1)
+                if not os.path.isfile(input_name):
+                    sys.stderr.write(('  Error: Input file was not found.\n'
+                                      '  Please check "{}".\n\n').format(input_name))
+                    sys.exit(1)
             elif n_comma == 1:
-                fastqs = input_name.split(',')
+                fastqs = [fastq.strip() for fastq in input_name.split(',')]
+                if '' in fastqs:
+                    sys.stderr.write(('  Error: Please check "{}".\n'
+                                      '  FASTQ file path is empty around a comma.\n\n').format(input_name))
+                    sys.exit(1)
+                args.bulk[i] = ','.join(fastqs)
                 for fastq in fastqs:
                     root, ext = os.path.splitext(fastq)
-                    if ext == '.bam':
+                    if ext.lower() == '.bam':
                         sys.stderr.write(('  Error: Please check "{}".\n'
                                           '  The file extension should not be "bam".\n'
                                           '  If you intended to specify BAM files, please input them separately. e.g., -b bam1 -b bam2\n\n').format(input_name))
+                        sys.exit(1)
+                    if not os.path.isfile(fastq):
+                        sys.stderr.write(('  Error: Input file was not found.\n'
+                                          '  Please check "{}".\n\n').format(fastq))
                         sys.exit(1)
                 N_fastq += 1
             else:
@@ -478,5 +525,59 @@ class Params(object):
             sys.stderr.write(('  Error: "--trim" can only be used when FASTQ files are specified.\n\n'))
             sys.exit(1)
 
-        return N_fastq
+        if args.N_bulk < 1:
+            sys.stderr.write(('  Error: "--N-bulk" must be >= 1.\n\n'))
+            sys.exit(1)
 
+        if args.window < 1:
+            sys.stderr.write(('  Error: "--window" must be >= 1 (kb).\n\n'))
+            sys.exit(1)
+
+        if args.step < 1:
+            sys.stderr.write(('  Error: "--step" must be >= 1 (kb).\n\n'))
+            sys.exit(1)
+
+        if args.N_rep < 1:
+            sys.stderr.write(('  Error: "--N-rep" must be >= 1.\n\n'))
+            sys.exit(1)
+
+        if args.min_depth < 1:
+            sys.stderr.write(('  Error: "--min-depth" must be >= 1.\n\n'))
+            sys.exit(1)
+
+        if args.max_depth < args.min_depth:
+            sys.stderr.write(('  Error: "--max-depth" must be greater than or equal to "--min-depth".\n\n'))
+            sys.exit(1)
+
+        if args.min_MQ < 0:
+            sys.stderr.write(('  Error: "--min-MQ" must be >= 0.\n\n'))
+            sys.exit(1)
+
+        if args.min_BQ < 0:
+            sys.stderr.write(('  Error: "--min-BQ" must be >= 0.\n\n'))
+            sys.exit(1)
+
+        if args.adjust_MQ < 0:
+            sys.stderr.write(('  Error: "--adjust-MQ" must be >= 0.\n\n'))
+            sys.exit(1)
+
+        mem_value = args.mem.strip()
+        if not re.match(r'^\d+[KMGkmg]$', mem_value):
+            sys.stderr.write(('  Error: "--mem" must be specified as an integer followed by K, M, or G.\n'
+                              '  Example: --mem 1G\n\n'))
+            sys.exit(1)
+        args.mem = mem_value.upper()
+
+        line_colors = [color.strip() for color in args.line_colors.split(',')]
+        if len(line_colors) != 3 or '' in line_colors:
+            sys.stderr.write(('  Error: "--line-colors" must have exactly 3 comma-separated values.\n'
+                              '  Order: SNP-index,p95,p99\n\n'))
+            sys.exit(1)
+        args.line_colors = ','.join(line_colors)
+
+        args.dot_color = args.dot_color.strip()
+        if args.dot_color == '':
+            sys.stderr.write(('  Error: "--dot-color" must not be empty.\n\n'))
+            sys.exit(1)
+
+        return N_fastq

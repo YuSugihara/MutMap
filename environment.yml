@@ -1,0 +1,20 @@
+name: mutmap
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python>=3.8
+  - bwa
+  - samtools
+  - bcftools
+  - htslib
+  - snpeff
+  - trimmomatic
+  - matplotlib
+  - numpy
+  - pandas
+  - seaborn
+  - openjdk
+  - pip
+  - pip:
+      - -e .

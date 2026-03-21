@@ -4,7 +4,6 @@ import os
 import glob
 import subprocess as sbp
 from multiprocessing import Pool
-from mutmap.vcf2index import Vcf2Index
 from mutmap.utils import time_stamp, clean_cmd, call_log
 
 
@@ -16,21 +15,46 @@ class Mpileup(object):
 
     def get_bams(self, label):
         bams = glob.glob('{}/20_bam/{}*.bam'.format(self.out, label))
+        bams = [bam for bam in bams if not bam.endswith('.unsorted.bam')]
         return bams
 
     def sort(self):
         for label in ['cultivar', 'bulk']:
             bams = self.get_bams(label)
-            if len(bams) == 1:
+            unsorted_bam = '{}/20_bam/{}.unsorted.bam'.format(self.out, label)
+            if len(bams) == 0:
+                sys.stderr.write(('{} Error: No input BAM files were found for "{}".\n'
+                                  '{} Please check the files under "{}/20_bam".\n').format(time_stamp(),
+                                                                                             label,
+                                                                                             time_stamp(),
+                                                                                             self.out))
+                sys.exit(1)
+            elif len(bams) == 1:
                 path_to_bam = os.path.abspath(bams[0])
-                cmd1 = 'ln -s {} {}/20_bam/{}.unsorted.bam'.format(path_to_bam,
-                                                                   self.out,
-                                                                   label)
+                if os.path.lexists(unsorted_bam):
+                    os.remove(unsorted_bam)
+                try:
+                    os.symlink(path_to_bam, unsorted_bam)
+                except OSError as err:
+                    sys.stderr.write(('{} Error: Failed to prepare an intermediate BAM symlink.\n'
+                                      '{} Source: "{}"\n'
+                                      '{} Target: "{}"\n'
+                                      '{} Reason: {}\n'
+                                      '{} Please check file permissions and available disk space.\n').format(time_stamp(),
+                                                                                                                time_stamp(),
+                                                                                                                path_to_bam,
+                                                                                                                time_stamp(),
+                                                                                                                unsorted_bam,
+                                                                                                                time_stamp(),
+                                                                                                                err,
+                                                                                                                time_stamp()))
+                    sys.exit(1)
             else:
                 cmd1 = 'samtools merge -f {0}/20_bam/{1}.unsorted.bam \
                                           {0}/20_bam/{1}*.bam \
                                           >> {0}/log/samtools.log \
                                           2>&1'.format(self.out, label)
+                cmd1 = clean_cmd(cmd1)
 
             cmd2 = 'samtools collate -O \
                                      -@ {3} \
@@ -68,21 +92,21 @@ class Mpileup(object):
 
             cmd5 = 'rm -f {}/20_bam/{}.*.bam'.format(self.out, label)
 
-            cmd1 = clean_cmd(cmd1)
             cmd2 = clean_cmd(cmd2)
             cmd3 = clean_cmd(cmd3)
             cmd4 = clean_cmd(cmd4)
             cmd5 = clean_cmd(cmd5)
 
-            try:
-                sbp.run(cmd1, 
-                        stdout=sbp.DEVNULL, 
-                        stderr=sbp.DEVNULL, 
-                        shell=True, 
-                        check=True)
-            except sbp.CalledProcessError:
-                call_log(self.out, 'samtools', cmd1)
-                sys.exit(1)
+            if len(bams) > 1:
+                try:
+                    sbp.run(cmd1, 
+                            stdout=sbp.DEVNULL, 
+                            stderr=sbp.DEVNULL, 
+                            shell=True, 
+                            check=True)
+                except sbp.CalledProcessError:
+                    call_log(self.out, 'samtools', cmd1)
+                    sys.exit(1)
 
             try:
                 sbp.run(cmd2, 
@@ -154,6 +178,14 @@ class Mpileup(object):
                                             self.out)
 
         cmd = clean_cmd(cmd)
+        cmd_idx1 = 'tabix -f -p vcf {0}/30_vcf/mutmap.{1}.vcf.gz \
+                    >> {0}/log/bcftools.{1}.log \
+                    2>&1'.format(self.out, chr_name)
+        cmd_idx2 = 'tabix -f -C -p vcf {0}/30_vcf/mutmap.{1}.vcf.gz \
+                    >> {0}/log/bcftools.{1}.log \
+                    2>&1'.format(self.out, chr_name)
+        cmd_idx1 = clean_cmd(cmd_idx1)
+        cmd_idx2 = clean_cmd(cmd_idx2)
 
         try:
             sbp.run(cmd, 
@@ -161,11 +193,40 @@ class Mpileup(object):
                     stderr=sbp.DEVNULL, 
                     shell=True, 
                     check=True)
+        except sbp.CalledProcessError as err:
+            raise RuntimeError(('bcftools mpileup/call failed for contig "{}". '
+                                'Please check "{}/log/bcftools.{}.log".').format(chr_name,
+                                                                                  self.out,
+                                                                                  chr_name)) from err
+
+        try:
+            sbp.run(cmd_idx1,
+                    stdout=sbp.DEVNULL,
+                    stderr=sbp.DEVNULL,
+                    shell=True,
+                    check=True)
         except sbp.CalledProcessError:
-            call_log(self.out, 'bcftools', cmd)
-            sys.exit(1)
+            try:
+                sbp.run(cmd_idx2,
+                        stdout=sbp.DEVNULL,
+                        stderr=sbp.DEVNULL,
+                        shell=True,
+                        check=True)
+            except sbp.CalledProcessError as err:
+                raise RuntimeError(('tabix indexing failed for contig "{}". '
+                                    'Please check "{}/log/bcftools.{}.log".').format(chr_name,
+                                                                                      self.out,
+                                                                                      chr_name)) from err
     
     def concat(self):
+        vcf_files = glob.glob('{}/30_vcf/mutmap.*.vcf.gz'.format(self.out))
+        if len(vcf_files) == 0:
+            sys.stderr.write(('{} Error: No per-contig VCF files were found for concatenation.\n'
+                              '{} Variant calling may have failed earlier. Please check "{}/log/bcftools.*.log".\n').format(time_stamp(),
+                                                                                                                             time_stamp(),
+                                                                                                                             self.out))
+            sys.exit(1)
+
         cmd1 = 'bcftools concat -O z \
                                 -o {0}/30_vcf/mutmap.vcf.gz \
                                 {0}/30_vcf/mutmap.*.vcf.gz \
@@ -187,7 +248,7 @@ class Mpileup(object):
                     shell=True, 
                     check=True)
         except sbp.CalledProcessError:
-            call_log(self.out, 'bcftools', cmd3)
+            call_log(self.out, 'bcftools', cmd1)
             sys.exit(1)
 
         sbp.run(cmd2, stdout=sbp.DEVNULL, stderr=sbp.DEVNULL, shell=True, check=True)
@@ -235,10 +296,31 @@ class Mpileup(object):
 
         print(time_stamp(), 'Calling variants.', flush=True)
         chr_names = self.get_header()
+        if len(chr_names) == 0:
+            sys.stderr.write(('{} Error: No contig/chromosome entries were found in the reference FASTA header.\n'
+                              '{} Please check "{}".\n').format(time_stamp(),
+                                                                time_stamp(),
+                                                                self.args.ref))
+            sys.exit(1)
 
         p = Pool(self.args.threads)
-        p.map(self.mpileup, chr_names)
-        p.close()
+        try:
+            p.map(self.mpileup, chr_names)
+        except RuntimeError as err:
+            sys.stderr.write('{} Error: {}\n'.format(time_stamp(), err))
+            sys.exit(1)
+        except Exception as err:
+            sys.stderr.write(('{} Error: Variant calling failed in multiprocessing workers.\n'
+                              '{} Reason: {}\n'
+                              '{} Please check "{}/log/bcftools.*.log".\n').format(time_stamp(),
+                                                                                    time_stamp(),
+                                                                                    err,
+                                                                                    time_stamp(),
+                                                                                    self.out))
+            sys.exit(1)
+        finally:
+            p.close()
+            p.join()
 
         self.concat()
         print(time_stamp(), 'Variant calling completed successfully.', flush=True)

@@ -6,15 +6,19 @@ args = pm.set_options()
 
 
 import os
+import sys
 import pandas as pd
 import subprocess as sbp
 from multiprocessing import set_start_method
-set_start_method('fork')
+try:
+    set_start_method('fork')
+except (RuntimeError, ValueError):
+    pass
 if os.environ.get('JAVA_TOOL_OPTIONS') == None:
     os.environ['JAVA_TOOL_OPTIONS'] = '-Xmx4000m'
 from mutmap.vcf2index import Vcf2Index
 from mutmap.plot import Plot
-from mutmap.utils import time_stamp, clean_cmd
+from mutmap.utils import time_stamp, clean_cmd, check_executables
 
 
 class MutPlot(object):
@@ -24,14 +28,83 @@ class MutPlot(object):
         self.vcf = args.vcf
         self.snpEff = args.snpEff
         self.args = args
+        self.validate_args()
+
+        if not os.path.isfile(self.vcf):
+            sys.stderr.write(('{} Error: VCF file was not found.\n'
+                              '{} Please check "{}".\n').format(time_stamp(),
+                                                                time_stamp(),
+                                                                self.vcf))
+            sys.exit(1)
+
+        if self.snpEff is not None:
+            check_executables(['snpEff'], program_name='MutPlot')
+
+    def validate_args(self):
+        if self.args.N_bulk < 1:
+            sys.stderr.write(('{} Error: "--N-bulk" must be >= 1.\n').format(time_stamp()))
+            sys.exit(1)
+
+        if self.args.window < 1:
+            sys.stderr.write(('{} Error: "--window" must be >= 1 (kb).\n').format(time_stamp()))
+            sys.exit(1)
+
+        if self.args.step < 1:
+            sys.stderr.write(('{} Error: "--step" must be >= 1 (kb).\n').format(time_stamp()))
+            sys.exit(1)
+
+        if self.args.N_rep < 1:
+            sys.stderr.write(('{} Error: "--N-rep" must be >= 1.\n').format(time_stamp()))
+            sys.exit(1)
+
+        if self.args.min_depth < 1:
+            sys.stderr.write(('{} Error: "--min-depth" must be >= 1.\n').format(time_stamp()))
+            sys.exit(1)
+
+        if self.args.max_depth < self.args.min_depth:
+            sys.stderr.write(('{} Error: "--max-depth" must be greater than or equal to "--min-depth".\n').format(time_stamp()))
+            sys.exit(1)
+
+        if self.args.min_SNPindex < 0 or self.args.min_SNPindex > 1:
+            sys.stderr.write(('{} Error: "--min-SNPindex" must be between 0 and 1.\n').format(time_stamp()))
+            sys.exit(1)
+
+        if self.args.strand_bias < 0:
+            sys.stderr.write(('{} Error: "--strand-bias" must be >= 0.\n').format(time_stamp()))
+            sys.exit(1)
+
+        if self.args.fig_width <= 0 or self.args.fig_height <= 0:
+            sys.stderr.write(('{} Error: "--fig-width" and "--fig-height" must be > 0.\n').format(time_stamp()))
+            sys.exit(1)
+
+        if self.args.white_space < 0:
+            sys.stderr.write(('{} Error: "--white-space" must be >= 0.\n').format(time_stamp()))
+            sys.exit(1)
 
     def check_outdir(self):
         if os.path.exists(self.out):
+            if not os.path.isdir(self.out):
+                sys.stderr.write(('{} Error: Output path exists but is not a directory.\n'
+                                  '{} Please check "{}".\n').format(time_stamp(),
+                                                                    time_stamp(),
+                                                                    self.out))
+                sys.exit(1)
             print(time_stamp(),
-                  'Output directory already exists.'.format(self.out),
+                  'Output directory already exists.',
                   flush=True)
         else:
             os.mkdir(self.out)
+
+    def check_required_tables(self):
+        required = ['snp_index.tsv', 'sliding_window.tsv']
+        missing = []
+        for filename in required:
+            path = '{}/{}'.format(self.out, filename)
+            if not os.path.isfile(path):
+                missing.append(path)
+        if missing:
+            raise FileNotFoundError(('Required intermediate file(s) were not found:\n'
+                                     '{}').format('\n'.join(missing)))
 
     def run_snpEff(self):
         cmd = 'snpEff ann -Xmx4g \
@@ -45,7 +118,14 @@ class MutPlot(object):
         cmd = clean_cmd(cmd)
 
         print(time_stamp(), 'Running SnpEff annotation.', flush=True)
-        sbp.run(cmd, stdout=sbp.DEVNULL, stderr=sbp.DEVNULL, shell=True, check=True)
+        try:
+            sbp.run(cmd, stdout=sbp.DEVNULL, stderr=sbp.DEVNULL, shell=True, check=True)
+        except sbp.CalledProcessError:
+            sys.stderr.write(('{} Error: SnpEff annotation failed.\n'
+                              '{} Please check "{}/snpEff.log".\n').format(time_stamp(),
+                                                                           time_stamp(),
+                                                                           self.out))
+            sys.exit(1)
         print(time_stamp(), 'SnpEff annotation completed successfully.', flush=True)
 
         self.args.vcf = '{}/mutmap.snpEff.vcf'.format(self.out)
@@ -175,17 +255,51 @@ class MutPlot(object):
             self.run_snpEff()
 
         v2i = Vcf2Index(self.args)
-        v2i.run()
+        try:
+            v2i.run()
+        except SystemExit:
+            raise
+        except Exception as err:
+            sys.stderr.write(('{} Error: Failed while converting VCF to MutPlot intermediate tables.\n'
+                              '{} Reason: {}\n').format(time_stamp(),
+                                                        time_stamp(),
+                                                        err))
+            sys.exit(1)
 
         print(time_stamp(), 'Generating plot...', flush=True)
         pt = Plot(self.args)
-        pt.run()
+        try:
+            pt.run()
+        except (RuntimeError, ValueError) as err:
+            sys.stderr.write('{} Error: {}\n'.format(time_stamp(), err))
+            sys.exit(1)
+        except Exception as err:
+            sys.stderr.write(('{} Error: Plot generation failed unexpectedly.\n'
+                              '{} Reason: {}\n').format(time_stamp(),
+                                                        time_stamp(),
+                                                        err))
+            sys.exit(1)
 
-        self.get_outlier_SNPindex()
-        self.get_outlier_windows()
+        try:
+            self.check_required_tables()
+            self.get_outlier_SNPindex()
+            self.get_outlier_windows()
+        except Exception as err:
+            sys.stderr.write(('{} Error: Failed while generating summary tables (p95/p99).\n'
+                              '{} Reason: {}\n').format(time_stamp(),
+                                                        time_stamp(),
+                                                        err))
+            sys.exit(1)
 
         if self.args.igv:
-            self.make_igv_file()
+            try:
+                self.make_igv_file()
+            except Exception as err:
+                sys.stderr.write(('{} Error: Failed while writing IGV output files.\n'
+                                  '{} Reason: {}\n').format(time_stamp(),
+                                                            time_stamp(),
+                                                            err))
+                sys.exit(1)
 
 def main():
     print(time_stamp(), 'Starting MutPlot.', flush=True)

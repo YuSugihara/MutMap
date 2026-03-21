@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import find_packages, setup
 from mutmap.__init__ import __version__
 
 setup(name='mutmap',
@@ -10,7 +10,16 @@ setup(name='mutmap',
       author_email='sugihara.yu.85s@kyoto-u.jp',
       url='https://github.com/YuSugihara/MutMap',
       license='GPL',
-      packages=['mutmap'],
+      packages=find_packages(exclude=['test', 'docs']),
+      python_requires='>=3.5',
+      install_requires=[
+            'matplotlib',
+            'numpy',
+            'pandas',
+      ],
+      extras_require={
+            'plot-style': ['seaborn'],
+      },
       entry_points={'console_scripts': [
             'mutmap = mutmap.mutmap:main',
             'mutplot = mutmap.mutplot:main',
