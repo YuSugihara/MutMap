@@ -7,7 +7,6 @@
   + [Dependencies](#dependencies)
   + [Installation via bioconda](#installation-via-bioconda)
   + [Installation via environment file](#installation-via-environment-file)
-  + [Manual installation](#manual-installation)
 - [Usage](#usage)
   + [Example 1 : run MutMap from FASTQ without trimming](#example-1--run-mutmap-from-fastq-without-trimming)
   + [Example 2 : run MutMap from FASTQ with trimming](#example-2--run-mutmap-from-fastq-with-trimming)
@@ -64,29 +63,6 @@ git clone https://github.com/YuSugihara/MutMap.git
 cd MutMap
 conda env create -f environment.yml
 conda activate mutmap
-```
-If the environment already exists and you want to sync it with the latest file, run:
-```
-conda env update -f environment.yml --prune
-```
-
-### Manual installation
-If you encounter an error during installation, you can install MutMap manually.
-```
-git clone https://github.com/YuSugihara/MutMap.git
-cd MutMap
-pip install -e .
-```
-`pip install -e .` installs the required Python libraries (`numpy`, `pandas`, `matplotlib`).
-You still need to install external command-line tools manually. We highly recommend installing SnpEff and Trimmomatic via bioconda.
-```
-conda install -c bioconda snpeff
-conda install -c bioconda trimmomatic
-```
-After installation, please check whether SnpEff and Trimmomatic are working by using the commands below.
-```
-snpEff --help
-trimmomatic --help
 ```
 MutMap also checks required external commands at startup and reports missing commands before running the pipeline.
 
